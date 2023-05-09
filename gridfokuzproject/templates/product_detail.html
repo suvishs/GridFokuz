@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <h2 style="text-align:center">{{product.Product_Name}}</h2><br>
+
+    <div class="card mx-auto" style="width: 18rem;">
+        <img src="{{product.product_image.url}}" class="card-img-top" alt="{{product.Product_Name}}">
+        <div class="card-body">
+
+            <a class="btn btn-primary" href="{% url 'update_product' product.id %}">Update</a>
+            <a class="btn btn-primary" href="{% url 'delete_product' product.id %}">Delete</a>
+          
+            <p>SKU : {{product.SKU}}</p>
+            <p>Vendor : {{product.Vendor.vendorname}}</p>
+            <p>Category : {{product.Category}}</p>
+            <p>Sub_category : {{product.Sub_category}}</p>
+            <p>Product_Name : {{product.Product_Name}}</p>
+            <p>MRP : {{product.MRP}}</p>
+            <p>Vendor_Price : {{product.Vendor_Price}}</p>
+            <p>Transport1 : {{product.Transport1}}</p>
+            <p>Transport2 : {{product.Transport2}}</p>
+            <p>Branding{{product.Branding}}</p>
+            <p>Packing : {{product.Packing}}</p>
+            <p>Profit_in_precentage : {{product.Profit_in_precentage}}</p>
+            <p>Profit_amount : {{product.Profit_amount}}</p>
+            <p>GF_Price : {{product.GF_Price}}</p>
+            <p>Tax_in_precentage : {{product.Tax_in_precentage}}</p>
+            <p>Tax_amount : {{product.Tax_amount}}</p>
+            <p>Total_GF_price : {{product.Total_GF_price}}</p>
+        </div>
+    </div>
+
+</body>
+</html>

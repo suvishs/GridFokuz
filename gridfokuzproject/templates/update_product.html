@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <h2 style="text-align:center">{{product.Product_Name}}</h2><br>
+    <a href="/home">Home</a>
+    <div class="card mx-auto" style="width: 25rem;">
+        <img src="{{product.product_image.url}}" class="card-img-top" alt="{{product.Product_Name}}">
+        <div class="card-body">
+            <form action="{% url 'update_product' product.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" name="SKU" placeholder="SKU" value="{{product.SKU}}" required><br><br>
+        
+                <select name="Vendor">
+                    <option value="none">Select Vendor</option>
+                    {% for i in vendor %}
+                      <option value="{{ i.vendorname }}">{{ i.vendorname }}</option>
+                    {% endfor %}
+                </select><br><br>
+                  
+                <label>Category</label>
+                <input type="text" name="Category" placeholder="Category" value="{{product.Category}}" required><br><br>
+                <label>Sub_category</label>
+                <input type="text" name="Sub_category" placeholder="Sub_category" value="{{product.Sub_category}}" required><br><br>
+                <label>Product_Name</label>
+                <input type="text" name="Product_Name" placeholder="Product_Name" value="{{product.Product_Name}}" required><br><br>
+                <label>MRP</label>
+                <input type="number" name="MRP" placeholder="MRP" step="0.0001" value="{{product.MRP}}" required><br><br>
+                <label>Vendor_Price</label>
+                <input type="number" name="Vendor_Price" placeholder="Vendor_Price" step="0.0001" value="{{product.Vendor_Price}}" required><br><br>
+                <label>Transport1</label>
+                <input type="number" name="Transport1" placeholder="Transport1" step="0.0001" value="{{product.Transport1}}" required><br><br>
+                <label>Transport2</label>
+                <input type="number" name="Transport2" placeholder="Transport2" step="0.0001" value="{{product.Transport2}}" required><br><br>
+                <label>Branding</label>
+                <input type="number" name="Branding" placeholder="Branding" step="0.0001" value="{{product.Branding}}" required><br><br>
+                <label>Packing</label>
+                <input type="number" name="Packing" placeholder="Packing" step="0.0001" value="{{product.Packing}}" required><br><br>
+                <label>Profit_in_precentage</label>
+                <input type="number" name="Profit_in_precentage" placeholder="Profit" step="0.0001" value="{{product.Profit_in_precentage}}" required><br><br>
+                <label>Profit_amount</label>
+                <input type="number" name="Profit_amount" placeholder="Profit_amount"step="0.0001" value="{{product.Profit_amount}}" required><br><br>
+                <label>GF_Price</label>
+                <input type="number" name="GF_Price" placeholder="GF_Price"step="0.0001" value="{{product.GF_Price}}" required><br><br>
+                <label>Tax_in_precentage</label>
+                <input type="number" name="Tax_in_precentage" placeholder="Tax"step="0.0001" value="{{product.Tax_in_precentage}}" required><br><br>
+                <label>Tax_amount</label>
+                <input type="number" name="Tax_amount" placeholder="Tax_amount"step="0.0001" value="{{product.Tax_amount}}" required><br><br>
+                <label>Total_GF_price</label>
+                <input type="number" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" value="{{product.Total_GF_price}}" required><br><br>
+                <label>product_image</label>
+                <input type="file" name="product_image" value="{{product.product_image.url}}" required>
+                <input type="submit" onclick="return validateForm()">
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function validateForm() {
+          var selectBox = document.getElementsByName("Vendor")[0];
+          var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+          if (selectedValue === "none") {
+            alert("Please select a vendor.");
+            return false;
+          }
+          return true;
+        }
+        </script>
+</body>
+</html>

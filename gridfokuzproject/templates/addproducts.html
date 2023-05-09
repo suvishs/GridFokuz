@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for i in messages %}
+        <p style="text-align:center;">{{i}}</p>
+    {% endfor %}
+    <h1>Add Products</h1>
+    <a href="home">Home</a><br><br>
+
+    <form action="addproducts" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="SKU" placeholder="SKU" required><br>
+
+        <select name="Vendor">
+            {% for i in vendor %}
+            <option value="{{i.vendorname}}">{{i.vendorname}}</option>
+            {% endfor %}
+        </select><br>
+
+        <input type="text" name="Category" placeholder="Category" required><br>
+        <input type="text" name="Sub_category" placeholder="Sub_category" required><br>
+        <input type="text" name="Product_Name" placeholder="Product_Name" required><br>
+        <input type="number" name="MRP" placeholder="MRP" step="0.0001" required><br>
+        <input type="number" name="Vendor_Price" placeholder="Vendor_Price" step="0.0001" required><br>
+        <input type="number" name="Transport1" placeholder="Transport1" step="0.0001" required><br>
+        <input type="number" name="Transport2" placeholder="Transport2" step="0.0001" required><br>
+        <input type="number" name="Branding" placeholder="Branding" step="0.0001" required><br>
+        <input type="number" name="Packing" placeholder="Packing" step="0.0001" required><br>
+        <input type="number" name="Profit_in_precentage" placeholder="Profit" step="0.0001" required><br>
+        <input type="number" name="Profit_amount" placeholder="Profit_amount"step="0.0001" required><br>
+        <input type="number" name="GF_Price" placeholder="GF_Price"step="0.0001" required><br>
+        <input type="number" name="Tax_in_precentage" placeholder="Tax"step="0.0001" required><br>
+        <input type="number" name="Tax_amount" placeholder="Tax_amount"step="0.0001" required><br>
+        <input type="number" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" required><br>
+        <input type="file" name="product_image" required>
+        <input type="submit">
+    </form>
+</body>
+</html>
