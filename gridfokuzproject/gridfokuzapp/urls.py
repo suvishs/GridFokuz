@@ -9,6 +9,8 @@ urlpatterns = [
     path("Register", views.Register, name="Register"),
     path("home", views.home, name="home"),
     path("GridHome", views.GridHome, name="GridHome"),
+    path("SemiAdminHome", views.SemiAdminHome, name="SemiAdminHome"),
+    path("EmployeeHome", views.EmployeeHome, name="EmployeeHome"),
     path("logout", views.logout, name="logout"),
     
     # -------------------Vendor Section-------------------

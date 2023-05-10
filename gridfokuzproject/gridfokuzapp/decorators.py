@@ -10,10 +10,10 @@ def Admin_only(view_func):
             return redirect("GridHome")
         
         if group == "SemiAdmin":
-            return redirect("semiadminhome")
+            return redirect("SemiAdminHome")
         
         if group == "Employee":
-            return redirect("employeehome")
+            return redirect("EmployeeHome")
         
         else:
             return view_func(request,*args,**kwargs)

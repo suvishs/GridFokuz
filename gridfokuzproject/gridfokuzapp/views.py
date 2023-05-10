@@ -75,6 +75,28 @@ def GridHome(request):
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
+
+def SemiAdminHome(request):
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    return render(request, "SemiAdminHome.html", {"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+    
+def EmployeeHome(request):
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    return render(request, "EmployeeHome.html", {"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
     
 # ---------------------------Addvendors section---------------------------
 
