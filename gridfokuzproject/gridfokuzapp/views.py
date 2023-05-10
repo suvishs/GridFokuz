@@ -65,6 +65,17 @@ def home(request):
                                          "vendors":vendors,
                                          "limit":limit})
 
+def GridHome(request):
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    return render(request, "GridHome.html", {"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+    
 # ---------------------------Addvendors section---------------------------
 
 def addventors(request):
