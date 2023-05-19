@@ -649,11 +649,11 @@ def MakeMaualCombo(request):
             j = int(i)
             product = AddProducts.objects.get(id=j)
             if ManualComboTemp.objects.filter(product=product).exists():
-                pass
+                print("inside", product)
             else:
-                combo = ManualComboTemp(product=product,usr=request.user)
-                combo.save()
-        messages.info(request, "Your Combo added successfuly but need to care about Quantity anualy...")
+                com = ManualComboTemp(product=product,usr=request.user)
+                com.save()
+        messages.info(request, "Your Combo added successfuly but need to care about Quantity manualy...")
         return redirect("Combo")
     return redirect("Combo")
 

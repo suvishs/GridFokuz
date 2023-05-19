@@ -35,5 +35,5 @@ class AddProducts(models.Model):
         return self.Product_Name
     
 class ManualComboTemp(models.Model):
-    product = models.ForeignKey(AddProducts ,on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(AddProducts, on_delete=models.CASCADE)
     usr = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
