@@ -37,4 +37,5 @@ urlpatterns = [
     path("AddToManualCombo/<int:id>", views.AddToManualCombo, name="AddToManualCombo"),
     path("DeleteCombo", views.DeleteCombo, name="DeleteCombo"),
     path("auto_combo_submit", views.auto_combo_submit, name="auto_combo_submit"),
+    path("combo_sort_products", views.combo_sort_products, name="combo_sort_products"),
 ]

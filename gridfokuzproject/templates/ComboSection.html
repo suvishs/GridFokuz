@@ -100,6 +100,48 @@
         </form>
     </div>
 
+
+
+
+
+
+    <h5>Select one or more vendors:</h5>
+    <form action="combo_sort_products" method="post">
+        {% csrf_token %}
+
+        <br><label>Sorting</label>
+        <select name="sorting">
+            <option value="null">Optional</option>
+            <option value="acending">Low to High</option>
+            <option value="desending">High to Low</option>
+        </select><br><br>
+
+        <label>Vendors</label><br>
+        {% for vendor in vendors %}
+        <input type="checkbox" name="vendor" value="{{ vendor.vendorname }}"> {{ vendor.vendorname }}<br>
+        {% endfor %}<br>
+
+        <label>Price limit</label><br>
+        <input type="number" name="limit" placeholder="Enter your limit" value="{{limit}}" step="0.0001" required><br><br>
+
+        <label>Category</label><br>
+        {% for i in product %}
+        <input type="checkbox" name="category" value="{{ i.Category }}"> {{ i.Category }}<br>
+        {% endfor %}<br>
+
+        <label>Sub Category</label><br>
+        {% for i in product %}
+        <input type="checkbox" name="sub_category" value="{{ i.Sub_category }}"> {{ i.Sub_category }}<br>
+        {% endfor %}<br>
+
+        <input type="submit" value="Filter">
+    </form>
+    <hr>
+
+
+
+
+
     <hr>
     <h4 style="text-align:center;">PRODUCTS</h4><br>
     <div class="col-12">
