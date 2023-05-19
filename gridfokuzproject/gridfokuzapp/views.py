@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
-from .models import AddVendors, AddProducts, ManualComboTemp
+from .models import AddVendors, AddProducts, ManualComboTemp, PDFtemp
 from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
@@ -579,7 +579,7 @@ def HomeSortedManualCombo(request):
         return render(request, "combo.html", {"combo":combo,"total_combo_price":total_combo_price})
     return redirect("home")
 
-def combo_sort_products(request):
+def combo_products(request):
     name = request.user
     if request.method == "POST":
         vendors = AddVendors.objects.all()
@@ -1201,3 +1201,21 @@ def auto_combo_submit(request):
         messages.info(request, "combo successfully added...")
         return redirect("Combo")
     return redirect("Combo")
+
+# ---------------------------PDF section---------------------------
+
+def IntermediatePDFsection(request):
+    if request.method == "POST":
+        productId = request.POST.getlist("productId")
+        price_dis_display = request.POST.getlist("price_dis_display")
+        if PDFtemp.objects.filter(usr=request.user).exists():
+            prod = PDFtemp.objects.all()
+            prod.delete()
+        for i in productId:
+            j = int(i)
+            product = AddProducts.objects.get(id=j)
+            pdftemp = PDFtemp(product=product,usr=request.user)
+            pdftemp.save()
+        product = PDFtemp.objects.all()
+        return render(request, "IntermediatePDFsection.html", {"product":product})
+    return render(request, "IntermediatePDFsection.html")

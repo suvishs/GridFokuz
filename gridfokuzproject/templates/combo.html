@@ -22,7 +22,7 @@
     </style>
   </head>
   <body>
-    <h2>Combo Page</h2><br><br><br>
+    <h2>Combo Page</h2>
 
     <div class="combotable">
         <table>
@@ -36,7 +36,8 @@
                 <th>Grand Total</th>
                 <th>Details</th>
             </tr>
-            <form action="product_discount" method="POST">
+            <form action="IntermediatePDFsection" method="POST">
+                {% csrf_token %}
                 {% for i in combo %}
                 <tr>
                     <td><img src="{{i.product_image.url}}" width="40px" height="40px"></td>
@@ -44,23 +45,25 @@
                     <td>{{i.MRP}}</td>
                     <td>{{i.Vendor_Price}}</td>
                     <td class="Total_GF_price">{{i.Total_GF_price}}</td>
-                    <td><input type="number" name="discount" value=0 placeholder="Discount Amount"></td>
-                    <td><input type="number" name="grand_total" placeholder="Grand Total"></td>
+                    <td><input type="number" name="discount" value=0 step="0.0001" placeholder="Discount Amount"></td>
+                    <td><input type="number" name="grand_total" step="0.0001" placeholder="Grand Total"></td>
                     <td><a href="{% url 'product_detail' i.id %}">Details</a></td>
                 </tr>
+                <input type="hidden" name="productId" value="{{i.id}}"><br>
                 {% endfor %}
-            </form>
         </table>
     </div>
-    <br><br><br>
+    <br>
 
     <h3> Total Combo Price : {{total_combo_price}}</h3><br>
-
-    <h3>Customer Price: <span id="customer_price"></span></h3>
+    <h3>Customer Price: <span id="customer_price"></span></h3><br><br>
 
     <div class="pdfbtn">
-        <a class="btn btn-warning" href="">Download Pdf</a>
-    </div>
+        <label>Price And Discription Need to display or Not</label>
+        <input type="checkbox" name="price_dis_display" checked><br>
+        <input type="submit" class="btn btn-warning" value="Convert To PDF">
+        </form>
+    </div> 
 
     <script>
         // Get references to the input fields

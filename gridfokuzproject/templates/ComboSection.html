@@ -82,7 +82,7 @@
     <h4 style="text-align:center;">Automatic Combo Maker</h4>
     <hr>
     <div class="comboform">
-        <form action="combo_sort_products" method="post">
+        <form action="combo_products" method="post">
             {% csrf_token %}
             <label>Combo limit</label>
             <input type="number" name="limit" placeholder="Enter your limit" value="{{limit}}" step="0.0001" required>

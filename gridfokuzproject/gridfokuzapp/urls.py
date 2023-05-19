@@ -28,7 +28,7 @@ urlpatterns = [
     
     # -------------------Combo Section-------------------
     path("Combo", views.Combo, name="Combo"),
-    path("combo_sort_products", views.combo_sort_products, name="combo_sort_products"),
+    path("combo_products", views.combo_products, name="combo_products"),
     path("HomeSortedManualCombo", views.HomeSortedManualCombo, name="HomeSortedManualCombo"),
     path("MakeMaualCombo", views.MakeMaualCombo, name="MakeMaualCombo"),
     path("Product_Manual_Combo_Del/<int:id>", views.Product_Manual_Combo_Del, name="Product_Manual_Combo_Del"),
@@ -38,4 +38,7 @@ urlpatterns = [
     path("DeleteCombo", views.DeleteCombo, name="DeleteCombo"),
     path("auto_combo_submit", views.auto_combo_submit, name="auto_combo_submit"),
     path("combo_sort_products", views.combo_sort_products, name="combo_sort_products"),
+    
+    # -------------------PDF Section-------------------
+    path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
 ]
