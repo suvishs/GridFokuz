@@ -1,1 +1,181 @@
-success
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            font-family: verdana;
+        }
+        header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-family: Verdana;
+        }
+        .logo img {
+        margin-right: 20px;
+        }
+        .company-details {
+        text-align: right;
+        }
+        .company-details ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        }
+        .company-details li {
+        margin-bottom: 5px;
+        }
+        table
+        {
+            margin: 0 auto;
+            font-family: verdana;
+            border:1px solid rgb(0, 0, 0);
+            padding:15px;
+            box-shadow: 10px 10px lightblue;
+        }
+        thead tr th
+        {
+            padding:20px;
+            font-size: 18px;
+            border-bottom: 1px solid black;
+            padding-bottom: 40px;
+        }
+        tbody tr td
+        {
+            padding:10px;
+        }
+        .product-description {
+        display: flex;
+        align-items: center;
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        }
+        .product-image {
+        flex: 1;
+        }
+        .product-image img {
+        max-width: 100%;
+        }
+        .product-info {
+        flex: 2;
+        padding: 0 20px;
+        border-left: 1px solid #ddd;
+        }
+        .product-info h3 {
+        margin-top: 0;
+        }
+        .product-info ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        }
+        .product-info li {
+        margin-bottom: 10px;
+        }
+        .product-info p {
+        margin: 10px 0;
+        }
+        footer {
+        background-color: #f1f1f1;
+        color: #000000;
+        padding: 20px 0;
+        }
+        .container {
+        max-width: 800px;
+        margin: 0 auto;
+        }
+        p {
+        margin: 0;
+        text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+          <img src="{% static 'img/logo4.png' %}" alt="" height="100px">
+        </div>
+        <div class="company-details">
+          <ul>
+            <li><a href="#">www.gridfokuz.com</a></li>
+            <li>1234 Main Street, Anytown USA</li>
+            <li>Phone: 9876987654</li>
+            <li>Email: info@example.com</li>
+          </ul>
+        </div>
+    </header>
+
+    <br>
+
+    <h1 style="text-align: center; font-family: verdana;">COMBO LIST</h1>
+
+    <br>
+
+
+<table width="66%">
+  <thead>
+    <tr>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Thumbnail Image</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <br>
+  <tbody>
+    {% for i in product %}
+        <tr>
+        <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
+        <td style="color:green">{{i.product.Total_GF_price}}</td>
+        <td><img src="{{i.product.product_image.url}}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+        <td><input type="number" value="1" min="1"></td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<br>
+{% for i in product %}
+<br>
+
+<div class="product-description">
+    <div class="product-image">
+      <img src="{{i.product.product_image.url}}" alt="Product Image">
+    </div>
+    <div class="product-info">
+      <h3>{{i.product.Product_Name}}</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
+      <ul>
+        <li>Feature 1</li>
+        <li>Feature 2</li>
+        <li>Feature 3</li>
+      </ul>
+      <p>Price: ₹{{i.Total_GF_price}}</p>
+    </div>
+</div>
+
+<br>
+{% endfor %}
+<br>
+
+<a href="html_to_pdf">Download</a>
+<a href="">Share</a>
+
+<footer>
+    <div class="container">
+      <p> 2023 Grid Fokuz. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

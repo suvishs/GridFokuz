@@ -6,6 +6,9 @@ from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
 
+import pdfkit
+from django.conf import settings
+from django.template.loader import get_template
 
 # Create your views here.
 
@@ -1219,3 +1222,59 @@ def IntermediatePDFsection(request):
         product = PDFtemp.objects.all()
         return render(request, "IntermediatePDFsection.html", {"product":product})
     return render(request, "IntermediatePDFsection.html")
+
+
+# def html_to_pdf(request):
+#     template_path = 'IntermediatePDFsection.html'
+#     product = PDFtemp.objects.filter(usr=request.user)
+#     # Render the template with the context data
+#     template = get_template(template_path)
+#     html = template.render({'product': product})
+
+#     # Create a file-like buffer to receive PDF data
+#     buffer = BytesIO()
+
+#     # Generate the PDF
+#     pisa_status = pisa.CreatePDF(html, dest=buffer)
+
+#     if pisa_status.err:
+#         return HttpResponse('PDF creation failed')
+
+#     # Get the PDF content from the buffer
+#     pdf = buffer.getvalue()
+
+#     # Set the response headers
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
+
+#     # Write the PDF content to the response
+#     response.write(pdf)
+
+#     return response
+
+def html_to_pdf(request):
+    template_path = 'IntermediatePDFsection.html'
+    template = get_template(template_path)
+    product = PDFtemp.objects.filter(usr=request.user)
+    html = template.render({'product': product})
+
+    # Set the options for PDF generation
+    options = {
+        'page-size': 'A4',
+        'encoding': 'UTF-8',
+    }
+
+    # Set the path to wkhtmltopdf executable
+    config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_PATH)
+
+    # Convert HTML to PDF
+    pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+
+    # Set the response headers
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="combo.pdf"'
+
+    # Write the PDF content to the response
+    response.write(pdf)
+
+    return response

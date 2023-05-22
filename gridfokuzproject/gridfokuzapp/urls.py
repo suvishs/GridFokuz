@@ -41,4 +41,6 @@ urlpatterns = [
     
     # -------------------PDF Section-------------------
     path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
+    path('html_to_pdf', views.html_to_pdf, name='convert_to_pdf'),
+
 ]
