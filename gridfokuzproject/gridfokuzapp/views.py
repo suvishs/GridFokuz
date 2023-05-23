@@ -6,6 +6,8 @@ from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
 
+from io import BytesIO
+from xhtml2pdf import pisa
 import pdfkit
 from django.conf import settings
 from django.template.loader import get_template
@@ -15,7 +17,7 @@ from django.template.loader import get_template
 # ---------------------------General section---------------------------
 
 def Index(request):
-    return render(request, "Index.html")
+    return render(request, "General/Index.html")
 
 def Register(request):
     if request.method == 'POST':
@@ -37,7 +39,7 @@ def Register(request):
         else:
             messages.info(request, "Both password is not matching")
             return redirect('Register')
-    return render(request, 'Register.html')
+    return render(request, 'General/Register.html')
 
 def Usrlogin(request):
     if request.method == 'POST':
@@ -50,11 +52,13 @@ def Usrlogin(request):
         else:
             messages.info(request, "Username or Password Is Wrong...")
             return redirect('Usrlogin')
-    return render(request, 'Usrlogin.html')
+    return render(request, 'General/Usrlogin.html')
 
 def logout(request):
     auth.logout(request)
     return redirect('Usrlogin')
+
+# ---------------------------Users section---------------------------
 
 @Admin_only
 def home(request):
@@ -63,7 +67,7 @@ def home(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    return render(request, "home.html", {"name":name,
+    return render(request, "Customer/home.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
@@ -74,7 +78,7 @@ def GridHome(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    return render(request, "GridHome.html", {"name":name,
+    return render(request, "GridAdmin/GridHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
@@ -85,7 +89,7 @@ def SemiAdminHome(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    return render(request, "SemiAdminHome.html", {"name":name,
+    return render(request, "SemiAdmin/SemiAdminHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
@@ -96,7 +100,7 @@ def EmployeeHome(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    return render(request, "EmployeeHome.html", {"name":name,
+    return render(request, "Employee/EmployeeHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
@@ -110,7 +114,7 @@ def addventors(request):
         vendor.save()
         messages.info(request, "Vendor is added successfuly...")
         return redirect("addventors")
-    return render(request, "addventors.html")
+    return render(request, "GridAdmin/addventors.html")
 
 # ---------------------------Product section---------------------------
 
@@ -160,11 +164,11 @@ def addproducts(request):
         product.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
         return redirect("addproducts")
-    return render(request, "addproducts.html",{"vendor":vendor})
+    return render(request, "GridAdmin/addproducts.html",{"vendor":vendor})
 
 def product_detail(request,id):
     product = AddProducts.objects.get(id=id)
-    return render(request, "product_detail.html",{"product":product})
+    return render(request, "GridAdmin/product_detail.html",{"product":product})
 
 def update_product(request,id):
     vendor = AddVendors.objects.all()
@@ -211,12 +215,12 @@ def update_product(request,id):
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
         return redirect("home")
-    return render(request, "update_product.html",{"product":product,
+    return render(request, "GridAdmin/update_product.html",{"product":product,
                                                   "vendor":vendor})
 
 def delete_product(request,id):
     product = AddProducts.objects.get(id=id)
-    return render(request, "delete_product.html",{"product":product})
+    return render(request, "GridAdmin/delete_product.html",{"product":product})
 
 def product_list(request):
     query = request.GET.get('search')
@@ -227,17 +231,57 @@ def product_list(request):
     limit = max(price)
     if query:
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
-        return render(request, "home.html",{"name":name,
+        return render(request, "GridAdmin/GridHome.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all()
-        return render(request, "home.html",{"name":name,
+        return render(request, "GridAdmin/GridHome.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
 
+def Employee_product_list(request):
+    query = request.GET.get('search')
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    if query:
+        product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
+        return render(request, "Employee/EmployeeHome.html",{"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+    else:
+        product = AddProducts.objects.all()
+        return render(request, "Employee/EmployeeHome.html",{"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+        
+def Customer_product_list(request):
+    query = request.GET.get('search')
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    if query:
+        product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
+        return render(request, "Customer/Customerhome.html",{"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+    else:
+        product = AddProducts.objects.all()
+        return render(request, "Customer/Customerhome.html",{"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit})
+        
 # ---------------------------Filtering section---------------------------
 
 def sort_products(request):
@@ -286,7 +330,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -295,10 +339,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":final})
+            return render(request, "GridAdmin/sorted_products.html",{"product":final})
         
         elif selected_vendors and category:
             for i in selected_vendors:
@@ -324,7 +368,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -333,10 +377,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":cat_list})   
+            return render(request, "GridAdmin/sorted_products.html",{"product":cat_list})   
          
         elif selected_vendors and sub_category:
             for i in selected_vendors:
@@ -362,7 +406,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -371,10 +415,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":final})    
+            return render(request, "GridAdmin/sorted_products.html",{"product":final})    
         
         elif category and sub_category:
             for lmt in all_product:
@@ -400,7 +444,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -409,10 +453,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":final})
+            return render(request, "GridAdmin/sorted_products.html",{"product":final})
         
         elif category:
             for lmt in all_product:
@@ -433,7 +477,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -442,10 +486,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":cat_list})
+            return render(request, "GridAdmin/sorted_products.html",{"product":cat_list})
         
         elif sub_category:
             for lmt in all_product:
@@ -466,7 +510,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -475,10 +519,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":final})
+            return render(request, "GridAdmin/sorted_products.html",{"product":final})
         
         elif selected_vendors:
             for i in selected_vendors:
@@ -499,7 +543,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -508,10 +552,10 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":product})
+            return render(request, "GridAdmin/sorted_products.html",{"product":product})
         
         elif limit:
             for lmt in all_product:
@@ -528,7 +572,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -537,10 +581,316 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
-                    return render(request, "sorted_products.html",{"product":acending_items})
+                    return render(request, "GridAdmin/sorted_products.html",{"product":acending_items})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            return render(request, "sorted_products.html",{"product":product})
+            return render(request, "GridAdmin/sorted_products.html",{"product":product})
+        else:
+            messages.info(request, "Something went wrong...")
+    return redirect("home")
+
+
+def Employee_sort_products(request):
+    if request.method == "POST":
+        all_product = AddProducts.objects.all()
+        sorting = request.POST.get('sorting')
+        selected_vendors = request.POST.getlist('vendor')
+        limit = request.POST.get("limit")
+        category = request.POST.getlist("category")
+        sub_category = request.POST.getlist("sub_category")
+        # print(selected_vendors)
+        # print(category)
+        # print(sub_category)
+        products = []
+        product = []
+        cat_list = []
+        final = []
+        item_price_sort = []
+        acending_items = []
+        if selected_vendors and category and sub_category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":final})
+        
+        elif selected_vendors and category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":cat_list})   
+         
+        elif selected_vendors and sub_category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":final})    
+        
+        elif category and sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":final})
+        
+        elif category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":cat_list})
+        
+        elif sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":final})
+        
+        elif selected_vendors:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":product})
+        
+        elif limit:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+                    # print("limit pro list :",product)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    return render(request, "Employee/Employee_sorted_products.html",{"product":acending_items})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "Employee/Employee_sorted_products.html",{"product":product})
         else:
             messages.info(request, "Something went wrong...")
     return redirect("home")
@@ -560,7 +910,7 @@ def Combo(request):
         combo_prod = AddProducts.objects.get(id=i.product.id)
         product_price.append(combo_prod.Total_GF_price)
     combo_price = sum(product_price)
-    return render(request, "ComboSection.html",{"name":name,
+    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                 "product":product,
                                                 "vendors":vendors,
                                                 "limit":limit,
@@ -579,13 +929,15 @@ def HomeSortedManualCombo(request):
             combo.append(prod)
             combo_price.append(prod.Total_GF_price)
         total_combo_price = sum(combo_price)
-        return render(request, "combo.html", {"combo":combo,"total_combo_price":total_combo_price})
-    return redirect("home")
+        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+    return redirect("GridHome")
 
 def combo_products(request):
     name = request.user
     if request.method == "POST":
+        combo_product = ManualComboTemp.objects.filter(usr=request.user)
         vendors = AddVendors.objects.all()
+        prod = AddProducts.objects.all()
         all_product = AddProducts.objects.all()
         limit = request.POST.get("limit")
         product = []
@@ -618,9 +970,11 @@ def combo_products(request):
                         temp_com_price = []
                 count = count-1
             combo.sort(key=lambda x: len(x), reverse=True)
-            return render(request, "ComboSection.html", {"name":name,
-                                                    "combo":combo,
-                                                    "vendors":vendors})
+            return render(request, "GridAdmin/ComboSection.html", {"name":name,"vendors":vendors,
+                                                                    "combo_product":combo_product,
+                                                                    "product":prod,
+                                                                    "combo":combo,
+                                                                    "vendors":vendors})
         else:
             messages.info(request, "Something went wrong...")
 
@@ -639,7 +993,7 @@ def ManualCombo(request):
         combo_product = AddProducts.objects.get(id=i.product.id)
         product_price.append(combo_product.Total_GF_price)
     combo_price = sum(product_price)
-    return render(request, "ManualCombo.html", {"name":name,
+    return render(request, "GridAdmin/ManualCombo.html", {"name":name,
                                          "product":products,
                                          "vendors":vendors,
                                          "limit":limit,
@@ -682,7 +1036,7 @@ def combo_product_list(request):
     combo_price = sum(product_price)
     if query:
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
-        return render(request, "ComboSection.html",{"name":name,
+        return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -690,7 +1044,7 @@ def combo_product_list(request):
                                                     "combo_price":combo_price})
     else:
         product = AddProducts.objects.all()
-        return render(request, "ComboSection.html",{"name":name,
+        return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -756,7 +1110,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -771,7 +1125,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -780,7 +1134,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -812,7 +1166,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -827,7 +1181,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -836,7 +1190,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":cat_list})   
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":cat_list,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -868,7 +1222,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -883,7 +1237,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -892,7 +1246,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final}) 
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -924,7 +1278,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -939,7 +1293,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -948,7 +1302,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -975,7 +1329,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -990,7 +1344,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -999,7 +1353,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":cat_list})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":cat_list,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1026,7 +1380,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1041,7 +1395,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1050,7 +1404,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1077,7 +1431,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1092,7 +1446,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1101,7 +1455,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":product})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1124,7 +1478,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1139,7 +1493,7 @@ def combo_sort_products(request):
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
                     # return render(request, "ComboSection.html",{"product":acending_items})
-                    return render(request, "ComboSection.html",{"name":name,
+                    return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1148,7 +1502,7 @@ def combo_sort_products(request):
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":product})
-            return render(request, "ComboSection.html",{"name":name,
+            return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
                                                     "vendors":vendors,
                                                     "limit":limit,
@@ -1169,10 +1523,10 @@ def SortedManualCombofinal(request):
             combo.append(prod)
             combo_price.append(prod.Total_GF_price)
         total_combo_price = sum(combo_price)
-        return render(request, "combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price})
 
 def AddToManualCombo(request,id):
-    if ManualComboTemp.objects.filter(product=id).exists():
+    if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Combo")
     else:
@@ -1211,70 +1565,704 @@ def IntermediatePDFsection(request):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         price_dis_display = request.POST.getlist("price_dis_display")
+        grand_total = request.POST.getlist("grand_total")
         if PDFtemp.objects.filter(usr=request.user).exists():
             prod = PDFtemp.objects.all()
             prod.delete()
-        for i in productId:
+        for i,k in zip(productId, grand_total):
             j = int(i)
             product = AddProducts.objects.get(id=j)
-            pdftemp = PDFtemp(product=product,usr=request.user)
+            pdftemp = PDFtemp(product=product,grand_total=k,usr=request.user)
             pdftemp.save()
         product = PDFtemp.objects.all()
-        return render(request, "IntermediatePDFsection.html", {"product":product})
-    return render(request, "IntermediatePDFsection.html")
+        return render(request, "General/IntermediatePDFsection.html", {"product":product})
+    return render(request, "General/IntermediatePDFsection.html")
 
+def html_to_pdf(request):
+    template_path = 'General/IntermediatePDFsection.html'
+    product = PDFtemp.objects.filter(usr=request.user)
+    # Render the template with the context data
+    template = get_template(template_path)
+    html = template.render({'product': product})
+
+    # Create a file-like buffer to receive PDF data
+    buffer = BytesIO()
+
+    # Generate the PDF
+    pisa_status = pisa.CreatePDF(html, dest=buffer)
+
+    if pisa_status.err:
+        return HttpResponse('PDF creation failed')
+
+    # Get the PDF content from the buffer
+    pdf = buffer.getvalue()
+
+    # Set the response headers
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
+
+    # Write the PDF content to the response
+    response.write(pdf)
+
+    return response
 
 # def html_to_pdf(request):
 #     template_path = 'IntermediatePDFsection.html'
-#     product = PDFtemp.objects.filter(usr=request.user)
-#     # Render the template with the context data
 #     template = get_template(template_path)
+#     product = PDFtemp.objects.filter(usr=request.user)
 #     html = template.render({'product': product})
 
-#     # Create a file-like buffer to receive PDF data
-#     buffer = BytesIO()
+#     # Set the options for PDF generation
+#     options = {
+#         'page-size': 'A4',
+#         'encoding': 'UTF-8',
+#     }
 
-#     # Generate the PDF
-#     pisa_status = pisa.CreatePDF(html, dest=buffer)
+#     # Set the path to wkhtmltopdf executable
+#     config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_PATH)
 
-#     if pisa_status.err:
-#         return HttpResponse('PDF creation failed')
-
-#     # Get the PDF content from the buffer
-#     pdf = buffer.getvalue()
+#     # Convert HTML to PDF
+#     pdf = pdfkit.from_string(html, False, options=options, configuration=config)
 
 #     # Set the response headers
 #     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
+#     response['Content-Disposition'] = 'attachment; filename="combo.pdf"'
 
 #     # Write the PDF content to the response
 #     response.write(pdf)
 
 #     return response
 
-def html_to_pdf(request):
-    template_path = 'IntermediatePDFsection.html'
-    template = get_template(template_path)
-    product = PDFtemp.objects.filter(usr=request.user)
-    html = template.render({'product': product})
+# ---------------------------Employee section---------------------------
 
-    # Set the options for PDF generation
-    options = {
-        'page-size': 'A4',
-        'encoding': 'UTF-8',
-    }
+def Employee_product_detail(request,id):
+    product = AddProducts.objects.get(id=id)
+    return render(request, "Employee/employee_product_detail.html",{"product":product})
 
-    # Set the path to wkhtmltopdf executable
-    config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_PATH)
+def Employee_HomeSortedManualCombo(request):
+    combo = []
+    combo_price = []
+    if request.method == "POST":
+        manualcombolist = request.POST.getlist("manualcombolist")
+        # print(manualcombolist)
+        for i in manualcombolist:
+            id = int(i)
+            prod = AddProducts.objects.get(id=id)
+            combo.append(prod)
+            combo_price.append(prod.Total_GF_price)
+        total_combo_price = sum(combo_price)
+        return render(request, "Employee/Employee_combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+    return redirect("EmployeeHome")
 
-    # Convert HTML to PDF
-    pdf = pdfkit.from_string(html, False, options=options, configuration=config)
+def Employee_Combo(request):
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    # combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
+    product_price = []
+    for i in combo_product:
+        combo_prod = AddProducts.objects.get(id=i.product.id)
+        product_price.append(combo_prod.Total_GF_price)
+    combo_price = sum(product_price)
+    return render(request, "Employee/Employee_ComboSection.html",{"name":name,
+                                                "product":product,
+                                                "vendors":vendors,
+                                                "limit":limit,
+                                                "combo_product":combo_product,
+                                                "combo_price":combo_price})
 
-    # Set the response headers
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="combo.pdf"'
+def Employee_AddToManualCombo(request,id):
+    if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
+        messages.info(request, "Cant Select a product more than once...!")
+        return redirect("Employee_Combo")
+    else:
+        product = AddProducts.objects.get(id=id)
+        combo = ManualComboTemp(product=product,usr=request.user)
+        combo.save()
+        return redirect("Employee_Combo")
+    
+def Employee_combo_products(request):
+    name = request.user
+    if request.method == "POST":
+        vendors = AddVendors.objects.all()
+        all_product = AddProducts.objects.all()
+        limit = request.POST.get("limit")
+        product = []
+        temp = []
+        temp_com_price = []
+        temp_combo = []
+        combo = []
+        count = 20
+        if limit:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item) 
+                    # print(product)  
+            for i in product:
+                com_product = AddProducts.objects.get(id=i.id)
+                if float(com_product.Total_GF_price) < float(limit):
+                    temp.append(com_product)
+                    # print(temp)
+            while count > 0:
+                random.shuffle(temp)
+                for j in temp:
+                    com_pro = AddProducts.objects.get(id=j.id)
+                    temp_combo.append(com_pro)
+                    temp_com_price.append(com_pro.Total_GF_price)
+                    if sum(temp_com_price) > float(limit):
+                        temp_combo.pop(-1)
+                        combo.append(temp_combo)
+                        temp_combo = []
+                        temp_com_price = []
+                count = count-1
+            combo.sort(key=lambda x: len(x), reverse=True)
+            return render(request, "Employee_ComboSection.html", {"name":name,
+                                                    "combo":combo,
+                                                    "vendors":vendors})
+        else:
+            messages.info(request, "Something went wrong...")
 
-    # Write the PDF content to the response
-    response.write(pdf)
+    return redirect("Employee_Combo")
 
-    return response
+def Employee_MakeMaualCombo(request):
+    if request.method == "POST":
+        manualcombolist = request.POST.getlist("manualcombolist")
+        for i in manualcombolist:
+            j = int(i)
+            product = AddProducts.objects.get(id=j)
+            if ManualComboTemp.objects.filter(product=product,usr=request.user).exists():
+                print("inside", product)
+            else:
+                com = ManualComboTemp(product=product,usr=request.user)
+                com.save()
+        messages.info(request, "Your Combo added successfuly but need to care about Quantity manualy...")
+        return redirect("Employee_Combo")
+    return redirect("Employee_Combo")
+
+def Employee_Product_Manual_Combo_Del(request,id):
+    product = AddProducts.objects.get(id=id)
+    com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
+    com_product.delete()
+    messages.info(request, "Removed Successfuly..!")
+    return redirect("Employee_Combo")
+
+def Employee_combo_product_list(request):
+    query = request.GET.get('search')
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    combo_product = ManualComboTemp.objects.all()
+    product_price = []
+    for i in combo_product:
+        combo_prod = AddProducts.objects.get(id=i.product.id)
+        product_price.append(combo_prod.Total_GF_price)
+    combo_price = sum(product_price)
+    if query:
+        product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
+        return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":product,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+
+def Employee_SortedManualCombofinal(request):
+    combo = []
+    combo_price = []
+    if request.method == "POST":
+        manualcombolist = request.POST.getlist("manualcombolist")
+        for i in manualcombolist:
+            id = int(i)
+            prod = AddProducts.objects.get(id=id)
+            combo.append(prod)
+            combo_price.append(prod.Total_GF_price)
+        total_combo_price = sum(combo_price)
+        return render(request, "Employee/Employee_combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+
+def Employee_DeleteCombo(request):
+    # combo = ManualComboTemp.objects.all()
+    combo = ManualComboTemp.objects.filter(usr=request.user)
+    combo.delete()
+    messages.info(request, "Combo Deleted Successfuly...")
+    return redirect("Employee_Combo")
+
+def Employee_auto_combo_submit(request):
+    if request.method == "POST":
+        combo_prod = request.POST.getlist("combo_prod")
+        com = ManualComboTemp.objects.filter(usr=request.user)
+        com.delete()
+        for i in combo_prod:
+            j = int(i)
+            product = AddProducts.objects.get(id=j)
+            combo = ManualComboTemp(product=product,usr=request.user)
+            combo.save()
+        messages.info(request, "combo successfully added...")
+        return redirect("Employee_Combo")
+    return redirect("Employee_Combo")
+
+def Employee_combo_sort_products(request):
+    name = request.user
+    vendors = AddVendors.objects.all()
+    prod = AddProducts.objects.all()
+    price = [p.Total_GF_price for p in prod]
+    limit = max(price)
+    combo_product = ManualComboTemp.objects.all()
+    product_price = []
+    for i in combo_product:
+        combo_prod = AddProducts.objects.get(id=i.product.id)
+        product_price.append(combo_prod.Total_GF_price)
+    combo_price = sum(product_price)
+    
+    if request.method == "POST":
+        all_product = AddProducts.objects.all()
+        sorting = request.POST.get('sorting')
+        selected_vendors = request.POST.getlist('vendor')
+        limit = request.POST.get("limit")
+        category = request.POST.getlist("category")
+        sub_category = request.POST.getlist("sub_category")
+        # print(selected_vendors)
+        # print(category)
+        # print(sub_category)
+        products = []
+        product = []
+        cat_list = []
+        final = []
+        item_price_sort = []
+        acending_items = []
+        if selected_vendors and category and sub_category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":final})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":final,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        
+        elif selected_vendors and category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":cat_list})   
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":cat_list,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+         
+        elif selected_vendors and sub_category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":final}) 
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":final,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})   
+        
+        elif category and sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":final})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":final,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        
+        elif category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":cat_list})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":cat_list,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        
+        elif sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":final})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":final,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        
+        elif selected_vendors:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":product})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":product,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        
+        elif limit:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit):
+                    product.append(item)
+                    # print("limit pro list :",product)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items = AddProducts.objects.get(Total_GF_price=j)
+                        acending_items.append(acend_items)
+                    # return render(request, "ComboSection.html",{"product":acending_items})
+                    return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":acending_items,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            # return render(request, "ComboSection.html",{"product":product})
+            return render(request, "Employee_ComboSection.html",{"name":name,
+                                                    "product":product,
+                                                    "vendors":vendors,
+                                                    "limit":limit,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
+        else:
+            messages.info(request, "Something went wrong...")
+    return redirect("Employee_Combo")

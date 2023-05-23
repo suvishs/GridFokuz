@@ -19,14 +19,20 @@ urlpatterns = [
     # -------------------Product Section-------------------
     path("addproducts", views.addproducts, name="addproducts"),
     path("product_detail/<int:id>", views.product_detail, name="product_detail"),
+    path("Employee_product_detail/<int:id>", views.Employee_product_detail, name="Employee_product_detail"),
+    
     path("update_product/<int:id>", views.update_product, name="update_product"),
     path("delete_product/<int:id>", views.delete_product, name="delete_product"),
     
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
-    path("product_list", views.product_list, name="product_list"),
+    path("Employee_sort_products", views.Employee_sort_products, name="Employee_sort_products"),
     
-    # -------------------Combo Section-------------------
+    path("product_list", views.product_list, name="product_list"),
+    path("Employee_product_list", views.Employee_product_list, name="Employee_product_list"),
+    path("Customer_product_list", views.Customer_product_list, name="Customer_product_list"),
+    
+    # -------------------Admin Combo Section-------------------
     path("Combo", views.Combo, name="Combo"),
     path("combo_products", views.combo_products, name="combo_products"),
     path("HomeSortedManualCombo", views.HomeSortedManualCombo, name="HomeSortedManualCombo"),
@@ -42,5 +48,18 @@ urlpatterns = [
     # -------------------PDF Section-------------------
     path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
     path('html_to_pdf', views.html_to_pdf, name='convert_to_pdf'),
+    
+    # -------------------Employee Combo Section-------------------
+    path("Employee_Combo", views.Employee_Combo, name="Employee_Combo"),
+    path("Employee_combo_products", views.Employee_combo_products, name="Employee_combo_products"),
+    path("Employee_HomeSortedManualCombo", views.Employee_HomeSortedManualCombo, name="Employee_HomeSortedManualCombo"),
+    path("Employee_MakeMaualCombo", views.Employee_MakeMaualCombo, name="Employee_MakeMaualCombo"),
+    path("Employee_Product_Manual_Combo_Del/<int:id>", views.Employee_Product_Manual_Combo_Del, name="Employee_Product_Manual_Combo_Del"),
+    path("Employee_combo_product_list", views.Employee_combo_product_list, name="Employee_combo_product_list"),
+    path("Employee_SortedManualCombofinal", views.Employee_SortedManualCombofinal, name="Employee_SortedManualCombofinal"),
+    path("Employee_AddToManualCombo/<int:id>", views.Employee_AddToManualCombo, name="Employee_AddToManualCombo"),
+    path("Employee_DeleteCombo", views.Employee_DeleteCombo, name="Employee_DeleteCombo"),
+    path("Employee_auto_combo_submit", views.Employee_auto_combo_submit, name="Employee_auto_combo_submit"),
+    path("Employee_combo_sort_products", views.Employee_combo_sort_products, name="Employee_combo_sort_products"),
 
 ]

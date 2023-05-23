@@ -128,17 +128,17 @@
       <th>Product Name</th>
       <th>Price</th>
       <th>Thumbnail Image</th>
-      <th>Quantity</th>
+      <th>Grand Total</th>
     </tr>
   </thead>
   <br>
   <tbody>
     {% for i in product %}
         <tr>
-        <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
-        <td style="color:green">{{i.product.Total_GF_price}}</td>
-        <td><img src="{{i.product.product_image.url}}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
-        <td><input type="number" value="1" min="1"></td>
+          <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
+          <td style="color:green">{{i.product.Total_GF_price}}</td>
+          <td><img src="{{i.product.product_image.url}}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          <td><input type="number">{{i.grand_total}}</td>
         </tr>
     {% endfor %}
   </tbody>

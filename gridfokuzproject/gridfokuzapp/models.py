@@ -41,3 +41,4 @@ class ManualComboTemp(models.Model):
 class PDFtemp(models.Model):
     product = models.ForeignKey(AddProducts, on_delete=models.CASCADE, null=True)
     usr = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
+    grand_total = models.FloatField(null=True)

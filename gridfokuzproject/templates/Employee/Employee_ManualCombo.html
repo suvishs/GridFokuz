@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +24,7 @@
     {% for i in messages %}
         <p style="text-align:center">{{i}}</p>
     {% endfor %}
-    <h1 style="text-align:center">Manual Combo page</h1>
+    <h1 style="text-align:center">Employee Manual Combo page</h1>
     <p>Welcome {{name}}</p>
 
     <hr>
@@ -42,12 +42,12 @@
                 <div class="row">
                     {% for j in manual_combo_product %}
                         <div class="card" style="width: 10rem; height:40px;">
-                                <img src="{{j.product_image.url}}" class="card-img-top" alt="..." >
-                                <div class="card-body">
-                                    <h6 class="card-title">{{j.Product_Name}}</h6>
-                                    <p>Total price : {{j.Total_GF_price}}</p>
-                                    <input type="checkbox" name="manualcombolist" value="{{j.id}}">
-                                    <a href="{% url 'product_detail' j.id %}">Details</a>
+                            <img src="{{j.product_image.url}}" class="card-img-top" alt="..." >
+                            <div class="card-body">
+                                <h6 class="card-title">{{j.Product_Name}}</h6>
+                                <p>Total price : {{j.Total_GF_price}}</p>
+                                <input type="checkbox" name="manualcombolist" value="{{j.id}}">
+                                <a href="{% url 'product_detail' j.id %}">Details</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -117,4 +117,4 @@
         </div>
     </div> 
 </body>
-</html>
+</html> {% endcomment %}
