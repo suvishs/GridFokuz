@@ -20,6 +20,7 @@ urlpatterns = [
     path("addproducts", views.addproducts, name="addproducts"),
     path("product_detail/<int:id>", views.product_detail, name="product_detail"),
     path("Employee_product_detail/<int:id>", views.Employee_product_detail, name="Employee_product_detail"),
+    path("Customer_product_detail/<int:id>", views.Customer_product_detail, name="Customer_product_detail"),
     
     path("update_product/<int:id>", views.update_product, name="update_product"),
     path("delete_product/<int:id>", views.delete_product, name="delete_product"),
@@ -27,6 +28,7 @@ urlpatterns = [
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
     path("Employee_sort_products", views.Employee_sort_products, name="Employee_sort_products"),
+    path("Customer_sort_products", views.Customer_sort_products, name="Customer_sort_products"),
     
     path("product_list", views.product_list, name="product_list"),
     path("Employee_product_list", views.Employee_product_list, name="Employee_product_list"),
@@ -61,5 +63,17 @@ urlpatterns = [
     path("Employee_DeleteCombo", views.Employee_DeleteCombo, name="Employee_DeleteCombo"),
     path("Employee_auto_combo_submit", views.Employee_auto_combo_submit, name="Employee_auto_combo_submit"),
     path("Employee_combo_sort_products", views.Employee_combo_sort_products, name="Employee_combo_sort_products"),
-
+    
+    # -------------------Customer Combo Section-------------------
+    path("Customer_Combo", views.Customer_Combo, name="Customer_Combo"),
+    path("Customer_combo_products", views.Customer_combo_products, name="Customer_combo_products"),
+    path("Customer_HomeSortedManualCombo", views.Customer_HomeSortedManualCombo, name="Customer_HomeSortedManualCombo"),
+    path("Customer_MakeMaualCombo", views.Customer_MakeMaualCombo, name="Customer_MakeMaualCombo"),
+    path("Customer_Product_Manual_Combo_Del/<int:id>", views.Customer_Product_Manual_Combo_Del, name="Customer_Product_Manual_Combo_Del"),
+    path("Customer_combo_product_list", views.Customer_combo_product_list, name="Customer_combo_product_list"),
+    path("Customer_SortedManualCombofinal", views.Customer_SortedManualCombofinal, name="Customer_SortedManualCombofinal"),
+    path("Customer_AddToManualCombo/<int:id>", views.Customer_AddToManualCombo, name="Customer_AddToManualCombo"),
+    path("Customer_DeleteCombo", views.Customer_DeleteCombo, name="Customer_DeleteCombo"),
+    path("Customer_auto_combo_submit", views.Customer_auto_combo_submit, name="Customer_auto_combo_submit"),
+    path("Customer_combo_sort_products", views.Customer_combo_sort_products, name="Customer_combo_sort_products"),
 ]
