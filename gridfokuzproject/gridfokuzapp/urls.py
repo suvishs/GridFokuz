@@ -16,6 +16,9 @@ urlpatterns = [
     # -------------------Vendor Section-------------------
     path("addventors", views.addventors, name="addventors"),
     
+    # -------------------Vendor Section-------------------
+    path("addstaffs", views.addstaffs, name="addstaffs"),
+    
     # -------------------Product Section-------------------
     path("addproducts", views.addproducts, name="addproducts"),
     path("product_detail/<int:id>", views.product_detail, name="product_detail"),

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for i in messages %}
+        <p>{{i}}</p>
+    {% endfor %}
+    <h1 style="text-align:center;">Admin Add Staffs</h1><br>
+
+    <a href="GridHome">Home</a><br>
+
+    <form action="addstaffs" method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="username" required><br>
+        <input type="password" name="password" placeholder="password" required><br>
+        <input type="password" name="confirm_password" placeholder="confirmpassword" required><br>
+        <select name="module">
+            <option value="SemiAdmin">SemiAdmin</option>
+            <option value="Employee">Employee</option>
+        </select>
+        <input type="submit">
+    </form>
+</body>
+</html>

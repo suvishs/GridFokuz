@@ -5,6 +5,7 @@ from .models import AddVendors, AddProducts, ManualComboTemp, PDFtemp
 from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
+from django.contrib.auth.models import Group
 
 from io import BytesIO
 from xhtml2pdf import pisa
@@ -57,6 +58,29 @@ def Usrlogin(request):
 def logout(request):
     auth.logout(request)
     return redirect('Usrlogin')
+
+# ---------------------------Add Staffs---------------------------
+def addstaffs(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirmpassword = request.POST.get('confirm_password')
+        print(password,confirmpassword)
+        module = request.POST.get('module')  
+        if password == confirmpassword:
+            if User.objects.filter(username=username).exists():
+                return HttpResponse("Username Already Exist")
+            else:
+                user = User.objects.create_user(username=username, password=password)
+                group = Group.objects.get(name=module)  
+                user.groups.add(group)  
+                user.save()
+                messages.info(request, f"{module} With Username {username} Created Successfuly...!")
+                return render(request, 'GridAdmin/addstaffs.html')
+        else:
+            return HttpResponse("Password Does Not Maching")
+    return render(request, "GridAdmin/addstaffs.html")
+
 
 # ---------------------------Users section---------------------------
 
