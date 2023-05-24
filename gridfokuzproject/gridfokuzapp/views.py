@@ -1309,7 +1309,7 @@ def MakeMaualCombo(request):
         for i in manualcombolist:
             j = int(i)
             product = AddProducts.objects.get(id=j)
-            if ManualComboTemp.objects.filter(product=product).exists():
+            if ManualComboTemp.objects.filter(product=product,usr=request.user).exists():
                 print("inside", product)
             else:
                 com = ManualComboTemp(product=product,usr=request.user)
@@ -1332,7 +1332,7 @@ def combo_product_list(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
@@ -1361,7 +1361,7 @@ def combo_sort_products(request):
     prod = AddProducts.objects.all()
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
@@ -1848,10 +1848,8 @@ def DeleteCombo(request):
 
 def auto_combo_submit(request):
     if request.method == "POST":
-        # print('data from frontend',request.POST)
         combo_prod = request.POST.getlist("combo_prod")
-        # print("selected combo",combo_prod)
-        # com = ManualComboTemp.objects.all()
+        print(combo_prod)
         com = ManualComboTemp.objects.filter(usr=request.user)
         com.delete()
         for i in combo_prod:
@@ -2061,7 +2059,7 @@ def Employee_combo_product_list(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
@@ -2116,7 +2114,7 @@ def Employee_combo_sort_products(request):
     prod = AddProducts.objects.all()
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
@@ -2695,7 +2693,7 @@ def Customer_combo_product_list(request):
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
@@ -2750,7 +2748,7 @@ def Customer_combo_sort_products(request):
     prod = AddProducts.objects.all()
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
-    combo_product = ManualComboTemp.objects.all()
+    combo_product = ManualComboTemp.objects.filter(usr=request.user)
     product_price = []
     for i in combo_product:
         combo_prod = AddProducts.objects.get(id=i.product.id)
