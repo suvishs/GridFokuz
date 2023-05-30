@@ -1905,32 +1905,55 @@ def IntermediatePDFsection(request):
     return render(request, "General/IntermediatePDFsection.html")
 
 def html_to_pdf(request):
-    template_path = 'General/IntermediatePDFsection.html'
     product = PDFtemp.objects.filter(usr=request.user)
-    # Render the template with the context data
-    template = get_template(template_path)
-    html = template.render({'product': product})
 
-    # Create a file-like buffer to receive PDF data
-    buffer = BytesIO()
+    template_path = 'General/IntermediatePDFsection.html'
 
-    # Generate the PDF
-    pisa_status = pisa.CreatePDF(html, dest=buffer)
+    context = {'product': product}
 
-    if pisa_status.err:
-        return HttpResponse('PDF creation failed')
-
-    # Get the PDF content from the buffer
-    pdf = buffer.getvalue()
-
-    # Set the response headers
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
 
-    # Write the PDF content to the response
-    response.write(pdf)
+    response['Content-Disposition'] = 'filename="products_report.pdf"'
 
+    template = get_template(template_path)
+
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+# def html_to_pdf(request):
+#     template_path = 'General/IntermediatePDFsection.html'
+#     product = PDFtemp.objects.filter(usr=request.user)
+#     # Render the template with the context data
+#     template = get_template(template_path)
+#     html = template.render({'product': product})
+
+#     # Create a file-like buffer to receive PDF data
+#     buffer = BytesIO()
+
+#     # Generate the PDF
+#     pisa_status = pisa.CreatePDF(html, dest=buffer)
+
+#     if pisa_status.err:
+#         return HttpResponse('PDF creation failed')
+
+#     # Get the PDF content from the buffer
+#     pdf = buffer.getvalue()
+
+#     # Set the response headers
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
+
+#     # Write the PDF content to the response
+#     response.write(pdf)
+
+#     return response
 
 # def html_to_pdf(request):
 #     template_path = 'IntermediatePDFsection.html'
