@@ -190,9 +190,25 @@ def addproducts(request):
         return redirect("addproducts")
     return render(request, "GridAdmin/addproducts.html",{"vendor":vendor})
 
+def GridAdminDeleteProduct(request,id):
+    product = AddProducts.objects.get(id=id)
+    product.delete()
+    messages.info(request, f"{product} Deleted Successfuly...!")
+    return redirect("GridHome")
+
+def GridSemiAdminDeleteProduct(request,id):
+    product = AddProducts.objects.get(id=id)
+    product.delete()
+    messages.info(request, f"{product} Deleted Successfuly...!")
+    return redirect("SemiAdminHome")
+
 def product_detail(request,id):
     product = AddProducts.objects.get(id=id)
     return render(request, "GridAdmin/product_detail.html",{"product":product})
+
+def SemiAdminProductDetail(request,id):
+    product = AddProducts.objects.get(id=id)
+    return render(request, "SemiAdmin/SemiAdminProductDetail.html",{"product":product})
 
 def update_product(request,id):
     vendor = AddVendors.objects.all()
@@ -238,8 +254,56 @@ def update_product(request,id):
         product.product_image = product_image
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
-        return redirect("home")
+        return redirect("GridHome")
     return render(request, "GridAdmin/update_product.html",{"product":product,
+                                                  "vendor":vendor})
+
+def GridSemiadminupdate_product(request,id):
+    vendor = AddVendors.objects.all()
+    product = AddProducts.objects.get(id=id)
+    if request.method == "POST":
+        SKU = request.POST.get("SKU")
+        Vendor = request.POST.get("Vendor")
+        vendor_name = AddVendors.objects.get(vendorname=Vendor)
+        Category = request.POST.get("Category")
+        Sub_category = request.POST.get("Sub_category")
+        Product_Name = request.POST.get("Product_Name")
+        MRP = request.POST.get("MRP")
+        Vendor_Price = request.POST.get("Vendor_Price")
+        Transport1 = request.POST.get("Transport1")
+        Transport2 = request.POST.get("Transport2")
+        Branding = request.POST.get("Branding")
+        Packing = request.POST.get("Packing")
+        Profit_in_precentage = request.POST.get("Profit_in_precentage")
+        Profit_amount = request.POST.get("Profit_amount")
+        GF_Price = request.POST.get("GF_Price")
+        Tax_in_precentage = request.POST.get("Tax_in_precentage")
+        Tax_amount = request.POST.get("Tax_amount")
+        Total_GF_price = request.POST.get("Total_GF_price")
+        product_image = request.FILES["product_image"]
+        
+        product.SKU = SKU
+        product.Category = Category
+        product.Vendor = vendor_name
+        product.Sub_category = Sub_category
+        product.Product_Name = Product_Name
+        product.MRP = MRP
+        product.Vendor_Price = Vendor_Price
+        product.Transport1 = Transport1
+        product.Transport2 = Transport2
+        product.Branding = Branding
+        product.Packing = Packing
+        product.Profit_in_precentage = Profit_in_precentage
+        product.Profit_amount = Profit_amount
+        product.GF_Price = GF_Price
+        product.Tax_in_precentage = Tax_in_precentage
+        product.Tax_amount = Tax_amount
+        product.Total_GF_price = Total_GF_price
+        product.product_image = product_image
+        product.save()
+        messages.info(request, "{} Updated Successfuly...".format(Product_Name))
+        return redirect("SemiAdminHome")
+    return render(request, "SemiAdmin/update_product.html",{"product":product,
                                                   "vendor":vendor})
 
 def delete_product(request,id):

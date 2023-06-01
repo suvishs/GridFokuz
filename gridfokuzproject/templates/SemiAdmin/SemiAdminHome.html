@@ -94,7 +94,7 @@
                                 <p>Vendor Price : {{i.Vendor_Price}}</p>
                                 <p>Total price : {{i.Total_GF_price}}</p>
                                 <input type="checkbox" name="manualcombolist" value="{{i.id}}">
-                                <a href="{% url 'product_detail' i.id %}">Details</a>
+                                <a href="{% url 'SemiAdminProductDetail' i.id %}">Details</a>
                         </div>
                     </div>
                 {% endfor %}

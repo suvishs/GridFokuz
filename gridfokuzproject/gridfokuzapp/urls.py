@@ -25,6 +25,12 @@ urlpatterns = [
     path("Employee_product_detail/<int:id>", views.Employee_product_detail, name="Employee_product_detail"),
     path("Customer_product_detail/<int:id>", views.Customer_product_detail, name="Customer_product_detail"),
     
+    path("SemiAdminProductDetail/<int:id>", views.SemiAdminProductDetail, name="SemiAdminProductDetail"),
+    
+    path("GridAdminDeleteProduct/<int:id>", views.GridAdminDeleteProduct, name="GridAdminDeleteProduct"),
+    path("GridSemiAdminDeleteProduct/<int:id>", views.GridSemiAdminDeleteProduct, name="GridSemiAdminDeleteProduct"),
+    path("GridSemiadminupdate_product/<int:id>", views.GridSemiadminupdate_product, name="GridSemiadminupdate_product"),
+    
     path("update_product/<int:id>", views.update_product, name="update_product"),
     path("delete_product/<int:id>", views.delete_product, name="delete_product"),
     
