@@ -19,23 +19,23 @@
         }
     </style>
 </head>
+
 <body>
     {% for i in messages %}
         <p style="text-align:center">{{i}}</p>
     {% endfor %}
-    <h1 style="text-align:center">Employee Home page</h1>
+    <h1 style="text-align:center">Employee View All Product page</h1> 
     <p>Welcome {{name}}</p>
     <ul>
-        {% comment %} <li><a href="addventors">Add Ventors</a></li>
-            <li><a href="addproducts">Add Products</a></li> {% endcomment %}
-        <li><a href="EmployeeViewAllProducts">View All Product</a></li>
         <li><a href="logout">logout</a></li>
-    </ul><br><br>
+    </ul>
+    
+    <br><br>
 
     <hr>
 
     <div class="searchform">
-        <form action="{% url 'Employee_product_list' %}" method="GET">
+        <form action="{% url 'EmployeeViewAll_product_list' %}" method="GET">
             <input type="text" name="search" placeholder="Search products...">
             <button type="submit">Search</button>
         </form>
@@ -43,16 +43,10 @@
 
     <hr>
 
-    <div class="combo">
-        <a class="btn btn-primary" href="Employee_Combo">Combo Section</a>
-    </div>
-
-    <hr>
-
     <h5>Select one or more vendors:</h5>
-    <form action="Employee_sort_products" method="post">
+    
+    <form action="EmployeeViewAllProduct_sort_products" method="post">
         {% csrf_token %}
-
         <br><label>Sorting</label>
         <select name="sorting">
             <option value="null">Optional</option>
@@ -80,29 +74,24 @@
 
         <input type="submit" value="Filter">
     </form>
-    <hr>
 
-    <form action="Employee_HomeSortedManualCombo" method="post">
-        {% csrf_token %}
-        <div class="col-12">
-            <div class="row">
-                {% for i in product %}
-                    <div class="card" style="width: 13rem;">
-                            <img src="{{i.product_image.url}}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">{{i.Product_Name}}</h5>
-                                {% comment %} <p>MRP : {{i.MRP}}</p>
-                                <p>Vendor Price : {{i.Vendor_Price}}</p> {% endcomment %}
-                                <p>Total price : {{i.Total_GF_price}}</p>
-                                <input type="checkbox" name="manualcombolist" value="{{i.id}}">
-                                <a href="{% url 'Employee_product_detail' i.id %}">Details</a>
-                        </div>
+    <hr> 
+
+    <div class="col-12">
+        <div class="row">
+            {% for i in product %}
+                <div class="card" style="width: 13rem;">
+                    <img src="{{i.product_image.url}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{i.Product_Name}}</h5>
+                        <p>MRP : {{i.MRP}}</p>
+                        <p>Vendor Price : {{i.Vendor_Price}}</p>
+                        <p>Total price : {{i.Total_GF_price}}</p> 
                     </div>
-                {% endfor %}
-            </div>
-        </div> 
-        <input class="combobtn" type="submit">
-    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div> 
 
 </body>
 </html>

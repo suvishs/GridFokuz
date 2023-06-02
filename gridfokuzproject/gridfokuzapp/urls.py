@@ -24,22 +24,24 @@ urlpatterns = [
     path("product_detail/<int:id>", views.product_detail, name="product_detail"),
     path("Employee_product_detail/<int:id>", views.Employee_product_detail, name="Employee_product_detail"),
     path("Customer_product_detail/<int:id>", views.Customer_product_detail, name="Customer_product_detail"),
-    
     path("SemiAdminProductDetail/<int:id>", views.SemiAdminProductDetail, name="SemiAdminProductDetail"),
-    
     path("GridAdminDeleteProduct/<int:id>", views.GridAdminDeleteProduct, name="GridAdminDeleteProduct"),
     path("GridSemiAdminDeleteProduct/<int:id>", views.GridSemiAdminDeleteProduct, name="GridSemiAdminDeleteProduct"),
     path("GridSemiadminupdate_product/<int:id>", views.GridSemiadminupdate_product, name="GridSemiadminupdate_product"),
-    
     path("update_product/<int:id>", views.update_product, name="update_product"),
     path("delete_product/<int:id>", views.delete_product, name="delete_product"),
+    path("AdminViewAllProducts", views.AdminViewAllProducts, name="AdminViewAllProducts"),
+    path("EmployeeViewAllProducts", views.EmployeeViewAllProducts, name="EmployeeViewAllProducts"),
     
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
+    path("AdminViewAllProduct_sort_products", views.AdminViewAllProduct_sort_products, name="AdminViewAllProduct_sort_products"),
+    path("EmployeeViewAllProduct_sort_products", views.EmployeeViewAllProduct_sort_products, name="EmployeeViewAllProduct_sort_products"),
     path("Employee_sort_products", views.Employee_sort_products, name="Employee_sort_products"),
     path("Customer_sort_products", views.Customer_sort_products, name="Customer_sort_products"),
-    
     path("product_list", views.product_list, name="product_list"),
+    path("AdminViewAll_product_list", views.AdminViewAll_product_list, name="AdminViewAll_product_list"),
+    path("EmployeeViewAll_product_list", views.EmployeeViewAll_product_list, name="EmployeeViewAll_product_list"),
     path("Employee_product_list", views.Employee_product_list, name="Employee_product_list"),
     path("Customer_product_list", views.Customer_product_list, name="Customer_product_list"),
     

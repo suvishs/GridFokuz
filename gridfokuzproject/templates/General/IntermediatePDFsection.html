@@ -137,7 +137,8 @@
         <tr>
           <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
           <td style="color:green">{{i.product.Total_GF_price}}</td>
-          <td><img src="{{i.product.product_image.url}}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          {% comment %} <img src="{{ media_url }}{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"> {% endcomment %}
           <td><input type="number">{{i.grand_total}}</td>
         </tr>
     {% endfor %}
@@ -151,6 +152,7 @@
 <div class="product-description">
     <div class="product-image">
       <img src="{{i.product.product_image.url}}" alt="Product Image">
+      {% comment %} <img src="{{ media_url }}{{ i.product.product_image.path }}" alt="Product Image"> {% endcomment %}
     </div>
     <div class="product-info">
       <h3>{{i.product.Product_Name}}</h3>
