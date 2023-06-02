@@ -32,16 +32,19 @@ urlpatterns = [
     path("delete_product/<int:id>", views.delete_product, name="delete_product"),
     path("AdminViewAllProducts", views.AdminViewAllProducts, name="AdminViewAllProducts"),
     path("EmployeeViewAllProducts", views.EmployeeViewAllProducts, name="EmployeeViewAllProducts"),
+    path("CustomerViewAllProducts", views.CustomerViewAllProducts, name="CustomerViewAllProducts"),
     
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
     path("AdminViewAllProduct_sort_products", views.AdminViewAllProduct_sort_products, name="AdminViewAllProduct_sort_products"),
     path("EmployeeViewAllProduct_sort_products", views.EmployeeViewAllProduct_sort_products, name="EmployeeViewAllProduct_sort_products"),
+    path("CustomerViewAllProduct_sort_products", views.CustomerViewAllProduct_sort_products, name="CustomerViewAllProduct_sort_products"),
     path("Employee_sort_products", views.Employee_sort_products, name="Employee_sort_products"),
     path("Customer_sort_products", views.Customer_sort_products, name="Customer_sort_products"),
     path("product_list", views.product_list, name="product_list"),
     path("AdminViewAll_product_list", views.AdminViewAll_product_list, name="AdminViewAll_product_list"),
     path("EmployeeViewAll_product_list", views.EmployeeViewAll_product_list, name="EmployeeViewAll_product_list"),
+    path("CustomerViewAll_product_list", views.CustomerViewAll_product_list, name="CustomerViewAll_product_list"),
     path("Employee_product_list", views.Employee_product_list, name="Employee_product_list"),
     path("Customer_product_list", views.Customer_product_list, name="Customer_product_list"),
     
