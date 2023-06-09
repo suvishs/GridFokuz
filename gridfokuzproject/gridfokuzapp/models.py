@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class AddVendors(models.Model):
     vendorname = models.CharField(max_length=30)
+    ventorcode = models.CharField(max_length=30, null=True)
     
     def __str__(self): 
         return str(self.vendorname)

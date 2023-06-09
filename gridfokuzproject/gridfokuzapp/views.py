@@ -3415,88 +3415,28 @@ def IntermediatePDFsection(request):
     return render(request, "General/IntermediatePDFsection.html")
 
 
-from django.conf import settings
-from django.template.loader import get_template
-from django.http import HttpResponse
-from django.contrib.sites.shortcuts import get_current_site
-from xhtml2pdf import pisa
-import os
-
-def html_to_pdf(request):
+def html_to_pdf(request, *args, **kwargs):
     product = PDFtemp.objects.filter(usr=request.user)
+    template_path = 'General\IntermediatePDFsection.html'
+    context = {'product': product}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+   #  response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    response['Content-Disposition'] = 'filename="report.pdf"'
 
-    template_path = 'General/IntermediatePDFsection.html'
-
-    # Get the base URL and media URL
-    current_site = get_current_site(request)
-    base_url = current_site.domain
-    media_url = settings.MEDIA_URL
-
-    context = {
-        'product': product,
-        'base_url': base_url,
-        'media_url': media_url,
-    }
-
+    # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
 
-    # Create a file path to temporarily save the rendered HTML
-    temp_html_path = os.path.join(settings.MEDIA_ROOT, 'temp_pdf.html')
-    try:
-        with open(temp_html_path, 'w', encoding='utf-8') as file:
-            file.write(html)
-    except IOError:
-        return HttpResponse('Failed to write temporary HTML file')
-
-    # Add the images to the HTML file
-    with open(temp_html_path, 'r', encoding='utf-8') as file:
-        html = file.read()
-
-    for j in product:
-        image_url = settings.MEDIA_ROOT + str(j.product.product_image)
-        html = html.replace('{{ j.product.product_image.url }}', image_url)
-
-    try:
-        with open(temp_html_path, 'w', encoding='utf-8') as file:
-            file.write(html)
-    except IOError:
-        return HttpResponse('Failed to update HTML file with images')
-
-    # Specify the file paths for the generated PDF and temporary HTML
-    output_pdf_path = os.path.join(settings.MEDIA_ROOT, 'products_report.pdf')
-
-    # Convert HTML to PDF using xhtml2pdf
-    try:
-        with open(output_pdf_path, 'wb') as pdf_file:
-            pisa.CreatePDF(html, dest=pdf_file)
-    except Exception as e:
-        return HttpResponse(f'PDF generation error: {str(e)}')
-
-    # Delete the temporary HTML file
-    try:
-        os.remove(temp_html_path)
-    except OSError:
-        return HttpResponse('Failed to delete temporary HTML file')
-
-    # Prepare the HTTP response with the PDF file
-    try:
-        with open(output_pdf_path, 'rb') as pdf_file:
-            response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-            response['Content-Disposition'] = 'filename="products_report.pdf"'
-    except IOError:
-        return HttpResponse('Failed to read PDF file')
-
-    # Delete the generated PDF file
-    try:
-        os.remove(output_pdf_path)
-    except OSError:
-        return HttpResponse('Failed to delete PDF file')
-
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-
-
+  
 # def html_to_pdf(request):
 #     product = PDFtemp.objects.filter(usr=request.user)
 

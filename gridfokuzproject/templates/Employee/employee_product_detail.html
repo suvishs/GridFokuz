@@ -19,18 +19,18 @@
             <a class="btn btn-primary" href="{% url 'delete_product' product.id %}">Delete</a> {% endcomment %}
           
             <p>SKU : {{product.SKU}}</p>
-            <p>Vendor : {{product.Vendor.vendorname}}</p>
+            {% comment %} <p>Vendor : {{product.Vendor.vendorname}}</p> {% endcomment %}
             <p>Category : {{product.Category}}</p>
             <p>Sub_category : {{product.Sub_category}}</p>
             <p>Product_Name : {{product.Product_Name}}</p>
-            {% comment %} <p>MRP : {{product.MRP}}</p>
-            <p>Vendor_Price : {{product.Vendor_Price}}</p> {% endcomment %}
+            <p>MRP : {{product.MRP}}</p>
+            {% comment %} <p>Vendor_Price : {{product.Vendor_Price}}</p>  {% endcomment %}
             <p>Transport1 : {{product.Transport1}}</p>
             <p>Transport2 : {{product.Transport2}}</p>
             <p>Branding{{product.Branding}}</p>
             <p>Packing : {{product.Packing}}</p>
-            {% comment %} <p>Profit_in_precentage : {{product.Profit_in_precentage}}</p>
-            <p>Profit_amount : {{product.Profit_amount}}</p> {% endcomment %}
+            <p>Profit_in_precentage : {{product.Profit_in_precentage}}</p>
+            <p>Profit_amount : {{product.Profit_amount}}</p> 
             <p>GF_Price : {{product.GF_Price}}</p>
             <p>Tax_in_precentage : {{product.Tax_in_precentage}}</p>
             <p>Tax_amount : {{product.Tax_amount}}</p>

@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +103,7 @@
 
     <header>
         <div class="logo">
-          <img src="{% static 'img/logo4.png' %}" alt="" height="100px">
+          <img src="/static/img/logo4.png" alt="" height="100px">
         </div>
         <div class="company-details">
           <ul>
@@ -133,43 +133,99 @@
   </thead>
   <br>
   <tbody>
-    {% for i in product %}
+    
         <tr>
-          <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
-          <td style="color:green">{{i.product.Total_GF_price}}</td>
-          {% comment %} <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>  {% endcomment %}
-          <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;">
-          {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"> {% endcomment %}
-          <td><input type="number">{{i.grand_total}}</td>
+          <td style="font-weight: 600;">MP12 Radius</td>
+          <td style="color:green">85.4</td>
+          <td><img src="/media/product_images/download_1.jpg" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          
+          <td><input type="number">85.4</td>
         </tr>
-    {% endfor %}
+    
+        <tr>
+          <td style="font-weight: 600;">KC05</td>
+          <td style="color:green">130.685</td>
+          <td><img src="/media/product_images/download_2_gcRcuH6.jpg" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          
+          <td><input type="number">130.685</td>
+        </tr>
+    
+        <tr>
+          <td style="font-weight: 600;">H-266 Ecomug</td>
+          <td style="color:green">170.8</td>
+          <td><img src="/media/product_images/mug_0Dg87c5.jpg" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>
+          
+          <td><input type="number">170.8</td>
+        </tr>
+    
   </tbody>
 </table>
 
 <br>
-{% for i in product %}
+
 <br>
 
 <div class="product-description">
     <div class="product-image">
-      {% comment %} <img src="{{i.product.product_image.url}}" alt="Product Image">  {% endcomment %}
-      <img src="{{ i.product.product_image.path }}" alt="Product Image">
-      {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product Image">  {% endcomment %}
+      <img src="/media/product_images/download_1.jpg" alt="Product Image">
+      
     </div>
     <div class="product-info">
-      <h3>{{i.product.Product_Name}}</h3>
+      <h3>MP12 Radius</h3>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
       <ul>
         <li>Feature 1</li>
         <li>Feature 2</li>
         <li>Feature 3</li>
       </ul>
-      <p>Price: ₹{{i.Total_GF_price}}</p>
+      <p>Price: ₹</p>
     </div>
 </div>
 
 <br>
-{% endfor %}
+
+<br>
+
+<div class="product-description">
+    <div class="product-image">
+      <img src="/media/product_images/download_2_gcRcuH6.jpg" alt="Product Image">
+      
+    </div>
+    <div class="product-info">
+      <h3>KC05</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
+      <ul>
+        <li>Feature 1</li>
+        <li>Feature 2</li>
+        <li>Feature 3</li>
+      </ul>
+      <p>Price: ₹</p>
+    </div>
+</div>
+
+<br>
+
+<br>
+
+<div class="product-description">
+    <div class="product-image">
+      <img src="/media/product_images/mug_0Dg87c5.jpg" alt="Product Image">
+      
+    </div>
+    <div class="product-info">
+      <h3>H-266 Ecomug</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
+      <ul>
+        <li>Feature 1</li>
+        <li>Feature 2</li>
+        <li>Feature 3</li>
+      </ul>
+      <p>Price: ₹</p>
+    </div>
+</div>
+
+<br>
+
 <br>
 
 <a href="html_to_pdf">Download</a>
