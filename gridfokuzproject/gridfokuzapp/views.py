@@ -3414,106 +3414,26 @@ def IntermediatePDFsection(request):
         return render(request, "General/IntermediatePDFsection.html", {"product":product})
     return render(request, "General/IntermediatePDFsection.html")
 
-
 def html_to_pdf(request, *args, **kwargs):
     product = PDFtemp.objects.filter(usr=request.user)
-    template_path = 'General\IntermediatePDFsection.html'
+    template_path = 'General/finalPDF.html'
     context = {'product': product}
-    # Create a Django response object, and specify content_type as pdf
+    # Create a Django response object and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-   #  response['Content-Disposition'] = 'attachment; filename="report.pdf"'
     response['Content-Disposition'] = 'filename="report.pdf"'
 
-    # find the template and render it.
+    # Find the template and render it
     template = get_template(template_path)
     html = template.render(context)
 
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
-    # if error then show some funny view
+    # Create a pdf
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    # If there was an error, show some funny view
     if pisa_status.err:
-       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
     return response
-
-  
-# def html_to_pdf(request):
-#     product = PDFtemp.objects.filter(usr=request.user)
-
-#     template_path = 'General/IntermediatePDFsection.html'
-
-#     context = {'product': product}
-
-#     response = HttpResponse(content_type='application/pdf')
-
-#     response['Content-Disposition'] = 'filename="products_report.pdf"'
-
-#     template = get_template(template_path)
-
-#     html = template.render(context)
-
-#     # create a pdf
-#     pisa_status = pisa.CreatePDF(
-#        html, dest=response)
-#     # if error then show some funy view
-#     if pisa_status.err:
-#        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-#     return response
-
-# def html_to_pdf(request):
-#     template_path = 'General/IntermediatePDFsection.html'
-#     product = PDFtemp.objects.filter(usr=request.user)
-#     # Render the template with the context data
-#     template = get_template(template_path)
-#     html = template.render({'product': product})
-
-#     # Create a file-like buffer to receive PDF data
-#     buffer = BytesIO()
-
-#     # Generate the PDF
-#     pisa_status = pisa.CreatePDF(html, dest=buffer)
-
-#     if pisa_status.err:
-#         return HttpResponse('PDF creation failed')
-
-#     # Get the PDF content from the buffer
-#     pdf = buffer.getvalue()
-
-#     # Set the response headers
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="combo3.pdf"'
-
-#     # Write the PDF content to the response
-#     response.write(pdf)
-
-#     return response
-
-# def html_to_pdf(request):
-#     template_path = 'IntermediatePDFsection.html'
-#     template = get_template(template_path)
-#     product = PDFtemp.objects.filter(usr=request.user)
-#     html = template.render({'product': product})
-
-#     # Set the options for PDF generation
-#     options = {
-#         'page-size': 'A4',
-#         'encoding': 'UTF-8',
-#     }
-
-#     # Set the path to wkhtmltopdf executable
-#     config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_PATH)
-
-#     # Convert HTML to PDF
-#     pdf = pdfkit.from_string(html, False, options=options, configuration=config)
-
-#     # Set the response headers
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="combo.pdf"'
-
-#     # Write the PDF content to the response
-#     response.write(pdf)
-
-#     return response
 
 # ---------------------------Employee section---------------------------
 

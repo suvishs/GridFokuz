@@ -137,7 +137,8 @@
         <tr>
           <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
           <td style="color:green">{{i.product.Total_GF_price}}</td>
-          <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>  
+          {% comment %} <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>  {% endcomment %}
+          <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;">
           {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"> {% endcomment %}
           <td><input type="number">{{i.grand_total}}</td>
         </tr>
@@ -151,8 +152,9 @@
 
 <div class="product-description">
     <div class="product-image">
-      <img src="{{i.product.product_image.url}}" alt="Product Image"> 
-      {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product Image"> {% endcomment %}
+      {% comment %} <img src="{{i.product.product_image.url}}" alt="Product Image">  {% endcomment %}
+      <img src="{{ i.product.product_image.path }}" alt="Product Image">
+      {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product Image">  {% endcomment %}
     </div>
     <div class="product-info">
       <h3>{{i.product.Product_Name}}</h3>
@@ -169,9 +171,6 @@
 <br>
 {% endfor %}
 <br>
-
-<a href="html_to_pdf">Download</a>
-<a href="">Share</a>
 
 <footer>
     <div class="container">
