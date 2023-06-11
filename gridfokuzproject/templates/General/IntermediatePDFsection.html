@@ -138,7 +138,6 @@
           <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
           <td style="color:green">{{i.product.Total_GF_price}}</td>
           <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>  
-          {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"> {% endcomment %}
           <td><input type="number">{{i.grand_total}}</td>
         </tr>
     {% endfor %}
@@ -156,13 +155,13 @@
     </div>
     <div class="product-info">
       <h3>{{i.product.Product_Name}}</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
+      <p>{{i.product.discription}}</p>
       <ul>
         <li>Feature 1</li>
         <li>Feature 2</li>
         <li>Feature 3</li>
       </ul>
-      <p>Price: ₹{{i.Total_GF_price}}</p>
+      <p>Price: ₹{{i.product.Total_GF_price}}</p>
     </div>
 </div>
 

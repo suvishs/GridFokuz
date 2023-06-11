@@ -31,6 +31,7 @@ class AddProducts(models.Model):
     Tax_amount = models.FloatField(null=True)
     Total_GF_price = models.FloatField(null=True)
     product_image = models.ImageField(upload_to="product_images", null=True)
+    discription = models.CharField(max_length=250, null=True)
     
     def __str__(self):
         return self.Product_Name

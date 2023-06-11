@@ -97,80 +97,177 @@
         margin: 0;
         text-align: center;
         }
+
+
+
+
+
+
+
+
+
+
+        .image-container {
+          width: 500px;
+          height: 100px;
+          border: 1px solid rgb(134, 134, 134);
+          padding-top:50px;
+          /* padding-right: 50px; */
+          padding-left: 180px;
+          padding-bottom: 50px;
+    
+        }
+    
+        .image-container2 {
+          width: 500px;
+          height: 100px;
+          /* border: 1px solid rgb(110, 110, 110); */
+          /* padding-right: 50px; */
+          padding-left: 180px;
+        }
+    
+        .image {
+          width: 350px;
+          height: 350px;
+        }
+    
+        .logo
+        {
+          height:20px;
+          width:30px;    
+        }
+    
+        .image2 {
+          width: 350px;
+          height: 350px;
+        }
+    
+        .image3 {
+          width: 350px;
+          height: 350px;
+        }
+    
+        .image4 {
+          height:400px;
+          padding-top: 50px;
+    
+        }
+    
+        table th
+        {
+          line-height: 10px;
+          font-size: 25px;
+          color:rgb(1, 1, 147);
+          background-color: rgb(222, 222, 222);
+          border:1px solid white;
+    
+        }
+    
+        table td
+        {
+          font-size:15px;
+          background-color:rgb(1, 1, 147) ;
+          color:white;
+          border:1px solid white;
+          font-weight: 600;
+          
+        }
+    
+    
+    
+        table tr
+        {
+          padding:10px;
+          text-align: center;
+        }
+    
+        .header
+        {
+          width:100%;
+          background-color: rgb(222, 222, 222);
+          height:80px;
+          padding-top:15px;
+          padding-left: 315px;
+          padding-bottom: 15px;    
+        }
+    
+        .head
+        {
+          height:50px;
+          width:95px;
+        }
+    
+        .division
+        {
+          background-color: rgb(222, 222, 222);
+          height:5px;
+          width:100%;
+          padding-top:10px;
+        }
+    
+        .description
+        {
+          border:1px solid rgb(222, 222, 222);
+          padding:30px;
+          background-color: rgb(1, 1, 147);
+        }
+
+        
+
+
+
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-          <img src="{% static 'img/logo4.png' %}" alt="" height="100px">
-        </div>
-        <div class="company-details">
-          <ul>
-            <li><a href="#">www.gridfokuz.com</a></li>
-            <li>1234 Main Street, Anytown USA</li>
-            <li>Phone: 9876987654</li>
-            <li>Email: info@example.com</li>
-          </ul>
-        </div>
-    </header>
-
-    <br>
-
-    <h1 style="text-align: center; font-family: verdana;">COMBO LIST</h1>
-
-    <br>
+<div class="header">
+  <img src="static/img/logo3.png" alt="" class="head">
+  {% comment %} <img src="C:/Users/ThinkPad/Desktop/git/GridFokuz/GridFokuz/gridfokuzproject/assets/img/logo3.png" alt="logoimg" height="100px"> {% endcomment %}
 
 
-<table width="66%">
-  <thead>
+
+</div>
+<br>
+<br>
+<h1 style="text-align: center; color:rgb(0, 0, 158); font-size: 30px;">Combo</h1>
+<table width="100%">
+  <tr>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Quantity</th>
+  </tr>
+  {% for i in product %}
     <tr>
-      <th>Product Name</th>
-      <th>Price</th>
-      <th>Thumbnail Image</th>
-      <th>Grand Total</th>
+      <td>{{i.product.Product_Name}}</td>
+      <td>{{i.product.Total_GF_price}}</td>
+      <td>1</td>
     </tr>
-  </thead>
-  <br>
-  <tbody>
-    {% for i in product %}
-        <tr>
-          <td style="font-weight: 600;">{{i.product.Product_Name}}</td>
-          <td style="color:green">{{i.product.Total_GF_price}}</td>
-          {% comment %} <td><img src="{{ i.product.product_image.url }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"></td>  {% endcomment %}
-          <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;">
-          {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product A thumbnail" height="80px" style="margin-left: 70px;"> {% endcomment %}
-          <td><input type="number">{{i.grand_total}}</td>
-        </tr>
-    {% endfor %}
-  </tbody>
+  {% endfor %}
 </table>
 
-<br>
 {% for i in product %}
 <br>
 
 <div class="product-description">
     <div class="product-image">
-      {% comment %} <img src="{{i.product.product_image.url}}" alt="Product Image">  {% endcomment %}
       <img src="{{ i.product.product_image.path }}" alt="Product Image">
-      {% comment %} <img src="{{ i.product.product_image.path }}" alt="Product Image">  {% endcomment %}
     </div>
     <div class="product-info">
       <h3>{{i.product.Product_Name}}</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at faucibus ex. Integer sollicitudin tortor vel lorem suscipit, eget mollis magna tristique. </p>
+      <p>{{i.product.discription}}</p>
       <ul>
         <li>Feature 1</li>
         <li>Feature 2</li>
         <li>Feature 3</li>
       </ul>
-      <p>Price: ₹{{i.Total_GF_price}}</p>
+      <p>Price: ₹{{i.product.Total_GF_price}}</p>
     </div>
 </div>
 
 <br>
 {% endfor %}
 <br>
+<img src="static/img/temp.png" alt="" class="image4">
 
 <footer>
     <div class="container">

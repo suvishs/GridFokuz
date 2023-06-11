@@ -11,10 +11,11 @@ from io import BytesIO
 from xhtml2pdf import pisa
 import pdfkit
 from django.conf import settings
-from django.template.loader import get_template
+from django.template.loader import get_template 
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
+
 
 # Create your views here.
 
@@ -182,9 +183,7 @@ def addproducts(request):
     if request.method == "POST":
         SKU = request.POST.get("SKU")
         Vendor = request.POST.get("Vendor")
-        
         vendor_name = AddVendors.objects.get(vendorname=Vendor)
-        
         Category = request.POST.get("Category")
         Sub_category = request.POST.get("Sub_category")
         Product_Name = request.POST.get("Product_Name")
@@ -200,8 +199,8 @@ def addproducts(request):
         Tax_in_precentage = request.POST.get("Tax_in_precentage")
         Tax_amount = request.POST.get("Tax_amount")
         Total_GF_price = request.POST.get("Total_GF_price")
+        discription = request.POST.get("discription")
         product_image = request.FILES["product_image"]
-        
         product = AddProducts(SKU=SKU,
                               Vendor=vendor_name,
                               Category=Category,
@@ -219,6 +218,7 @@ def addproducts(request):
                               Tax_in_precentage=Tax_in_precentage,
                               Tax_amount=Tax_amount,
                               Total_GF_price=Total_GF_price,
+                              discription=discription,
                               product_image=product_image)
         product.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
@@ -3403,21 +3403,21 @@ def IntermediatePDFsection(request):
         price_dis_display = request.POST.getlist("price_dis_display")
         grand_total = request.POST.getlist("grand_total")
         if PDFtemp.objects.filter(usr=request.user).exists():
-            prod = PDFtemp.objects.all()
+            prod = PDFtemp.objects.filter(usr=request.user)
             prod.delete()
         for i,k in zip(productId, grand_total):
             j = int(i)
             product = AddProducts.objects.get(id=j)
             pdftemp = PDFtemp(product=product,grand_total=k,usr=request.user)
             pdftemp.save()
-        product = PDFtemp.objects.all()
+        product = PDFtemp.objects.filter(usr=request.user)
         return render(request, "General/IntermediatePDFsection.html", {"product":product})
     return render(request, "General/IntermediatePDFsection.html")
 
 def html_to_pdf(request, *args, **kwargs):
     product = PDFtemp.objects.filter(usr=request.user)
     template_path = 'General/finalPDF.html'
-    context = {'product': product}
+    context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT}
     # Create a Django response object and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="report.pdf"'
@@ -3434,6 +3434,39 @@ def html_to_pdf(request, *args, **kwargs):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
 
     return response
+
+
+# def html_to_pdf(request, *args, **kwargs):
+#     import os
+
+#     # Add the static files directory to the path
+#     static_files_dir = os.path.join(settings.BASE_DIR, 'static')
+
+#     # Get the product data
+#     product = PDFtemp.objects.filter(usr=request.user)
+
+#     # Get the template path
+#     template_path = 'General/finalPDF.html'
+
+#     # Get the context
+#     context = {'product': product}
+
+#     # Create a Django response object and specify content_type as pdf
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'filename="report.pdf"'
+
+#     # Find the template and render it
+#     template = get_template(template_path)
+#     html = template.render(context)
+
+#     # Create a pdf
+#     pisa_status = pisa.CreatePDF(html, dest=response, url_fetcher=lambda url: os.path.join(static_files_dir, url))
+
+#     # If there was an error, show some funny view
+#     if pisa_status.err:
+#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+#     return response
 
 # ---------------------------Employee section---------------------------
 
