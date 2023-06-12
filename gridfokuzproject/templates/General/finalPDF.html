@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -48,7 +47,7 @@
     }
 
     .image4 {
-      height: 400px;
+      height: 700px;
       padding-top: 50px;
 
     }
@@ -70,8 +69,6 @@
       font-weight: 600;
 
     }
-
-
 
     table tr {
       padding: 10px;
@@ -121,12 +118,15 @@
       <th>Category</th>
       <th>Price</th>
     </tr>
-
     {% for i in product %}
     <tr>
       <td>{{i.product.Product_Name}}</td>
       <td>{{i.product.Category}}</td>
-      <td>{{i.product.Total_GF_price}}</td>
+      {% if price_display %}
+        <td>{{i.product.Total_GF_price}}</td>
+      {% else %}
+        <td>---</td>
+      {% endif %}
     </tr>
     {% endfor %}
 
@@ -177,33 +177,34 @@
   <div class="image-container">
     <img src="{{i.product.product_image.path}}" alt="" class="image">
     <img src="static/img/logo3.png" alt="" class="logo">
-  </div>
-  <br>
-  <br>
-  {% endfor %}
-
-  <!-- <br>
-  <br>
-
-  <div class="image-container">
-    <img src="{{customer.image1.path}}" alt="" class="image2">
+    <br>
+    <br>
+    <br>
+    {% if i.product.product_image2 %}
+      <img src="{{i.product.product_image2.path}}" alt="" class="image">
+    {% endif %}
+    <img src="static/img/logo3.png" alt="" class="logo">
+    <br>
+    {% if i.product.product_image3 %}
+      <img src="{{i.product.product_image3.path}}" alt="" class="image">
+    {% endif %}
     <img src="static/img/logo3.png" alt="" class="logo">
   </div>
 
   <br>
-  <br>
-
-  <div class="image-container2">
-    <img src="{{customer.image2.path}}" alt="" class="image3">
-  </div>
   <h1
     style="text-align: center; background-color:rgb(222, 222, 222); height:40px; padding-top:10px; color:rgb(0, 0, 158); font-size: 25px;">
     {{customer}}</h1>
-  <div class="description">
-    <h3 style="text-align: center; font-size: 15px; color:white;">{{customer.description | linebreaks}}</h3>
-  </div> -->
+    
+    {% if discription_display %}
+      <div class="description">
+        <h3 style="text-align: center; font-size: 15px; color:white;">{{i.product.discription | linebreaks}}</h3>
+      </div>
+    {% else %}
+      <div></div>
+    {% endif %}
 
-
+  {% endfor %}
   <br>
   <br>
   <br>
@@ -214,8 +215,6 @@
   <br>
   <br>
   <br>
-
   <img src="static/img/temp.png" alt="" class="image4">
 </body>
-
 </html>

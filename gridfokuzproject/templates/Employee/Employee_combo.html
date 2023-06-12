@@ -36,7 +36,7 @@
                 <th>Grand Total</th>
                 <th>Details</th>
             </tr>
-            <form action="IntermediatePDFsection" method="POST">
+            <form action="html_to_pdf" method="POST">
                 {% csrf_token %}
                 {% for i in combo %}
                 <tr>
@@ -61,7 +61,8 @@
 
     <div class="pdfbtn">
         <label>Price And Discription Need to display or Not</label>
-        <input type="checkbox" name="price_dis_display" checked><br>
+        <input type="checkbox" name="price_display" checked><br>
+        <input type="checkbox" name="discription_display" checked><br>
         <input type="submit" class="btn btn-warning" value="Convert To PDF">
         </form>
     </div> 

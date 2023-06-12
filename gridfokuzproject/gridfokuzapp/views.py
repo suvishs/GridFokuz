@@ -202,6 +202,8 @@ def addproducts(request):
         Total_GF_price = request.POST.get("Total_GF_price")
         discription = request.POST.get("discription")
         product_image = request.FILES["product_image"]
+        product_image2 = request.FILES["product_image2"]
+        product_image3 = request.FILES["product_image3"]
         product = AddProducts(SKU=SKU,
                               Vendor=vendor_name,
                               Category=Category,
@@ -220,7 +222,9 @@ def addproducts(request):
                               Tax_amount=Tax_amount,
                               Total_GF_price=Total_GF_price,
                               discription=discription,
-                              product_image=product_image)
+                              product_image=product_image,
+                              product_image2=product_image2,
+                              product_image3=product_image3)
         product.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
         return redirect("addproducts")
@@ -3416,25 +3420,56 @@ def IntermediatePDFsection(request):
     return render(request, "General/IntermediatePDFsection.html")
 
 def html_to_pdf(request, *args, **kwargs):
-    product = PDFtemp.objects.filter(usr=request.user)
-    template_path = 'General/finalPDF.html'
-    context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT}
-    # Create a Django response object and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
+    if request.method == "POST":
+        productId = request.POST.getlist("productId")
+        price_display = request.POST.getlist("price_display")
+        discription_display = request.POST.getlist("discription_display")
+        # print(price_display,discription_display)
+        grand_total = request.POST.getlist("grand_total")
+        if PDFtemp.objects.filter(usr=request.user).exists():
+            prod = PDFtemp.objects.filter(usr=request.user)
+            prod.delete()
+        for i,k in zip(productId, grand_total):
+            j = int(i)
+            prod = AddProducts.objects.get(id=j)
+            pdftemp = PDFtemp(product=prod, grand_total=k, usr=request.user)
+            pdftemp.save()
+        product = PDFtemp.objects.filter(usr=request.user)
+        template_path = 'General/finalPDF.html'
+        context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT, "price_display":price_display, "discription_display":discription_display}
+        # Create a Django response object and specify content_type as pdf
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="report.pdf"'
+        # Find the template and render it
+        template = get_template(template_path)
+        html = template.render(context)
+        # Create a pdf
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        # If there was an error, show some funny view
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
 
-    # Find the template and render it
-    template = get_template(template_path)
-    html = template.render(context)
+# def html_to_pdf(request, *args, **kwargs):
+#     product = PDFtemp.objects.filter(usr=request.user)
+#     template_path = 'General/finalPDF.html'
+#     context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT}
+#     # Create a Django response object and specify content_type as pdf
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'filename="report.pdf"'
 
-    # Create a pdf
-    pisa_status = pisa.CreatePDF(html, dest=response)
+#     # Find the template and render it
+#     template = get_template(template_path)
+#     html = template.render(context)
 
-    # If there was an error, show some funny view
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+#     # Create a pdf
+#     pisa_status = pisa.CreatePDF(html, dest=response)
 
-    return response
+#     # If there was an error, show some funny view
+#     if pisa_status.err:
+#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+#     return response
 
 # ---------------------------Employee section---------------------------
 
