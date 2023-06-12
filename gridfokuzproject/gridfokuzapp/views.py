@@ -138,7 +138,8 @@ def EmployeeHome(request):
 def addventors(request):
     if request.method == "POST":
         vendorname = request.POST.get("vendorname")
-        vendor = AddVendors(vendorname=vendorname)
+        ventorcode = request.POST.get("ventorcode")
+        vendor = AddVendors(vendorname=vendorname, ventorcode=ventorcode)
         vendor.save()
         messages.info(request, "Vendor is added successfuly...")
         return redirect("addventors")
@@ -3434,39 +3435,6 @@ def html_to_pdf(request, *args, **kwargs):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
 
     return response
-
-
-# def html_to_pdf(request, *args, **kwargs):
-#     import os
-
-#     # Add the static files directory to the path
-#     static_files_dir = os.path.join(settings.BASE_DIR, 'static')
-
-#     # Get the product data
-#     product = PDFtemp.objects.filter(usr=request.user)
-
-#     # Get the template path
-#     template_path = 'General/finalPDF.html'
-
-#     # Get the context
-#     context = {'product': product}
-
-#     # Create a Django response object and specify content_type as pdf
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="report.pdf"'
-
-#     # Find the template and render it
-#     template = get_template(template_path)
-#     html = template.render(context)
-
-#     # Create a pdf
-#     pisa_status = pisa.CreatePDF(html, dest=response, url_fetcher=lambda url: os.path.join(static_files_dir, url))
-
-#     # If there was an error, show some funny view
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
-
-#     return response
 
 # ---------------------------Employee section---------------------------
 

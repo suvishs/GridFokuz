@@ -16,6 +16,7 @@
     <form action="addventors" method="post">
         {% csrf_token %}
         <input type="name" name="vendorname" placeholder="Enter the vendorname" required>
+        <input type="text" name="ventorcode" placeholder="Enter the Ventor Code" required>
         <input type="submit">
     </form>
 </body>

@@ -1,279 +1,221 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        *{
-            font-family: verdana;
-        }
-        header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #f1f1f1;
-        padding: 10px;
-        font-family: Verdana;
-        }
-        .logo img {
-        margin-right: 20px;
-        }
-        .company-details {
-        text-align: right;
-        }
-        .company-details ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        }
-        .company-details li {
-        margin-bottom: 5px;
-        }
-        table
-        {
-            margin: 0 auto;
-            font-family: verdana;
-            border:1px solid rgb(0, 0, 0);
-            padding:15px;
-            box-shadow: 10px 10px lightblue;
-        }
-        thead tr th
-        {
-            padding:20px;
-            font-size: 18px;
-            border-bottom: 1px solid black;
-            padding-bottom: 40px;
-        }
-        tbody tr td
-        {
-            padding:10px;
-        }
-        .product-description {
-        display: flex;
-        align-items: center;
-        margin: 20px auto;
-        max-width: 800px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        }
-        .product-image {
-        flex: 1;
-        }
-        .product-image img {
-        max-width: 100%;
-        }
-        .product-info {
-        flex: 2;
-        padding: 0 20px;
-        border-left: 1px solid #ddd;
-        }
-        .product-info h3 {
-        margin-top: 0;
-        }
-        .product-info ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        }
-        .product-info li {
-        margin-bottom: 10px;
-        }
-        .product-info p {
-        margin: 10px 0;
-        }
-        footer {
-        background-color: #f1f1f1;
-        color: #000000;
-        padding: 20px 0;
-        }
-        .container {
-        max-width: 800px;
-        margin: 0 auto;
-        }
-        p {
-        margin: 0;
-        text-align: center;
-        }
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .image-container {
+      width: 500px;
+      height: 100px;
+      border: 1px solid rgb(134, 134, 134);
+      padding-top: 50px;
+      /* padding-right: 50px; */
+      padding-left: 180px;
+      padding-bottom: 50px;
+
+    }
+
+    .image-container2 {
+      width: 500px;
+      height: 100px;
+      /* border: 1px solid rgb(110, 110, 110); */
+      /* padding-right: 50px; */
+      padding-left: 180px;
+    }
+
+    .image {
+      width: 350px;
+      height: 350px;
+    }
+
+    .logo {
+      height: 20px;
+      width: 30px;
+    }
+
+    .image2 {
+      width: 350px;
+      height: 350px;
+    }
+
+    .image3 {
+      width: 350px;
+      height: 350px;
+    }
+
+    .image4 {
+      height: 400px;
+      padding-top: 50px;
+
+    }
+
+    table th {
+      line-height: 10px;
+      font-size: 25px;
+      color: rgb(1, 1, 147);
+      background-color: rgb(222, 222, 222);
+      border: 1px solid white;
+
+    }
+
+    table td {
+      font-size: 15px;
+      background-color: rgb(1, 1, 147);
+      color: white;
+      border: 1px solid white;
+      font-weight: 600;
+
+    }
 
 
 
+    table tr {
+      padding: 10px;
+      text-align: center;
+    }
 
+    .header {
+      width: 100%;
+      background-color: rgb(222, 222, 222);
+      height: 80px;
+      padding-top: 15px;
+      padding-left: 315px;
+      padding-bottom: 15px;
+    }
 
+    .head {
+      height: 50px;
+      width: 95px;
+    }
 
+    .division {
+      background-color: rgb(222, 222, 222);
+      height: 5px;
+      width: 100%;
+      padding-top: 10px;
+    }
 
-
-
-
-        .image-container {
-          width: 500px;
-          height: 100px;
-          border: 1px solid rgb(134, 134, 134);
-          padding-top:50px;
-          /* padding-right: 50px; */
-          padding-left: 180px;
-          padding-bottom: 50px;
-    
-        }
-    
-        .image-container2 {
-          width: 500px;
-          height: 100px;
-          /* border: 1px solid rgb(110, 110, 110); */
-          /* padding-right: 50px; */
-          padding-left: 180px;
-        }
-    
-        .image {
-          width: 350px;
-          height: 350px;
-        }
-    
-        .logo
-        {
-          height:20px;
-          width:30px;    
-        }
-    
-        .image2 {
-          width: 350px;
-          height: 350px;
-        }
-    
-        .image3 {
-          width: 350px;
-          height: 350px;
-        }
-    
-        .image4 {
-          height:400px;
-          padding-top: 50px;
-    
-        }
-    
-        table th
-        {
-          line-height: 10px;
-          font-size: 25px;
-          color:rgb(1, 1, 147);
-          background-color: rgb(222, 222, 222);
-          border:1px solid white;
-    
-        }
-    
-        table td
-        {
-          font-size:15px;
-          background-color:rgb(1, 1, 147) ;
-          color:white;
-          border:1px solid white;
-          font-weight: 600;
-          
-        }
-    
-    
-    
-        table tr
-        {
-          padding:10px;
-          text-align: center;
-        }
-    
-        .header
-        {
-          width:100%;
-          background-color: rgb(222, 222, 222);
-          height:80px;
-          padding-top:15px;
-          padding-left: 315px;
-          padding-bottom: 15px;    
-        }
-    
-        .head
-        {
-          height:50px;
-          width:95px;
-        }
-    
-        .division
-        {
-          background-color: rgb(222, 222, 222);
-          height:5px;
-          width:100%;
-          padding-top:10px;
-        }
-    
-        .description
-        {
-          border:1px solid rgb(222, 222, 222);
-          padding:30px;
-          background-color: rgb(1, 1, 147);
-        }
-
-        
-
-
-
-    </style>
+    .description {
+      border: 1px solid rgb(222, 222, 222);
+      padding: 30px;
+      background-color: rgb(1, 1, 147);
+    }
+  </style>
 </head>
+
 <body>
+  <div class="header">
+    <img src="static/img/logo3.png" alt="" class="head">
+  </div>
+  <br>
+  <br>
 
-<div class="header">
-  <img src="static/img/logo3.png" alt="" class="head">
-  {% comment %} <img src="C:/Users/ThinkPad/Desktop/git/GridFokuz/GridFokuz/gridfokuzproject/assets/img/logo3.png" alt="logoimg" height="100px"> {% endcomment %}
+  <h1 style="text-align: center; color:rgb(0, 0, 158); font-size: 30px;">Combo</h1>
+  <table width="100%">
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Price</th>
+    </tr>
 
-
-
-</div>
-<br>
-<br>
-<h1 style="text-align: center; color:rgb(0, 0, 158); font-size: 30px;">Combo</h1>
-<table width="100%">
-  <tr>
-    <th>Name</th>
-    <th>Price</th>
-    <th>Quantity</th>
-  </tr>
-  {% for i in product %}
+    {% for i in product %}
     <tr>
       <td>{{i.product.Product_Name}}</td>
+      <td>{{i.product.Category}}</td>
       <td>{{i.product.Total_GF_price}}</td>
-      <td>1</td>
     </tr>
+    {% endfor %}
+
+  </table>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <div class="division">
+    <h1 style="text-align: center;">View Products</h1>
+  </div>
+
+  {% for i in product %}
+  <div class="image-container">
+    <img src="{{i.product.product_image.path}}" alt="" class="image">
+    <img src="static/img/logo3.png" alt="" class="logo">
+  </div>
+  <br>
+  <br>
   {% endfor %}
-</table>
 
-{% for i in product %}
-<br>
+  <!-- <br>
+  <br>
 
-<div class="product-description">
-    <div class="product-image">
-      <img src="{{ i.product.product_image.path }}" alt="Product Image">
-    </div>
-    <div class="product-info">
-      <h3>{{i.product.Product_Name}}</h3>
-      <p>{{i.product.discription}}</p>
-      <ul>
-        <li>Feature 1</li>
-        <li>Feature 2</li>
-        <li>Feature 3</li>
-      </ul>
-      <p>Price: ₹{{i.product.Total_GF_price}}</p>
-    </div>
-</div>
+  <div class="image-container">
+    <img src="{{customer.image1.path}}" alt="" class="image2">
+    <img src="static/img/logo3.png" alt="" class="logo">
+  </div>
 
-<br>
-{% endfor %}
-<br>
-<img src="static/img/temp.png" alt="" class="image4">
+  <br>
+  <br>
 
-<footer>
-    <div class="container">
-      <p> 2023 Grid Fokuz. All Rights Reserved.</p>
-    </div>
-</footer>
+  <div class="image-container2">
+    <img src="{{customer.image2.path}}" alt="" class="image3">
+  </div>
+  <h1
+    style="text-align: center; background-color:rgb(222, 222, 222); height:40px; padding-top:10px; color:rgb(0, 0, 158); font-size: 25px;">
+    {{customer}}</h1>
+  <div class="description">
+    <h3 style="text-align: center; font-size: 15px; color:white;">{{customer.description | linebreaks}}</h3>
+  </div> -->
 
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <img src="static/img/temp.png" alt="" class="image4">
 </body>
+
 </html>
