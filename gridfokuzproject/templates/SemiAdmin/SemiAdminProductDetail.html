@@ -9,18 +9,15 @@
 </head>
 <body>
     <h1>Semi Admin product Details</h1><br>
-    
     <h2 style="text-align:center">{{product.Product_Name}}</h2><br>
-
     <div class="card mx-auto" style="width: 18rem;">
         <img src="{{product.product_image.url}}" class="card-img-top" alt="{{product.Product_Name}}">
         <div class="card-body">
-
             <a class="btn btn-primary" href="{% url 'GridSemiadminupdate_product' product.id %}">Update</a>
             <a class="btn btn-primary" href="{% url 'GridSemiAdminDeleteProduct' product.id %}">Delete</a>
-        
             <p>SKU : {{product.SKU}}</p>
             <p>Vendor : {{product.Vendor.vendorname}}</p>
+            <p>Vendor : {{product.Vendor.ventorcode}}</p>
             <p>Category : {{product.Category}}</p>
             <p>Sub_category : {{product.Sub_category}}</p>
             <p>Product_Name : {{product.Product_Name}}</p>
