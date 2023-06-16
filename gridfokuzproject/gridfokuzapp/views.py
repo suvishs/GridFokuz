@@ -6,16 +6,13 @@ from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
 from django.contrib.auth.models import Group
-
 from io import BytesIO
 from xhtml2pdf import pisa
 import pdfkit
 from django.conf import settings
 from django.template.loader import get_template 
-
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
-
 
 # Create your views here.
 
@@ -3422,10 +3419,17 @@ def IntermediatePDFsection(request):
 def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
-        price_display = request.POST.getlist("price_display")
-        discription_display = request.POST.getlist("discription_display")
-        # print(price_display,discription_display)
+        price_display = request.POST.get("price_display")
+        discription_display = request.POST.get("discription_display")
         grand_total = request.POST.getlist("grand_total")
+        temp_discripiton = request.POST.getlist("temp_discripiton")
+        # print(temp_discripiton)
+        for i,disc,total in zip(productId,temp_discripiton,grand_total):
+            id = int(i)
+            item = AddProducts.objects.get(id=id)
+            item.temp_discription = disc
+            item.final_price = total
+            item.save()
         if PDFtemp.objects.filter(usr=request.user).exists():
             prod = PDFtemp.objects.filter(usr=request.user)
             prod.delete()
@@ -3436,16 +3440,16 @@ def html_to_pdf(request, *args, **kwargs):
             pdftemp.save()
         product = PDFtemp.objects.filter(usr=request.user)
         template_path = 'General/finalPDF.html'
-        context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT, "price_display":price_display, "discription_display":discription_display}
-        # Create a Django response object and specify content_type as pdf
+        context = {'product': product, 
+                   'STATIC_ROOT': settings.STATIC_ROOT, 
+                   "price_display":price_display, 
+                   "discription_display":discription_display}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
-        # Find the template and render it
         template = get_template(template_path)
         html = template.render(context)
         # Create a pdf
         pisa_status = pisa.CreatePDF(html, dest=response)
-        # If there was an error, show some funny view
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response

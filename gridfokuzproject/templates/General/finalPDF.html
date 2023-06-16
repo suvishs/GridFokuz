@@ -123,7 +123,7 @@
       <td>{{i.product.Product_Name}}</td>
       <td>{{i.product.Category}}</td>
       {% if price_display %}
-        <td>{{i.product.Total_GF_price}}</td>
+        <td>{{i.product.final_price}}</td>
       {% else %}
         <td>---</td>
       {% endif %}
@@ -198,7 +198,8 @@
     
     {% if discription_display %}
       <div class="description">
-        <h3 style="text-align: center; font-size: 15px; color:white;">{{i.product.discription | linebreaks}}</h3>
+      <h3 style="text-align: center; font-size: 15px; color:white;">{{i.product.temp_discription | linebreaks}}</h3>
+      <h3 style="text-align: center; font-size: 15px; color:white;">{{i.product.discription | linebreaks}}</h3>
       </div>
     {% else %}
       <div></div>

@@ -2,7 +2,6 @@ from django.urls import path
 from .import views
 
 urlpatterns = [
-    
     # -------------------General Section-------------------
     path("", views.Index, name="index"),
     path("Usrlogin", views.Usrlogin, name="Usrlogin"),
