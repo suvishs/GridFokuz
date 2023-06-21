@@ -3416,23 +3416,6 @@ def IntermediatePDFsection(request):
     return render(request, "General/IntermediatePDFsection.html")
 
 
-# def IntermediatePDFsection(request):
-#     if request.method == "POST":
-#         productId = request.POST.getlist("productId")
-#         price_dis_display = request.POST.getlist("price_dis_display")
-#         grand_total = request.POST.getlist("grand_total")
-#         if PDFtemp.objects.filter(usr=request.user).exists():
-#             prod = PDFtemp.objects.filter(usr=request.user)
-#             prod.delete()
-#         for i,k in zip(productId, grand_total):
-#             j = int(i)
-#             product = AddProducts.objects.get(id=j)
-#             pdftemp = PDFtemp(product=product,grand_total=k,usr=request.user)
-#             pdftemp.save()
-#         product = PDFtemp.objects.filter(usr=request.user)
-#         return render(request, "General/IntermediatePDFsection.html", {"product":product})
-#     return render(request, "General/IntermediatePDFsection.html")
-
 def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
