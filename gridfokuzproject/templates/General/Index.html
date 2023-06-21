@@ -1,4 +1,503 @@
-<!DOCTYPE html>
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grid Fokuz is an idea celebrating the Extraordinary of Everyday</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+      <style>
+        #testimonial-slider {
+          text-align: center;
+          padding: 50px; /* Adjust the padding as desired */
+        }
+
+        .testimonial-box {
+          background-color: #fff;
+          padding: 20px; /* Adjust the padding as desired */
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+        }
+
+        .client-name {
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .client-opinion {
+          font-size: 14px;
+        }
+
+        .testimonialtop
+        {
+          background-color: rgb(233, 246, 250);
+          height: 230px;
+          padding-top:20px;
+        }
+
+        .custom-span {
+          font-size: 35px;
+          font-weight: 600;
+        }
+
+        .center-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .shopnow
+        {
+          border:none;
+          font-size: 15px;
+          padding:15px;
+          color:white;
+          background-color: rgb(12, 55, 90);
+
+
+        }
+
+        .shopnow:hover
+        {
+          background-color: rgb(19, 19, 93);
+
+        }
+
+        .whatsapp-button {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          border-radius: 50%;
+          background-color: green;
+          color: white;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 30px;
+          padding-right: 5px;
+          height:60px;
+          width:60px;
+          box-shadow: 0 4px 7px rgba(0, 0, 0, 0.7);
+        }
+
+        .whatsapp-button i {
+          margin-right: 5px;
+        }
+
+ 
+
+      </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg bg-white">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="index">
+            <img src="{% static 'img/logo3.png' %}" alt="Your Logo" style="padding:10px;" height="70px">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active px-3" aria-current="page" href="index" style="font-size: 20px;">Home</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link px-3" aria-current="page" href="shop" style="font-size: 20px;">Shop</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3" aria-current="page" href="ourstory" style="font-size: 20px;">Our Story</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3" aria-current="page" href="gallery" style="font-size: 20px;">Gallery</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3" aria-current="page" href="contact" style="font-size: 20px;">Contact</a>
+              </li>
+              
+            </ul>
+
+          </div>
+        </div>
+      </nav>
+
+
+
+      <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{% static 'img/gridbg.jpg' %}" class="d-block w-100" alt="..." height="750px">
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+
+      <div class="testimonialtop">
+        <h1 style="text-align: center; color:rgb(19, 19, 93); font-size: 50px; font-weight: 700;">What Our Happy <br>Customers Have To Say</h1>
+        <br>
+        <h5 style="text-align: center; font-weight: 700;">THE FOKUZ IS ON YOU</h5>
+      </div>
+
+      <br>
+      <br>
+
+      <div id="testimonial-slider" class="carousel slide" data-ride="carousel" style="background-color: rgb(12, 55, 90);">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+              <p style="color:yellow;">★★★★★</p>
+              <h1 class="client-name">Mr. Deepak Subramanya</h1>
+              <h6>Partner AVJ Jewellery</h6>
+              <p class="client-opinion">Grid Fokuz is a highly professional agency in the area of branding and marketing.I have been associated with them for almost more than a year for our OOH and branding support.They are highly systematic and organised, planning untill installation of their service and make sure 100% result oriented delivery within the timeline.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+              <p style="color:yellow;">★★★★★</p>
+              <h1 class="client-name">Keerthi N.</h1>
+              <h6>Procurement Executive,Think Palm Technologies Private Limited.</h6>
+              <p class="client-opinion">Grid Fokuz have been providing a wide variety of high end corporate gift item to us (Thinkpalm Technologies Pvt Ltd) for over 3 years now.The service is always fantastic and it is a great comfort to know you supply what we need,at the budget we require,and deliver to us always of time and often ahead of schedule.You and your team are the best in the business and i look forward to enhancing our corporate gift range with you in the future. </p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+              <p style="color:yellow;">★★★★★</p>
+              <h1 class="client-name">Karthik P.</h1>
+              <h6>Director, Kalaidecor Art from scrap</h6>
+              <p class="client-opinion">It was not only my best experience but also a very wise decision to get associated with Grid Fokuz.highly professional and go getters.They will analyse your needs and then properly guide you choose the right kind of gifting solutions.Hey guys hats off to you.Keep going and keep growing. </p>
+            </div>
+          </div>
+          
+          
+          <div class="carousel-item ">
+            <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+              <p style="color:yellow;">★★★★★</p>
+              <h1 class="client-name">Afsal Ali</h1>
+              <h6>Director,Claritone Hearing Aid Center</h6>
+              <p class="client-opinion">They are very professional and they are armed with a variety of products.As far as my personal experience is concern,the quality and variety they have,I think no one else has it.Very innovative and very researchful.</p>
+            </div>
+          </div> 
+              
+            
+            <div class="carousel-item">
+              <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+                <p style="color:yellow;">★★★★★</p>
+                  <h1 class="client-name">Leo Vadakel</h1>
+                  <h6>Pushpagiri Hospital,Kerala</h6>
+                  <p class="client-opinion">I had a very good experience with Grid Fokuz.High quality products with a reasonable rate and speedy delivery.We are proud to be associated with such a professional team. </p>
+              </div>
+            </div>
+            
+            <div class="carousel-item">
+              <div class="testimonial-box" style="background-color: rgb(12, 55, 90); color:white;">
+                <p style="color:yellow;">★★★★★</p>
+                  <h1 class="client-name">Rajeesh</h1>
+                  <h6>Purchase Manager,Popees Baby Care Products PVT LTD </h6>
+                  <p class="client-opinion">A nice place for gift items and promotional materials and good customer service.Very professional approach.Hassle-free seamless interactions.I wish them all the best.</p>
+              </div>
+            </div>
+          
+          
+            
+                              
+          <!-- Add more testimonial items here -->
+        </div>
+      
+        <!-- Add navigation arrows -->
+        <a class="carousel-control-prev" href="#testimonial-slider" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#testimonial-slider" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+
+      
+      <!-- Add the necessary Bootstrap and jQuery files -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      
+      <script>
+        $(document).ready(function() {
+          // Initialize the carousel
+          $('#testimonial-slider').carousel({
+            interval: 3000 // Adjust the interval (in milliseconds) between slide transitions as desired
+          });
+        });
+      </script>
+
+<br>
+
+<div class="container py-5">
+  <h1 class="text-center mb-4" style="color:rgb(12, 55, 90); font-weight: 700;">Our Clients</h1>
+  <br>
+  <div id="client-slider" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/smec.png' %}" class="img-fluid rounded" alt="Client 1" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/silverline.jpg' %}" class="img-fluid rounded" alt="Client 2" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/schenider.png' %}" class="img-fluid rounded" alt="Client 3" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/sbi.png' %}" class="img-fluid rounded" alt="Client 4" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/rajagiri.png' %}" class="img-fluid rounded" alt="Client 5" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/medical-trust.png' %}" class="img-fluid rounded" alt="Client 6" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/manapuram.png' %}" class="img-fluid rounded" alt="Client 7" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/lamit.png' %}" class="img-fluid rounded" alt="Client 8" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/kt.png' %}" class="img-fluid rounded" alt="Client 9" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/klm.png' %}" class="img-fluid rounded" alt="Client 10" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/IOC.jpg' %}" class="img-fluid rounded" alt="Client 11" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/aster.jpg' %}" class="img-fluid rounded" alt="Client 12" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Baker-hughes.png' %}" class="img-fluid rounded" alt="Client 13" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Accubits.jpg' %}" class="img-fluid rounded" alt="Client 14" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Admaren.png' %}" class="img-fluid rounded" alt="Client 15" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Financial.png' %}" class="img-fluid rounded" alt="Client 16" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/icici.png' %}" class="img-fluid rounded" alt="Client 17" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Buck.png' %}" class="img-fluid rounded" alt="Client 18" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/aizar.png' %}" class="img-fluid rounded" alt="Client 19" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/DRD.jpg' %}" class="img-fluid rounded" alt="Client 20" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/fingent.jpg' %}" class="img-fluid rounded" alt="Client 21" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/kerala-police.png' %}" class="img-fluid rounded" alt="Client 22" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/mercedes.png' %}" class="img-fluid rounded" alt="Client 23" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/MG.jpg' %}" class="img-fluid rounded" alt="Client 24" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/mozart.png' %}" class="img-fluid rounded" alt="Client 25" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/nessa.png' %}" class="img-fluid rounded" alt="Client 26" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/nissan.png' %}" class="img-fluid rounded" alt="Client 27" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/One-team.png' %}" class="img-fluid rounded" alt="Client 28" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Poppies.jpg' %}" class="img-fluid rounded" alt="Client 29" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/pushpagiri.jpg' %}" class="img-fluid rounded" alt="Client 30" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/tata.png' %}" class="img-fluid rounded" alt="Client 31" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/Think-Palm.png' %}" class="img-fluid rounded" alt="Client 32" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/trutuff.png' %}" class="img-fluid rounded" alt="Client 33" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/v-guard.jpg' %}" class="img-fluid rounded" alt="Client 4" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/volksvagen.png' %}" class="img-fluid rounded" alt="Client 5" style="max-width: 80%; margin: 40px;">
+          </div>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <img src="{% static 'img/lamit.png' %}" class="img-fluid rounded" alt="Client 6" style="max-width: 80%; margin: 40px;">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#client-slider" data-bs-slide="prev" style="color: black;">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="custom-span">&laquo;</span>
+
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#client-slider" data-bs-slide="next" style="color: black;">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="custom-span">&raquo;</span>
+    </button>
+  </div>
+</div>
+
+
+<div class="center-container">
+  <a href="shop"><button class="shopnow">Shop Now</button></a>
+</div>
+<br>
+<br>
+
+<button onclick="window.location.href='https://api.whatsapp.com/send?phone=919526658444&text=Hi%20Grid Fokuz!'" target="_blank" class="whatsapp-button">
+  <i class="fab fa-whatsapp"></i>
+</button>
+
+
+
+<footer class="footer" style="background-color: whitesmoke; padding: 40px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6">
+        <img src="{% static 'img/logo3.png' %}" alt="Logo" class="footer-logo" height="60px" style="margin-right: 20px;">
+        <br><br>
+        <p class="footer-description">Vareity <br> Innovtion <br> Customization</p>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h4>Social Media</h4>
+        <ul class="social-media-list" style="list-style-type: none; padding-left: 0;">
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Indiamart</a></li>
+          <li><a href="#">Youtube</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h4>Location</h4>
+        <div class="map-container">
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15718.067096254772!2d76.297286!3d9.974102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b0872b6326de723%3A0xb6f4754383ba9948!2sGrid%20Fokuz!5e0!3m2!1sen!2sin!4v1686678455066!5m2!1sen!2sin" style="border:0; width:250px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h4>Get in Touch</h4>
+        <p>38/2191 C, KVVB Building <br> Plakat Colony <br> Kaloor-Kadavanthara Road <br> Kochi-682017 <br> Kerala,India</p>
+        <p>M: +91 8891760450</p>
+        <p>M: +91 9526658444</p>
+        <p>T: +91 484 44861444</p>
+      </div>
+    </div>
+  </div>
+</footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,4 +510,4 @@
     <a href="Usrlogin">Login</a>
     <a href="Register">Register</a>
 </body>
-</html>
+</html> -->

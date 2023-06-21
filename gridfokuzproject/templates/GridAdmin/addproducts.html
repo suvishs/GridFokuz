@@ -133,7 +133,7 @@
                                     <label for="select1" class="form-label">Select Vendor</label>
                                     <select class="form-select" name="Vendor" id="select1">
                                         {% for i in vendor %}
-                                            <option value="{{i.vendorname}}">{{i.vendorname}}</option>
+                                            <option value="{{i.vendorname}}">{{i.vendorname}}---{{i.ventorcode}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -162,79 +162,64 @@
                                     {% comment %} <input type="number" class="form-control" id="vendorprice"> {% endcomment %}
                                     <input type="number" class="form-control" id="vendorprice" name="Vendor_Price" placeholder="Vendor_Price" step="0.0001" required>
                                 </div>
-                                <div class="mb-3">
+                                {% comment %} <div class="mb-3">
                                     <label for="transport" class="form-label">Transport 1</label>
-                                    {% comment %} <input type="number" class="form-control" id="transport"> {% endcomment %}
                                     <input type="number" class="form-control" id="transport" name="Transport1" placeholder="Transport1" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="transport2" class="form-label">Transport 2</label>
-                                    {% comment %} <input type="number" class="form-control" id="transport2"> {% endcomment %}
                                     <input type="number" class="form-control" id="transport2" name="Transport2" placeholder="Transport2" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Branding Cost</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Branding" placeholder="Branding" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Packing Cost</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Packing" placeholder="Packing" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Profit</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Profit_in_precentage" placeholder="Profit" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Profit Amount</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Profit_amount" placeholder="Profit_amount" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">GF Price</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="GF_Price" placeholder="GF_Price" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Tax</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Tax_in_precentage" placeholder="Tax" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Tax Amount</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Tax_amount" placeholder="Tax_amount" step="0.0001" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Total GF Price</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="number" class="form-control" id="mrp" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Total GF Price</label>
-                                    {% comment %} <input type="number" class="form-control" id="mrp"> {% endcomment %}
                                     <textarea class="form-control" id="mrp" name="discription" placeholder="Discription" required></textarea>
-                                </div>
+                                </div> {% endcomment %}
 
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Choose Product Picture 1</label>
-                                    {% comment %} <input type="file" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="file" class="form-control" id="mrp" name="product_image" required>
                                 </div>
-                                <div class="mb-3">
+                                {% comment %} <div class="mb-3">
                                     <label for="mrp" class="form-label">Choose Product Picture 2</label>
-                                    {% comment %} <input type="file" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="file" class="form-control" id="mrp" name="product_image2" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Choose Product Picture 3</label>
-                                    {% comment %} <input type="file" class="form-control" id="mrp"> {% endcomment %}
                                     <input type="file" class="form-control" id="mrp" name="product_image3" required>
-                                </div>
-
+                                </div> {% endcomment %}
                                 <br>
                                 <br>
                                 <button type="submit" class="btn btn-primary">Add Product</button>

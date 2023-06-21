@@ -32,9 +32,9 @@
                 <th></th>
                 <th></th>
                 <th>Total price</th>
-                <th>Discount Amount</th>
+                <!-- <th>Discount Amount</th> -->
                 <th>Discription</th>
-                <th>Grand Total</th> 
+                <th>Grand Total</th>
                 <th>Details</th>
             </tr>
             <form action="html_to_pdf" method="POST">
@@ -46,9 +46,9 @@
                      <td></td>
                     <td></td> 
                     <td class="Total_GF_price">{{i.Total_GF_price}}</td>
-                    <td><input type="number" name="discount" value=0 step="0.0001" placeholder="Discount Amount"></td> 
-                    <td><textarea row="4" type="text" name="temp_discripiton" placeholder="Enter Discription"></textarea></td>
-                    <td><input type="number" name="grand_total" step="0.0001" placeholder="Grand Total"></td> 
+                    <!-- <td><input type="number" name="discount" value=0 step="0.0001" placeholder="Discount Amount"></td> -->
+                    <td><textarea type="text" name="temp_discription" placeholder="Enter Discription"></textarea></td>
+                    <td><input type="number" name="grand_total" step="0.0001" placeholder="Grand Total"></td>
                     <td><a href="{% url 'Customer_product_detail' i.id %}">Details</a></td>
                 </tr>
                 <input type="hidden" name="productId" value="{{i.id}}"><br>
@@ -63,8 +63,7 @@
 
     <div class="pdfbtn">
         <label>Price And Discription Need to display or Not</label>
-        <input type="checkbox" name="price_display" checked><br>
-        <input type="checkbox" name="discription_display" checked><br>
+        <input type="checkbox" name="price_dis_display" checked><br>
         <input type="submit" class="btn btn-warning" value="Convert To PDF">
         </form>
     </div> 
