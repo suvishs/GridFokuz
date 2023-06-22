@@ -3401,7 +3401,6 @@ def auto_combo_submit(request):
     return redirect("Combo")
 
 # ---------------------------PDF section---------------------------
-
 def IntermediatePDFsection(request):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
@@ -3418,6 +3417,7 @@ def IntermediatePDFsection(request):
         product = PDFtemp.objects.filter(usr=request.user)
         return render(request, "General/IntermediatePDFsection.html", {"product":product})
     return render(request, "General/IntermediatePDFsection.html")
+
 
 def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
