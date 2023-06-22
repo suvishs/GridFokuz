@@ -476,12 +476,10 @@ def sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
-        # print(selected_vendors)
-        # print(category)
-        # print(sub_category)
         products = []
         product = []
         cat_list = []
@@ -496,7 +494,7 @@ def sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -548,7 +546,7 @@ def sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -595,7 +593,7 @@ def sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -637,7 +635,7 @@ def sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -684,7 +682,7 @@ def sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -726,7 +724,7 @@ def sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -773,7 +771,7 @@ def sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -810,7 +808,7 @@ def sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -855,6 +853,7 @@ def AdminViewAllProduct_sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
@@ -872,7 +871,7 @@ def AdminViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -924,7 +923,7 @@ def AdminViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -971,7 +970,7 @@ def AdminViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1013,7 +1012,7 @@ def AdminViewAllProduct_sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1060,7 +1059,7 @@ def AdminViewAllProduct_sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1102,7 +1101,7 @@ def AdminViewAllProduct_sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1149,7 +1148,7 @@ def AdminViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -1186,7 +1185,7 @@ def AdminViewAllProduct_sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -1231,6 +1230,7 @@ def EmployeeViewAllProduct_sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
@@ -1248,7 +1248,7 @@ def EmployeeViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1300,7 +1300,7 @@ def EmployeeViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1347,7 +1347,7 @@ def EmployeeViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1389,7 +1389,7 @@ def EmployeeViewAllProduct_sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1436,7 +1436,7 @@ def EmployeeViewAllProduct_sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1478,7 +1478,7 @@ def EmployeeViewAllProduct_sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1525,7 +1525,7 @@ def EmployeeViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -1562,7 +1562,7 @@ def EmployeeViewAllProduct_sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -1608,6 +1608,7 @@ def CustomerViewAllProduct_sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
@@ -1625,7 +1626,7 @@ def CustomerViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1677,7 +1678,7 @@ def CustomerViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1724,7 +1725,7 @@ def CustomerViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1766,7 +1767,7 @@ def CustomerViewAllProduct_sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1813,7 +1814,7 @@ def CustomerViewAllProduct_sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -1855,7 +1856,7 @@ def CustomerViewAllProduct_sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -1902,7 +1903,7 @@ def CustomerViewAllProduct_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -1939,7 +1940,7 @@ def CustomerViewAllProduct_sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -1985,6 +1986,7 @@ def Employee_sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
@@ -2005,7 +2007,7 @@ def Employee_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2057,7 +2059,7 @@ def Employee_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2104,7 +2106,7 @@ def Employee_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -2146,7 +2148,7 @@ def Employee_sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2193,7 +2195,7 @@ def Employee_sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2235,7 +2237,7 @@ def Employee_sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -2282,7 +2284,7 @@ def Employee_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -2319,7 +2321,7 @@ def Employee_sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -2364,6 +2366,7 @@ def Customer_sort_products(request):
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
+        min_limit = request.POST.get("min_limit")
         limit = request.POST.get("limit")
         category = request.POST.getlist("category")
         sub_category = request.POST.getlist("sub_category")
@@ -2384,7 +2387,7 @@ def Customer_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2436,7 +2439,7 @@ def Customer_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2483,7 +2486,7 @@ def Customer_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -2525,7 +2528,7 @@ def Customer_sort_products(request):
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2572,7 +2575,7 @@ def Customer_sort_products(request):
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
@@ -2614,7 +2617,7 @@ def Customer_sort_products(request):
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             for sub_cat in product:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
@@ -2661,7 +2664,7 @@ def Customer_sort_products(request):
                     products.append(j)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
             if sorting != "null":
                 if sorting == "acending":
@@ -2698,7 +2701,7 @@ def Customer_sort_products(request):
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
-                if float(item.Total_GF_price) <= float(limit):
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
                     # print("limit pro list :",product)
             if sorting != "null":
@@ -3199,7 +3202,7 @@ def combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
