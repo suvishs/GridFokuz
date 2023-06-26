@@ -105,6 +105,12 @@
         <h1>Branding Cost: Rs.{{ i.product.branding_cost|floatformat:2 }}/-</h1>
         <h1>Tax Perceentage: {{ i.product.tax|floatformat:2 }}%</h1>
       </div>
+    {% else %}
+      <div>
+        <h1></h1>
+        <h1></h1>
+        <h1></h1>
+      </div>
     {% endif %}
   {% endfor %}
 

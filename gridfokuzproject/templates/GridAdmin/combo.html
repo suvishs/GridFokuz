@@ -69,13 +69,13 @@
       <tr>
         <th>Profit Percentage</th>
         <td>
-          <input type="number" id="profit_percentage" name="profit_percentage" placeholder="Profit Percentage" required>
+          <input type="number" id="profit_percentage" name="profit_percentage" value="0" placeholder="Profit Percentage">
         </td>
       </tr>
       <tr>
         <th>Branding Cost</th>
         <td>
-          <input type="number" id="branding" name="branding_cost" placeholder="Branding Cost" required>
+          <input type="number" id="branding" name="branding_cost" value="0" placeholder="Branding Cost">
         </td>
       </tr>
       <tr>
@@ -101,7 +101,7 @@
       <tr>
         <th>Transportation Cost</th>
         <td>
-          <input id="transportation" type="number" name="transportation_cost" placeholder="Transportation Cost" required>
+          <input id="transportation" type="number" name="transportation_cost" value="0" placeholder="Transportation Cost">
         </td>
       </tr>
       <tr>
@@ -128,9 +128,8 @@
 </div>
 <br>
 
-  <h3>Total Combo Price: {{total_combo_price}}</h3><br>
+  <h3>Total Combo Price: {{total_combo_price|floatformat:2}}</h3><br>
   <input type="hidden" name="total_combo_price" value="{{total_combo_price}}">
-  <h3>Customer Price: <span id="customer_price"></span></h3><br><br>
 
   <div class="pdfbtn">
     <label>Price And Discription Need to display or Not</label>

@@ -36,9 +36,9 @@ class AddProducts(models.Model):
     discription = models.CharField(max_length=250, null=True)
     temp_discription = models.CharField(max_length=250, null=True)
     branding_category = models.CharField(max_length=50, null=True)
-    profit_percentage = models.FloatField(null=True)
-    branding_cost = models.FloatField(null=True)
-    transportation_cost = models.FloatField(null=True)
+    profit_percentage = models.FloatField(default=0,null=True)
+    branding_cost = models.FloatField(default=0, null=True)
+    transportation_cost = models.FloatField(default=0, null=True)
     tax = models.FloatField(null=True)
     
     def __str__(self):
@@ -52,4 +52,3 @@ class PDFtemp(models.Model):
     product = models.ForeignKey(AddProducts, on_delete=models.CASCADE, null=True)
     usr = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
     grand_total = models.FloatField(null=True)
-

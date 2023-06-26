@@ -31,6 +31,86 @@
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
+    <style>
+        .filter-form {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    
+        .filter-form h5 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+    
+        .filter-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    
+        .filter-form select,
+        .filter-form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    
+        .scrollable-list {
+            max-height: 150px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    
+        .filter-form .form-check-label {
+            margin-left: 5px;
+        }
+    
+        .filter-form .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    
+        .row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+    
+        .row .column {
+            flex: 1;
+            margin-right: 10px;
+        }
+    
+        .row .column:last-child {
+            margin-right: 0;
+        }
+
+        #sticky-button {
+        position: fixed;
+        bottom: 40px; /* Adjust this value to set the desired distance from the bottom */
+        left: 50px; /* Adjust this value to set the desired distance from the left */
+        z-index: 9999;
+        width: 80px; /* Adjust this value to set the desired width of the button */
+        height: 80px; /* Adjust this value to set the desired height of the button */
+        border-radius: 50%;
+        font-weight: 800;
+        }
+
+    </style>
+
 
 </head>
 
@@ -115,44 +195,6 @@
             <!-- Navbar End -->
 
 
-            <!-- Blank Start -->
-            <!-- <div class="container-fluid pt-4 px-4">
-                <div class="row vh-300 bg-light rounded align-items-center justify-content-center mx-0">
-                    {% for i in messages %}
-                        <p style="text-align:center">{{i}}</p>
-                    {% endfor %}
-                  <h2 style="text-align: left; padding:50px;">Welcome, <span style="color:green;">{{name}}</span></h2>
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Filter Products
-                  </button>
-                  <div class="col-12 mt-4 md-2 m-2">
-                    <form action="HomeSortedManualCombo" method="post">
-                      {% csrf_token %}
-                    <div class="row justify-content-between">
-                      {% for i in product %}
-                      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card shadow border-0">
-                          {{i.Product_Name}}
-                          <img src="{{i.product_image.url}}" class="card-img-top border" alt="Image 1">
-                          <div class="card-body d-flex justify-content-between">
-                            <input type="checkbox" class="form-check-input" id="checkbox1">
-                            <input type="checkbox" name="manualcombolist" value="{{i.id}}">
-                            <a href="{% url 'product_detail' i.id %}">Details</a>
-                            <button class="btn btn-primary">View</button>
-                          </div>
-                        </div>
-                      </div>
-                      {% endfor %}
-
-                      <input class="combobtn" type="submit">
-                    </form>
-
-
-    
-                    </div>
-                  </div>
-                </div>
-              </div> -->
 
 
               <div class="container-fluid pt-4 px-4">
@@ -162,53 +204,105 @@
                     {% endfor %}
                     <h2 style="text-align: left; padding:50px;">Welcome, <span style="color:green;">{{name}}</span></h2>
 
-
-
                     <hr>
+                    
+                    <script>
+                        function selectAllItems(itemType) {
+                            const checkboxes = document.querySelectorAll(`.${itemType}-checkbox`);
+                            const selectAllCheckbox = document.querySelector(`#select-all-${itemType}`);
+                    
+                            checkboxes.forEach((checkbox) => {
+                                checkbox.checked = selectAllCheckbox.checked;
+                            });
+                        }
+                    </script>
+                    
+                    <div class="filter-form">
+                        <h5>Filter Products</h5>
+                        <form action="sort_products" method="post">
+                            {% csrf_token %}
+                            <br><label>Sorting</label>
+                            <select name="sorting">
+                                <option value="null">Optional</option>
+                                <option value="acending">Low to High</option>
+                                <option value="desending">High to Low</option>
+                            </select><br><br>
 
-                    <h5 style="text-align: center;">Filter Products</h5>
-                    <form action="sort_products" method="post">
-                        {% csrf_token %}
-                
-                        <br><label>Sorting</label>
-                        <select name="sorting">
-                            <option value="null">Optional</option>
-                            <option value="acending">Low to High</option>
-                            <option value="desending">High to Low</option>
-                        </select><br><br>
-                
-
-                        <div class="form-group mb-3">
-                            <label>Vendor List:</label><br>
-                            {% for vendor in vendors %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="vendor" id="vendor_{{ vendor.ventorcode }}" value="{{ vendor.ventorcode }}">
-                                <label class="form-check-label" for="vendor_{{ vendor.ventorcode }}">{{ vendor.ventorcode }}</label>
+                            <div class="row">
+                                <div class="column">
+                                    <label>Minimum Price limit</label>
+                                    <input type="number" name="min_limit" placeholder="Enter your minimum limit" value="0"  step="0.01" required>
+                                </div>
                             </div>
-                            {% endfor %}
-                        </div>
+                    
+                            <div class="row">
+                                <div class="column">
+                                    <label>Maximum Price limit</label>
+                                    <input type="number" name="limit" placeholder="Enter your maximum limit" value="1000"  step="0.01" required>
+                                </div>
+                            </div>
+                    
+                            <div class="row">
+                                <div class="column">
+                                    <div class="scrollable-list">
+                                        <label>
+                                            <input type="checkbox" id="select-all-vendor" onchange="selectAllItems('vendor')"> Select All Vendors
+                                        </label>
+                                        {% for vendor in vendors %}
+                                        <div class="form-check">
+                                            <input class="form-check-input vendor-checkbox" type="checkbox" name="vendor" id="vendor_{{ vendor.ventorcode }}" value="{{ vendor.vendorname }}">
+                                            <label class="form-check-label" for="vendor_{{ vendor.ventorcode }}">{{ vendor.ventorcode }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="scrollable-list">
+                                        <label>
+                                            <input type="checkbox" id="select-all-category" onchange="selectAllItems('category')"> Select All Categories
+                                        </label>
+                                        {% for i in product %}
+                                        <div class="form-check">
+                                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="{{ i.Category }}">
+                                            <label class="form-check-label">{{ i.Category }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="scrollable-list">
+                                        <label>
+                                            <input type="checkbox" id="select-all-subcategory" onchange="selectAllItems('subcategory')"> Select All Subcategories
+                                        </label>
+                                        {% for i in product %}
+                                        <div class="form-check">
+                                            <input class="form-check-input subcategory-checkbox" type="checkbox" name="sub_category" value="{{ i.Sub_category }}">
+                                            <label class="form-check-label">{{ i.Sub_category }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-md-5">
+                                        <input type="submit" value="Filter" class="btn btn-primary btn-block">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- <input type="submit" value="Filter" class="btn btn-primary"> -->
+  
+                        </form>
+                    </div>
+                    
+                    
 
-                        <label>Minimum Price limit</label><br>
-                        <input type="number" name="min_limit" placeholder="Enter your Minimum limit" value="0" step="0.001" required><br><br>
-                
-                        <label>Maximum Price limit</label><br>
-                        <input type="number" name="limit" placeholder="Enter your limit" value="{{limit}}" step="0.001" required><br><br>
-                
-                        <label>Category</label><br>
-                        {% for i in product %}
-                        <input type="checkbox" name="category" value="{{ i.Category }}"> {{ i.Category }}<br>
-                        {% endfor %}<br>
-                
-                        <label>Sub Category</label><br>
-                        {% for i in product %}
-                        <input type="checkbox" name="sub_category" value="{{ i.Sub_category }}"> {{ i.Sub_category }}<br>
-                        {% endfor %}<br>
-                
-                        <input type="submit" value="Filter" class="btn btn-primary">
-                    </form>
-                    <br>
-                    <br>
-                    <hr>
+
+
+<div style="padding-top:20px;">
+    <h4 style="text-align: center; background-color: rgb(0, 0, 163); color:white; padding:10px; border-radius: 10px;">View All Products</h4>
+</div>
 
 
 
@@ -232,6 +326,7 @@
                                 {% endfor %}
                             </div>
                             <button class="btn btn-primary" type="submit">Make Combo</button>
+                            <button id="sticky-button" class="btn btn-primary" type="submit">Combo</button>
                         </form>
                         <br>
                     </div>
@@ -242,72 +337,7 @@
               
               
               
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Choose Filter</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <form action="sort_products" method="post">
-            {% csrf_token %}
-                <div class="form-group mb-3">
-                <label for="priceLimit">Price Limit:</label>
-                <input type="number" class="form-control" id="priceLimit" placeholder="Enter price limit" name="limit">
-                </div>
-                
-                <div class="form-group mb-3">
-                <label for="priceSort">Price Sort:</label>
-                <select class="form-control" id="priceSort" name="sorting">
-                    <option value="lowToHigh">Low to High</option>
-                    <option value="highToLow">High to Low</option>
-                </select>
-                </div>
 
-
-                
-                <div class="form-group mb-3">
-                <label for="productCategory">Product Category:</label>
-                <select multiple class="form-control" id="productCategory" name="category">
-                    {% for i in product %}
-                    <option value="{{ i.Category }}">{{ i.Category }}</option>
-                    {% endfor %}
-                </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                <label for="productSubcategory">Product Subcategory:</label>
-                <select multiple class="form-control" id="productSubcategory" name="sub_category">
-                    {% for i in product %}
-                        <option value="{{ i.Sub_category }}">{{ i.Sub_category }}</option>
-                    {% endfor %}
-                    <!-- Add more options as needed 
-                </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                <label for="vendorList">Vendor List:</label>
-                <select multiple class="form-control" id="vendorList" name="vendor">
-                    {% for vendor in vendors %}
-                        <option value="{{ vendor.ventorcode }}">{{ vendor.ventorcode }}</option>
-                    {% endfor %}
-                </select>
-                </div>
-            </div>
-            
-            
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <input class="combobtn" type="submit">            
-            </div>
-        </form>
-      </div>
-    </div>
-  </div> -->
               
 
             <!-- Footer Start -->
@@ -349,29 +379,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

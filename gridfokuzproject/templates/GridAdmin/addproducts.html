@@ -30,6 +30,11 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+        .msg{
+            text-align:center;
+        }
+    </style>
 </head>
 
 <body>
@@ -94,7 +99,7 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form> -->
                 {% for i in messages %}
-                    <p style="text-align:center">{{i}}</p>
+                    <p class="msg">{{i}}</p>
                 {% endfor %}
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">

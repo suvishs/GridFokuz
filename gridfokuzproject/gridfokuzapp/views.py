@@ -82,7 +82,6 @@ def addstaffs(request):
             return HttpResponse("Password Does Not Maching")
     return render(request, "GridAdmin/addstaffs.html")
 
-
 # ---------------------------Users section---------------------------
 
 @Admin_only
@@ -135,8 +134,8 @@ def EmployeeHome(request):
 def addventors(request):
     if request.method == "POST":
         vendorname = request.POST.get("vendorname")
-        ventorcode = request.POST.get("ventorcode")
-        vendor = AddVendors(vendorname=vendorname, ventorcode=ventorcode)
+        vendorcode = request.POST.get("vendorcode")
+        vendor = AddVendors(vendorname=vendorname, ventorcode=vendorcode)
         vendor.save()
         messages.info(request, "Vendor is added successfuly...")
         return redirect("addventors")
@@ -475,11 +474,17 @@ def sort_products(request):
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
+        print(sorting)
         selected_vendors = request.POST.getlist('vendor')
+        print(selected_vendors)
         min_limit = request.POST.get("min_limit")
+        print(min_limit)
         limit = request.POST.get("limit")
+        print(limit)
         category = request.POST.getlist("category")
+        print(category)
         sub_category = request.POST.getlist("sub_category")
+        print(sub_category)
         products = []
         product = []
         cat_list = []
@@ -487,25 +492,30 @@ def sort_products(request):
         item_price_sort = []
         acending_items = []
         if selected_vendors and category and sub_category:
+            print(selected_vendors)
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
                 pro = AddProducts.objects.filter(Vendor=vendor)
                 for j in pro:
                     products.append(j)
+                    print(products)
             for lmt in products:
                 item = AddProducts.objects.get(id=lmt.id)
                 if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
                     product.append(item)
+                    print(product)
             for cat in product:
                 item_cat = AddProducts.objects.get(id=cat.id)
                 for k in category:
                     if item_cat.Category == k:
                         cat_list.append(cat)
+                        print(cat_list)
             for sub_cat in cat_list:
                 sub_item = AddProducts.objects.get(id=sub_cat.id)
                 for q in sub_category:
                     if sub_item.Sub_category == q:
                         final.append(sub_item)
+                        print(final)
             if sorting != "null":
                 if sorting == "acending":
                     for i in final:
@@ -515,6 +525,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(acending_items)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -527,6 +538,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(acending_items)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -562,6 +574,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -574,12 +587,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
@@ -609,6 +624,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -621,12 +637,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
@@ -656,6 +674,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -668,12 +687,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
@@ -698,6 +719,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -710,12 +732,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
@@ -740,6 +764,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -752,12 +777,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
@@ -782,6 +809,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -794,12 +822,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
@@ -820,6 +850,7 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
@@ -832,12 +863,14 @@ def sort_products(request):
                     for j in item_price_sort:
                         acend_items = AddProducts.objects.get(Total_GF_price=j)
                         acending_items.append(acend_items)
+                    print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
+            print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
@@ -3422,23 +3455,15 @@ def IntermediatePDFsection(request):
 def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
-        print(productId)
         price_display = request.POST.get("price_display")
-        print(price_display)
         # discription_display = request.POST.get("discription_display")
         # temp_discripiton = request.POST.getlist("temp_discripiton")
-        # print(temp_discripiton)
         profit_percentage = request.POST.getlist("profit_percentage")
-        print(profit_percentage)
         branding_cost = request.POST.getlist("branding_cost")
-        print(branding_cost)
         branding_category = request.POST.getlist("branding_category")
-        print(branding_category)
         transportation_cost = request.POST.getlist("transportation_cost")
-        print(transportation_cost)
         tax = request.POST.getlist("tax")
-        print(tax)
-        
+
         for i,pro_p,barn_co,bran_cat,trans_co,ta in zip(productId, profit_percentage, branding_cost,branding_category, transportation_cost, tax):
             id = int(i)
             item = AddProducts.objects.get(id=id)
@@ -3451,7 +3476,7 @@ def html_to_pdf(request, *args, **kwargs):
             item.tax = ta
             item.final_price = final_price
             item.save()
-            print(item)
+
         if PDFtemp.objects.filter(usr=request.user).exists():
             prod = PDFtemp.objects.filter(usr=request.user)
             prod.delete()
