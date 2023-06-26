@@ -160,7 +160,7 @@
                                 <div class="mb-3">
                                     <label for="vendorprice" class="form-label">Vendor Price</label>
                                     {% comment %} <input type="number" class="form-control" id="vendorprice"> {% endcomment %}
-                                    <input type="number" class="form-control" id="vendorprice" name="Vendor_Price" placeholder="Vendor_Price" step="0.0001" required>
+                                    <input type="number" class="form-control" id="vendorprice" name="Vendor_Price" oninput="updateTotalPrice()" placeholder="Vendor_Price" step="0.0001" required>
                                 </div>
                                 {% comment %} <div class="mb-3">
                                     <label for="transport" class="form-label">Transport 1</label>
@@ -198,18 +198,18 @@
                                     <label for="mrp" class="form-label">Tax Amount</label>
                                     <input type="number" class="form-control" id="mrp" name="Tax_amount" placeholder="Tax_amount" step="0.0001" required>
                                 </div>
-                                <div class="mb-3">
+                                {% comment %} <div class="mb-3">
                                     <label for="mrp" class="form-label">Total GF Price</label>
                                     <input type="number" class="form-control" id="mrp" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="mrp" class="form-label">Total GF Price</label>
-                                    <textarea class="form-control" id="mrp" name="discription" placeholder="Discription" required></textarea>
                                 </div> {% endcomment %}
 
                                 <div class="mb-3">
-                                    <label for="mrp" class="form-label">Choose Product Picture 1</label>
+                                    <label for="mrp" class="form-label">Total GF Price</label>
+                                    <input class="form-control" id="Total_GF_price" name="Total_GF_price" placeholder="Discription" required>
+                                </div> 
+
+                                <div class="mb-3">
+                                    <label for="mrp" class="form-label">Choose Product Picture</label>
                                     <input type="file" class="form-control" id="mrp" name="product_image" required>
                                 </div>
                                 {% comment %} <div class="mb-3">
@@ -255,6 +255,20 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+    <script>
+        function updateTotalPrice() {
+            // Get the input field values
+            var vendorPrice = parseFloat(document.getElementById("vendorprice").value);
+            var totalGFPriceInput = document.getElementById("Total_GF_price");
+      
+            // Update the Total_GF_price input field
+            if (!isNaN(vendorPrice)) {
+              totalGFPriceInput.value = vendorPrice;
+            } else {
+              totalGFPriceInput.value = "";
+            }
+          }
+    </script>
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

@@ -35,6 +35,11 @@ class AddProducts(models.Model):
     # product_image3 = models.ImageField(upload_to="product_images", null=True)
     discription = models.CharField(max_length=250, null=True)
     temp_discription = models.CharField(max_length=250, null=True)
+    branding_category = models.CharField(max_length=50, null=True)
+    profit_percentage = models.FloatField(null=True)
+    branding_cost = models.FloatField(null=True)
+    transportation_cost = models.FloatField(null=True)
+    tax = models.FloatField(null=True)
     
     def __str__(self):
         return self.Product_Name
@@ -47,3 +52,4 @@ class PDFtemp(models.Model):
     product = models.ForeignKey(AddProducts, on_delete=models.CASCADE, null=True)
     usr = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
     grand_total = models.FloatField(null=True)
+

@@ -196,11 +196,11 @@ def addproducts(request):
         # GF_Price = request.POST.get("GF_Price")
         # Tax_in_precentage = request.POST.get("Tax_in_precentage")
         # Tax_amount = request.POST.get("Tax_amount")
-        # Total_GF_price = request.POST.get("Total_GF_price")
+        Total_GF_price = request.POST.get("Total_GF_price")
         discription = request.POST.get("discription")
         product_image = request.FILES["product_image"]
-        product_image2 = request.FILES["product_image2"]
-        product_image3 = request.FILES["product_image3"]
+        # product_image2 = request.FILES["product_image2"]
+        # product_image3 = request.FILES["product_image3"]
         product = AddProducts(SKU=SKU,
                               Vendor=vendor_name,
                               Category=Category,
@@ -217,11 +217,11 @@ def addproducts(request):
                             #   GF_Price=GF_Price,
                             #   Tax_in_precentage=Tax_in_precentage,
                             #   Tax_amount=Tax_amount,
-                            #   Total_GF_price=Total_GF_price,
+                              Total_GF_price=Total_GF_price,
                               discription=discription,
-                              product_image=product_image,
-                              product_image2=product_image2,
-                              product_image3=product_image3)
+                              product_image=product_image)
+                            #   product_image2=product_image2,
+                            #   product_image3=product_image3)
         product.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
         return redirect("addproducts")
@@ -268,7 +268,7 @@ def update_product(request,id):
         # GF_Price = request.POST.get("GF_Price")
         # Tax_in_precentage = request.POST.get("Tax_in_precentage")
         # Tax_amount = request.POST.get("Tax_amount")
-        # Total_GF_price = request.POST.get("Total_GF_price")
+        Total_GF_price = request.POST.get("Total_GF_price")
         product_image = request.FILES["product_image"]
         
         product.SKU = SKU
@@ -287,7 +287,7 @@ def update_product(request,id):
         # product.GF_Price = GF_Price
         # product.Tax_in_precentage = Tax_in_precentage
         # product.Tax_amount = Tax_amount
-        # product.Total_GF_price = Total_GF_price
+        product.Total_GF_price = Total_GF_price
         product.product_image = product_image
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
@@ -3422,31 +3422,50 @@ def IntermediatePDFsection(request):
 def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
+        print(productId)
         price_display = request.POST.get("price_display")
-        discription_display = request.POST.get("discription_display")
-        grand_total = request.POST.getlist("grand_total")
-        temp_discripiton = request.POST.getlist("temp_discripiton")
+        print(price_display)
+        # discription_display = request.POST.get("discription_display")
+        # temp_discripiton = request.POST.getlist("temp_discripiton")
         # print(temp_discripiton)
-        for i,disc,total in zip(productId,temp_discripiton,grand_total):
+        profit_percentage = request.POST.getlist("profit_percentage")
+        print(profit_percentage)
+        branding_cost = request.POST.getlist("branding_cost")
+        print(branding_cost)
+        branding_category = request.POST.getlist("branding_category")
+        print(branding_category)
+        transportation_cost = request.POST.getlist("transportation_cost")
+        print(transportation_cost)
+        tax = request.POST.getlist("tax")
+        print(tax)
+        
+        for i,pro_p,barn_co,bran_cat,trans_co,ta in zip(productId, profit_percentage, branding_cost,branding_category, transportation_cost, tax):
             id = int(i)
             item = AddProducts.objects.get(id=id)
-            item.temp_discription = disc
-            item.final_price = total
+            price_with_profit = float(item.Total_GF_price)+((float(item.Total_GF_price))*(float(pro_p)/100))
+            final_price = (price_with_profit+float(barn_co)+float(trans_co))+((price_with_profit+float(barn_co)+float(trans_co))*int(ta)/100)
+            item.branding_category = bran_cat
+            item.profit_percentage = pro_p
+            item.branding_cost = barn_co
+            item.transportation_cost = trans_co
+            item.tax = ta
+            item.final_price = final_price
             item.save()
+            print(item)
         if PDFtemp.objects.filter(usr=request.user).exists():
             prod = PDFtemp.objects.filter(usr=request.user)
             prod.delete()
-        for i,k in zip(productId, grand_total):
+        for i in productId:
             j = int(i)
-            prod = AddProducts.objects.get(id=j)
-            pdftemp = PDFtemp(product=prod, grand_total=k, usr=request.user)
-            pdftemp.save()
+            pro = AddProducts.objects.get(id=j)
+            temp_prod = PDFtemp(product=pro, usr=request.user)
+            temp_prod.save()
         product = PDFtemp.objects.filter(usr=request.user)
+        print(product)
         template_path = 'General/finalPDF.html'
         context = {'product': product, 
                    'STATIC_ROOT': settings.STATIC_ROOT, 
-                   "price_display":price_display, 
-                   "discription_display":discription_display}
+                   "price_display":price_display}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
         template = get_template(template_path)
@@ -3456,27 +3475,6 @@ def html_to_pdf(request, *args, **kwargs):
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
-
-# def html_to_pdf(request, *args, **kwargs):
-#     product = PDFtemp.objects.filter(usr=request.user)
-#     template_path = 'General/finalPDF.html'
-#     context = {'product': product, 'STATIC_ROOT': settings.STATIC_ROOT}
-#     # Create a Django response object and specify content_type as pdf
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="report.pdf"'
-
-#     # Find the template and render it
-#     template = get_template(template_path)
-#     html = template.render(context)
-
-#     # Create a pdf
-#     pisa_status = pisa.CreatePDF(html, dest=response)
-
-#     # If there was an error, show some funny view
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
-
-#     return response
 
 # ---------------------------Employee section---------------------------
 

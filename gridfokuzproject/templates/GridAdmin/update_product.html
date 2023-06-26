@@ -36,7 +36,6 @@
                 <input type="number" name="MRP" placeholder="MRP" step="0.0001" value="{{product.MRP}}" required><br><br>
                 <label>Vendor_Price</label>
                 <input type="number" name="Vendor_Price" placeholder="Vendor_Price" step="0.0001" value="{{product.Vendor_Price}}" required><br><br>
-
                 {% comment %} <label>Transport1</label>
                 <input type="number" name="Transport1" placeholder="Transport1" step="0.0001" value="{{product.Transport1}}" required><br><br>
                 <label>Transport2</label>
@@ -54,10 +53,9 @@
                 <label>Tax_in_precentage</label>
                 <input type="number" name="Tax_in_precentage" placeholder="Tax"step="0.0001" value="{{product.Tax_in_precentage}}" required><br><br>
                 <label>Tax_amount</label>
-                <input type="number" name="Tax_amount" placeholder="Tax_amount"step="0.0001" value="{{product.Tax_amount}}" required><br><br>
+                <input type="number" name="Tax_amount" placeholder="Tax_amount"step="0.0001" value="{{product.Tax_amount}}" required><br><br>{% endcomment %}
                 <label>Total_GF_price</label>
-                <input type="number" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" value="{{product.Total_GF_price}}" required><br><br> {% endcomment %}
-
+                <input type="number" name="Total_GF_price" placeholder="Total_GF_price" step="0.0001" value="{{product.Total_GF_price}}" required><br><br> 
                 <label>product_image</label>
                 <input type="file" name="product_image" value="{{product.product_image.url}}" required>
                 <input type="submit" onclick="return validateForm()">

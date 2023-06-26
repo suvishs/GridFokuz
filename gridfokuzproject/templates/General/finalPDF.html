@@ -1,5 +1,5 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -7,135 +7,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    .image-container {
-      width: 500px;
-      height: 100px;
-      border: 1px solid rgb(134, 134, 134);
-      padding-top: 50px;
-      /* padding-right: 50px; */
-      padding-left: 180px;
-      padding-bottom: 50px;
+    .logo
+    {
+      width:250px;
+      height:150px;
 
     }
 
-    .image-container2 {
-      width: 500px;
-      height: 100px;
-      /* border: 1px solid rgb(110, 110, 110); */
-      /* padding-right: 50px; */
-      padding-left: 180px;
+    .logo_container{
+      padding-left: 250px;
+      padding-top:400px;
     }
 
-    .image {
-      width: 350px;
-      height: 350px;
+    .viewproducts
+    {
+      width:100%;
+      padding:10px;
+      padding-top:20px;
+      background-color: darkblue;
+      color:white;
+      height:10px
     }
 
-    .logo {
-      height: 20px;
-      width: 30px;
+    .logo_container2
+    {
+      padding-left:650px;
     }
 
-    .image2 {
-      width: 350px;
-      height: 350px;
-    }
 
-    .image3 {
-      width: 350px;
-      height: 350px;
-    }
-
-    .image4 {
-      height: 700px;
-      padding-top: 50px;
-
-    }
-
-    table th {
-      line-height: 10px;
-      font-size: 25px;
-      color: rgb(1, 1, 147);
-      background-color: rgb(222, 222, 222);
-      border: 1px solid white;
-
-    }
-
-    table td {
-      font-size: 15px;
-      background-color: rgb(1, 1, 147);
-      color: white;
-      border: 1px solid white;
-      font-weight: 600;
-
-    }
-
-    table tr {
-      padding: 10px;
-      text-align: center;
-    }
-
-    .header {
-      width: 100%;
-      background-color: rgb(222, 222, 222);
-      height: 80px;
-      padding-top: 15px;
-      padding-left: 315px;
-      padding-bottom: 15px;
-    }
-
-    .head {
-      height: 50px;
-      width: 95px;
-    }
-
-    .division {
-      background-color: rgb(222, 222, 222);
-      height: 5px;
-      width: 100%;
-      padding-top: 10px;
-    }
-
-    .description {
-      border: 1px solid rgb(222, 222, 222);
-      padding: 30px;
-      background-color: rgb(1, 1, 147);
-    }
   </style>
 </head>
-
 <body>
-  <div class="header">
-    <img src="static/img/logo3.png" alt="" class="head">
+
+  <div class="logo_container">
+    <img src="static/img/logo3.png" alt="" class="logo">
   </div>
-  <br>
-  <br>
 
-  <h1 style="text-align: center; color:rgb(0, 0, 158); font-size: 30px;">Combo</h1>
-  <table width="100%">
-    <tr>
-      <th>Name</th>
-      <th>Category</th>
-      <th>Price</th>
-    </tr>
-    {% for i in product %}
-    <tr>
-      <td>{{i.product.Product_Name}}</td>
-      <td>{{i.product.Category}}</td>
-      {% if price_display %}
-        <td>{{i.product.Total_GF_price}}</td>
-      {% else %}
-        <td>---</td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-
-  </table>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
   <br>
   <br>
   <br>
@@ -169,48 +76,38 @@
   <br>
   <br>
 
-  <div class="division">
-    <h1 style="text-align: center;">View Products</h1>
+
+  <div class="viewproducts">
+    <h1 style="text-align: center; font-size: 20px;">View Products</h1>
   </div>
+
+  <br>
+  <br>
+
 
   {% for i in product %}
-  <div class="image-container">
-    <img src="{{i.product.product_image.path}}" alt="" class="image">
-    <img src="static/img/logo3.png" alt="" class="logo">
-    <br>
-    <br>
-    <br>
-    {% if i.product.product_image2 %}
-      <img src="{{i.product.product_image2.path}}" alt="" class="image">
-    {% endif %}
-    <img src="static/img/logo3.png" alt="" class="logo">
-    <br>
-    {% if i.product.product_image3 %}
-      <img src="{{i.product.product_image3.path}}" alt="" class="image">
-    {% endif %}
-    <img src="static/img/logo3.png" alt="" class="logo">
+  <div class="logo_container2">
+    <img src="static/img/logo3.png" alt="" height="50px">
   </div>
 
-  <br>
-  <h1
-    style="text-align: center; background-color:rgb(222, 222, 222); height:40px; padding-top:10px; color:rgb(0, 0, 158); font-size: 25px;">
-    {{customer}}</h1>
-    
-    {% if discription_display %}
-      <div class="description">
-        <h3 style="text-align: center; font-size: 15px; color:white;">{{i.product.discription | linebreaks}}</h3>
-      </div>
-    {% else %}
-      <div></div>
-    {% endif %}
+  <hr>
 
+  <div class="image_container">
+    <img src="{{i.product.product_image.path}}" alt="" width="1000px" height="1000px">
+  </div>
+
+  <hr>
+
+  <br>
+    {% if price_display %}
+      <div>
+        <h1>Grid Fokuz Price: Rs.{{ i.product.final_price|floatformat:2 }}/-</h1>
+        <h1>Branding Cost: Rs.{{ i.product.branding_cost|floatformat:2 }}/-</h1>
+        <h1>Tax Perceentage: {{ i.product.tax|floatformat:2 }}%</h1>
+      </div>
+    {% endif %}
   {% endfor %}
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
+
   <br>
   <br>
   <br>
