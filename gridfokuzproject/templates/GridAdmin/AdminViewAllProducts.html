@@ -98,10 +98,24 @@
             margin-right: 0;
         }
     
-        .select-all {
+        .select-all 
+        {
             font-weight: bold;
             margin-bottom: 5px;
         }
+        .product-card 
+        {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add shadow to product container */
+        }
+        
+        .product-image 
+        {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Maintain aspect ratio for the image */
+        }
+
+    
     </style>
 </head>
 
@@ -248,7 +262,7 @@
                     <div class="bg-light rounded h-100 p-4">
                         <div style="border:5px solid rgb(255, 255, 255); padding:30px;">
                             {% for i in messages %}
-                            <p style="text-align:center">{{i}}</p>
+                                <p style="text-align:center">{{i}}</p>
                             {% endfor %}
                             <div>
                                 <h4 style="text-align: center; background-color: rgb(0, 0, 163); color:white; padding:10px; border-radius: 10px;">View All Products</h4>
@@ -274,16 +288,7 @@
                                 <h5>Filter Products</h5>
                                 <form action="AdminViewAllProduct_sort_products" method="post">
                                     {% csrf_token %}
-                                    <!-- <div class="row">
-                                        <div class="column">
-                                            <label>Sorting</label>
-                                            <select name="sorting">
-                                                <option value="null">Optional</option>
-                                                <option value="ascending">Low to High</option>
-                                                <option value="descending">High to Low</option>
-                                            </select>
-                                        </div>
-                                    </div> -->
+                       
                                     <br><label>Sorting</label>
                                     <select name="sorting">
                                         <option value="null">Optional</option>
@@ -291,9 +296,18 @@
                                         <option value="desending">High to Low</option>
                                     </select><br>
 
-                                    <div class="column">
-                                        <label>Price limit</label><br>
-                                        <input type="number" name="limit" placeholder="Enter your limit" step="0.0001" required>
+                                    <div class="row">
+                                        <div class="column">
+                                            <label>Minimum Price limit</label>
+                                            <input type="number" name="min_limit" placeholder="Enter your minimum limit" value="0"  step="0.01" required>
+                                        </div>
+                                    </div>
+                            
+                                    <div class="row">
+                                        <div class="column">
+                                            <label>Maximum Price limit</label>
+                                            <input type="number" name="limit" placeholder="Enter your maximum limit" value="1000"  step="0.01" required>
+                                        </div>
                                     </div>
                             
 
@@ -306,7 +320,7 @@
                                                 </div>
                                                 {% for vendor in vendors %}
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="vendor" value="{{ vendor.ventorcode }}">
+                                                    <input class="form-check-input" type="checkbox" name="vendor" value="{{ vendor.vendorname }}">
                                                     <label class="form-check-label">{{ vendor.ventorcode }}</label>
                                                 </div>
                                                 {% endfor %}
@@ -356,29 +370,27 @@
                             
                             
                             
+ 
                             <div class="col-12">
-                                <div class="row">
+                                <div class="row justify-content-between">
                                     {% for i in product %}
-                                        <div class="card" style="width: 13rem;">
-                                            <img src="{{i.product_image.url}}" class="card-img-top" alt="...">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{i.Product_Name}}</h5>
-                                                <p>MRP : {{i.MRP}}</p>
-                                                <p>Vendor Price : {{i.Vendor_Price}}</p>
-                                                <p>Total price : {{i.Total_GF_price}}</p> 
-                                                <a class="btn btn-primary" href="{% url 'update_product' i.id %}">Update</a>
-                                                <a class="btn btn-warning" href="{% url 'GridAdminDeleteProduct' i.id %}">Delete</a>
+                                        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                                            <div class="card product-card h-100">
+                                                <img src="{{i.product_image.url}}" class="card-img-top product-image" alt="...">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{i.Product_Name}}</h5>
+                                                    {% comment %} <p>MRP: {{i.MRP}}</p> {% endcomment %}
+                                                    <p>Vendor Price: {{i.Vendor_Price}}</p>
+                                                    <p>MRP: {{i.Total_GF_price}}</p>
+                                                    <a class="btn btn-primary" href="{% url 'update_product' i.id %}">Update</a>
+                                                    <a class="btn btn-warning" href="{% url 'GridAdminDeleteProduct' i.id %}">Delete</a>
+                                                </div>
                                             </div>
                                         </div>
                                     {% endfor %}
                                 </div>
-                            </div> 
-
-                            
-
-
-
-
+                            </div>
+        
 
 
                         </div>

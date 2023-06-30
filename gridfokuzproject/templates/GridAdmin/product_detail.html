@@ -206,7 +206,7 @@
                                   <p>Vendor Code: {{product.Vendor.ventorcode}}</p>
                                   <p>Category: {{product.Category}}</p>
                                   <p>Sub Category: {{product.Sub_category}}</p>
-                                  <p>MRP: {{product.MRP}}</p>
+                                  <p>MRP: {{product.Total_GF_price}}</p>
                                   <p>Vendor Price: {{product.Vendor_Price}}</p>
                                   <br>
                                   <a class="btn btn-primary" href="{% url 'update_product' product.id %}">Update</a>
@@ -259,19 +259,5 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

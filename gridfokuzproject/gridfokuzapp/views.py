@@ -21,6 +21,20 @@ from django.conf import settings
 def Index(request):
     return render(request, "General/Index.html")
 
+def shop(request):
+    return render(request, "General/shop.html")
+
+def ourstory(request):
+    return render(request, "General/ourstory.html")
+
+def gallery(request):
+    return render(request, "General/gallery.html")
+
+def contact(request):
+    return render(request, "General/contact.html")
+
+    
+
 def Register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -230,7 +244,7 @@ def GridAdminDeleteProduct(request,id):
     product = AddProducts.objects.get(id=id)
     product.delete()
     messages.info(request, f"{product} Deleted Successfuly...!")
-    return redirect("GridHome")
+    return redirect("AdminViewAllProducts")
 
 def GridSemiAdminDeleteProduct(request,id):
     product = AddProducts.objects.get(id=id)
@@ -3456,6 +3470,12 @@ def html_to_pdf(request, *args, **kwargs):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         price_display = request.POST.get("price_display")
+
+        branding_cost_dis = request.POST.get("branding_cost_dis")
+        branding_cat_dis = request.POST.get("branding_cat_dis")
+        transportation_cost_dis = request.POST.get("transportation_cost_dis")
+        gridfokuz_price_dis = request.POST.get("gridfokuz_price_dis")
+
         # discription_display = request.POST.get("discription_display")
         # temp_discripiton = request.POST.getlist("temp_discripiton")
         profit_percentage = request.POST.getlist("profit_percentage")
@@ -3467,7 +3487,7 @@ def html_to_pdf(request, *args, **kwargs):
         for i,pro_p,barn_co,bran_cat,trans_co,ta in zip(productId, profit_percentage, branding_cost,branding_category, transportation_cost, tax):
             id = int(i)
             item = AddProducts.objects.get(id=id)
-            price_with_profit = float(item.Total_GF_price)+((float(item.Total_GF_price))*(float(pro_p)/100))
+            price_with_profit = float(item.Vendor_Price)+((float(item.Vendor_Price))*(float(pro_p)/100))
             final_price = (price_with_profit+float(barn_co)+float(trans_co))+((price_with_profit+float(barn_co)+float(trans_co))*int(ta)/100)
             item.branding_category = bran_cat
             item.profit_percentage = pro_p
@@ -3490,7 +3510,11 @@ def html_to_pdf(request, *args, **kwargs):
         template_path = 'General/finalPDF.html'
         context = {'product': product, 
                    'STATIC_ROOT': settings.STATIC_ROOT, 
-                   "price_display":price_display}
+                   "price_display":price_display,
+                   "branding_cost_dis":branding_cost_dis,
+                   "branding_cat_dis":branding_cat_dis,
+                   "transportation_cost_dis":transportation_cost_dis,
+                   "gridfokuz_price_dis":gridfokuz_price_dis}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
         template = get_template(template_path)

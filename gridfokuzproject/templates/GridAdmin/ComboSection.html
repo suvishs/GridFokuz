@@ -118,6 +118,22 @@
         .card{
             float:left;
         }
+
+        .img-height-fix
+        {
+            height:200px;
+        }
+
+
+
+        .product-card {
+            height: 100%;
+        }
+                        
+        .product-img {
+            height: 220px;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -274,40 +290,44 @@
                         <form action="/SortedManualCombofinal" method="post">
                             {% csrf_token %}
                             <div class="col-12">
-                              <div class="row">
-                                {% for i in combo_product %}
-                                <div class="card" style="width: 13rem;">
-                                  <img src="{{i.product.product_image.url}}" class="card-img-top" alt="...">
-                                  <div class="card-body">
-                                    <h5 class="card-title">{{i.product.Product_Name}}</h5>
-                                    <p>MRP: {{i.product.MRP}}</p>
-                                    <p>Vendor Price: {{i.product.Vendor_Price}}</p>
-                                    <p>Total price: {{i.product.Total_GF_price}}</p>
-                                    <a href="{% url 'product_detail' i.product.id %}" class="btn btn-primary">View</a>
-                                    <a href="{% url 'Product_Manual_Combo_Del' i.product.id %}" class="btn btn-warning">Delete</a>
-                                    <input type="checkbox" name="manualcombolist" value="{{i.product.id}}" checked>
-                                  </div>
+                                <div class="row">
+                                    {% for i in combo_product %}
+                                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                        <div class="card shadow h-100">
+                                            <div class="aspect-ratio">
+                                                <img src="{{i.product.product_image.url}}" class="card-img-top img-height-fix" alt="...">
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{i.product.Product_Name}}</h5>
+                                                {% comment %} <p>MRP: {{i.product.MRP}}</p> {% endcomment %}
+                                                <p>Vendor Price: {{i.product.Vendor_Price}}</p>
+                                                <p>MRP: {{i.product.Total_GF_price}}</p>
+                                                <a href="{% url 'product_detail' i.product.id %}" class="btn btn-primary">View</a>
+                                                <a href="{% url 'Product_Manual_Combo_Del' i.product.id %}" class="btn btn-warning">Delete</a>
+                                                <input type="checkbox" name="manualcombolist" value="{{i.product.id}}" checked>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <br>
+                                    <div style="padding-top: 20px; padding-bottom: 20px;">
+                                        <div class="d-flex justify-content-between">
+                                            <input class="combobtn btn btn-primary" type="submit" value="Create Combo">
+                                            <a href="DeleteCombo" class="btn btn-danger" style="display:inline-block;">Delete Combo</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <br>
                                 </div>
-                                {% endfor %}
-                                <br>
-                                <div style="padding-top:20px; padding-bottom:20px;">
-                                    <a href="DeleteCombo" class="btn btn-danger" style="display:inline-block;">Delete Combo</a>
-                                </div>
-                                <br>
-                              </div>
                             </div>
-                            <input class="combobtn btn btn-primary" type="submit" value="Create Combo">
                         </form>
-                        <hr>
-                        <hr>
+                        
                         <hr>
                         <h4 style="text-align:center;">Automatic Combo Maker</h4>
-                        <hr>
                         <div class="d-flex flex-column align-items-center comboform">
                             <form action="combo_products" method="post">
                               {% csrf_token %}
                               <div class="d-flex flex-column align-items-center">
-                                <label>Combo limit</label>
                                 <input type="number" name="limit" placeholder="Enter your limit" step="0.0001" required>
                               </div>
                               <div class="d-flex justify-content-center mt-2">
@@ -318,8 +338,7 @@
                           
                           
                           
-                        <hr>
-                        <hr>
+    
                         <hr>
                         <h4 style="text-align:center;">Search Product</h4>
                         <div class="d-flex flex-column align-items-center searchform">
@@ -358,16 +377,7 @@
                             <form action="combo_sort_products" method="post">
                                 {% csrf_token %}
                         
-                                <!-- <div class="row">
-                                    <div class="column">
-                                        <label>Sorting</label>
-                                        <select name="sorting">
-                                            <option value="null">Optional</option>
-                                            <option value="ascending">Low to High</option>
-                                            <option value="descending">High to Low</option>
-                                        </select>
-                                    </div>
-                                </div> -->
+      
 
                                 <br><label>Sorting</label>
                                 <select name="sorting">
@@ -378,8 +388,15 @@
 
                                 <div class="row">
                                     <div class="column">
-                                        <label>Price limit</label><br>
-                                        <input type="number" name="limit" placeholder="Enter your limit" step="0.0001" required>
+                                        <label>Minimum Price limit</label>
+                                        <input type="number" name="min_limit" placeholder="Enter your minimum limit" value="0"  step="0.01" required>
+                                    </div>
+                                </div>
+                        
+                                <div class="row">
+                                    <div class="column">
+                                        <label>Maximum Price limit</label>
+                                        <input type="number" name="limit" placeholder="Enter your maximum limit" value="1000"  step="0.01" required>
                                     </div>
                                 </div>
                                 <br>
@@ -393,7 +410,7 @@
                                             {% for vendor in vendors %}
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="vendor" value="{{ vendor.vendorname }}">
-                                                <label class="form-check-label">{{ vendor.vendorname }}</label>
+                                                <label class="form-check-label">{{ vendor.ventorcode }}</label>
                                             </div>
                                             {% endfor %}
                                         </div>
@@ -443,44 +460,59 @@
                             <h4 style="text-align: center; background-color: rgb(0, 0, 163); color:white; padding:10px; border-radius: 10px;">View All Products</h4>
                         </div> 
                         <div class="col-12">
-                            <div class="row">                       
-                                {% for com in combo %}
-                                    <form action="auto_combo_submit" method="post">
-                                        {% csrf_token %}
-                                        {% for products in com %}
-                                            <div class="col-3">
-                                                <div class="card">
-                                                    <img src="{{products.product_image.url}}" class="card-img-top" alt="...">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">{{products.Product_Name}}</h5>
-                                                        <p>MRP : {{i.MRP}}</p>
-                                                        <p>Vendor Price : {{products.Vendor_Price}}</p>
-                                                        <p>Total price : {{products.Total_GF_price}}</p>
-                                                        <a href="{% url 'product_detail' products.id %}">Details</a>
-                                                        <input type="checkbox" name="combo_prod" value="{{products.id}}" checked>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                        <input type="submit">
-                                    </form>
-                                {% endfor %}
+                            <div class="row">
+                              {% for com in combo %}
+                              <form action="auto_combo_submit" method="post">
+                                {% csrf_token %}
+                                <div class="d-flex justify-content-center align-items-center flex-wrap">
+                                  {% for products in com %}
+                                  <div class="col-3">
+                                    <div class="card">
+                                      <img src="{{products.product_image.url}}" class="card-img-top" alt="Product Image" style="height:150px; width:150px;">
+                                      <div class="card-body" style="font-size: 15px;">
+                                        <h5 class="card-title">{{products.Product_Name}}</h5>
+                                        {% comment %} <p>MRP: {{i.MRP}}</p> {% endcomment %}
+                                        <p>Vendor Price: {{products.Vendor_Price}}</p>
+                                        <p>MRP: {{products.Total_GF_price}}</p>
+                                        <a href="{% url 'product_detail' products.id %}">Details</a>
+                                        <input type="checkbox" name="combo_prod" value="{{products.id}}" checked>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                </div>
+                                <br>
+                                <div class="row justify-content-center mt-3">
+                                  <div class="col-auto">
+                                    <input type="submit" value="Make Combo" class="btn btn-primary">
+                                  </div>
+                                </div>
+                                <br>
+                              </form>
+                              {% endfor %}
                             </div>
-                        </div>
+                          </div>
+
+                          
+                          
                     
+
+                        
+ 
+                        
                         <form action="MakeMaualCombo" method="post">
                             {% csrf_token %}
                             <div class="col-12">
-                                <div class="row">
+                                <div class="row justify-content-between">
                                     {% for i in product %}
-                                        <div class="col-3">
-                                            <div class="card">
-                                                <img src="{{i.product_image.url}}" class="card-img-top" alt="...">
+                                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                            <div class="card product-card shadow">
+                                                <img src="{{i.product_image.url}}" class="card-img-top product-img" alt="Product Image">
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{i.Product_Name}}</h5>
-                                                    <p>MRP: {{i.MRP}}</p>
+                                                    {% comment %} <p>MRP: {{i.MRP}}</p> {% endcomment %}
                                                     <p>Vendor Price: {{i.Vendor_Price}}</p>
-                                                    <p>Total Price: {{i.Total_GF_price}}</p>
+                                                    <p>MRP: {{i.Total_GF_price}}</p>
                                                     <div class="form-group">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="manualcombolist" value="{{i.id}}">
@@ -500,9 +532,10 @@
                             {% else %}
                             <input class="combobtn btn btn-primary" type="submit" value="Make Combo">
                             <button id="sticky-button" class="btn btn-primary" type="submit">Combo</button>
-
                             {% endif %}
                         </form>
+                        
+                        
                         
 
         

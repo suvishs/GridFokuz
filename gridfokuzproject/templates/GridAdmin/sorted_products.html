@@ -42,6 +42,10 @@
             border-radius: 50%;
             font-weight: 800;
         }
+
+        .img-height-fix {
+            height: 200px; /* Adjust the height as per your requirements */
+        }
     </style>
 </head>
 
@@ -194,16 +198,22 @@
                                 <div class="col-12">
                                     <div class="row">
                                         {% for i in product %}
-                                            <div class="card" style="width: 13rem;">
-                                                    <img src="{{i.product_image.url}}" class="card-img-top" alt="...">
+                                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                                <div class="card h-100 shadow border-0">
+                                                    <img src="{{i.product_image.url}}" class="card-img-top img-height-fix" alt="...">
                                                     <div class="card-body">
                                                         <h5 class="card-title">{{i.Product_Name}}</h5>
-                                                        <p>MRP : {{i.MRP}}</p>
-                                                        <p>Vendor Price : {{i.Vendor_Price}}</p>
-                                                        <p>Total price : {{i.Total_GF_price}}</p>
-                                                        <input type="checkbox" name="manualcombolist" value="{{i.id}}">
-                                                        <a href="{% url 'product_detail' i.id %}" class="btn btn-primary">View</a>
+                                                        {% comment %} <p>MRP: {{i.MRP}}</p> {% endcomment %}
+                                                        <p>Vendor Price: {{i.Vendor_Price}}</p>
+                                                        <p>MRP: {{i.Total_GF_price}}</p>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="form-check">
+                                                                <input type="checkbox" name="manualcombolist" value="{{i.id}}" class="form-check-input">
+                                                            </div>
+                                                            <a href="{% url 'product_detail' i.id %}" class="btn btn-primary">View</a>
+                                                        </div>
                                                     </div>
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -213,6 +223,8 @@
                                 <input class="combobtn btn btn-primary" type="submit" value="Make Combo">
                                 <button id="sticky-button" class="btn btn-primary" type="submit">Combo</button>
                             </form>
+                                                        
+                            
                         </div>
                     </div>
                 </div>
@@ -259,20 +271,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

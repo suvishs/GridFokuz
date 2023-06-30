@@ -205,7 +205,6 @@
 
                       <div class="container">
                         <h2 class="text-center">{{ product.Product_Name }}</h2><br>
-                        <a href="/home">Home</a>
                         <div class="card mx-auto" style="width: 25rem;">
                           <img src="{{ product.product_image.url }}" class="card-img-top" alt="{{ product.Product_Name }}">
                           <div class="card-body">
@@ -258,7 +257,7 @@
                                 <input type="file" class="form-control-file" id="product_image" name="product_image" required>
                               </div>
                               <br>
-                              <input type="submit" class="btn btn-primary" onclick="return validateForm()" value="Update">
+                              {% comment %} <input type="submit" class="btn btn-primary" onclick="return validateForm()" value="Update"> {% endcomment %}
                             </form>
                           </div>
                         </div>
