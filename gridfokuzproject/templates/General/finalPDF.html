@@ -13,27 +13,20 @@
       height:150px;
 
     }
-
     .logo_container{
       padding-left: 230px;
       padding-top:400px;
     }
-
-
     .logo_container2
     {
       padding-left:650px;
     }
-
-
   </style>
 </head>
 <body>
-
   <div class="logo_container">
     <img src="static/img/logo3.png" alt="" class="logo">
   </div>
-
   <br>
   <br>
   <br>
@@ -66,25 +59,15 @@
   <br>
   <br>
   <br>
-
-
-
-
-
-
   {% for i in product %}
   <div class="logo_container2">
     <img src="static/img/logo3.png" alt="" height="50px">
   </div>
-
   <hr>
-
   <div class="image_container">
     <img src="{{i.product.product_image.path}}" alt="" width="1000px" height="1000px">
   </div>
-
   <hr>
-
   <br>
     {% if price_display %}
       <div>
@@ -113,11 +96,9 @@
         <br>
         <br>
   {% endfor %}
-
   <br>
   <br>
   <br>
-
   <img src="static/img/temp.png" alt="" class="image4">
 </body>
 </html>

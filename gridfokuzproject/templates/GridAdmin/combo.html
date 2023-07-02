@@ -13,8 +13,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
+  }
     .combotable {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .profit{
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -70,9 +76,22 @@
       <tr>
         <th>Profit Percentage</th>
         <td>
-          <input type="number" id="profit_percentage" name="profit_percentage" value="0" placeholder="Profit Percentage">
+          <select name="profit">
+            <option value="profit_percentage">Profit Percentage</option>
+            <option value="profit_amount">Profit Amount</option>
+          </select>
         </td>
-      </tr>     
+      </tr>   
+      
+      <tr>
+        <td colspan="2">
+          <div class="profit">
+            <input type="number" id="profit" name="profit_input" value="0" placeholder="Profit">
+          </div>
+        </td>
+      </tr>
+      
+
       <tr>
         <th>Branding Cost</th>
         <td>
@@ -131,34 +150,14 @@
 
   {% comment %} <h3>Total Combo Price: {{total_combo_price|floatformat:2}}</h3><br> {% endcomment %}
   <input type="hidden" name="total_combo_price" value="{{total_combo_price}}">
-
-  <div class="pdfbtn">
-    <input type="checkbox" name="price_display" checked>Include all description or not
     <br>
-    <br>
-    <input type="checkbox" name="branding_cost_dis" checked>Branding Cost
-    <br>
-    <br>
-    <input type="checkbox" name="branding_cat_dis" checked>Branding Category
-    <br>
-    <br>
-    <input type="checkbox" name="transportation_cost_dis" checked>Transportation Cost
-    <br>
-    <br>
-    <input type="checkbox" name="gridfokuz_price_dis" checked>Gridfokuz Price
-    <br>
-    <br>
-    
-    <input type="submit" class="btn btn-warning" value="Convert To PDF">
+    <div class="pdfbtn">
+      <input type="submit" class="btn btn-warning" value="View Details">
+    </div>
   </form>
-</div>
 <br>
 <br>
 <br>
-
-  
-  
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-
 </body>
 </html>

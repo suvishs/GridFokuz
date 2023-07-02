@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
 {% load static %}
+<html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Gridfokuz - Admin Panel</title>
@@ -29,7 +30,14 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-
+    <style>
+        .vendorinfo{
+            overflow:scroll;
+        }
+        th,td{
+            text-align:center;
+        }
+    </style>
 </head>
 
 <body>
@@ -71,7 +79,7 @@
                     </div>
                     <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
                     <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                    <a href="AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
+                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
                     <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
                 </div>
             </nav>
@@ -92,10 +100,6 @@
 
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">
-           
-                    </div>
-                    <div class="nav-item dropdown">
-  
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -103,7 +107,8 @@
                             <span class="d-none d-lg-inline-flex">Admin</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-2 rounded-0 rounded-bottom m-0">
-             
+                            <!-- <a href="#" class="dropdown-item">My Profile</a>
+                            <a href="#" class="dropdown-item">Settings</a> -->
                             <a href="logout" class="dropdown-item">Log Out</a>
                         </div>
                     </div>
@@ -112,50 +117,61 @@
             <!-- Navbar End -->
 
 
-
-
             <!-- Blank Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row vh-100 bg-light rounded align-items-center justify-content-center mx-0">
-                    <div class="bg-light rounded h-100 p-4">
-                        <div style="border:5px solid rgb(255, 255, 255); padding:30px;">
-                        <h3 class="mb-4">Add Staffs</h3>
-                        <form action="addstaffs" method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username"
-                                    aria-describedby="emailHelp">
-                        
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password"
-                                    aria-describedby="emailHelp">
-                     
-                            </div>
-                            <div class="mb-3">
-                                <label for="password2" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="password2" name="confirm_password"
-                                    aria-describedby="emailHelp">
-                    
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="module" class="form-label">Choose Staff Status</label>
-                                <select class="form-select" id="module" name="module" aria-describedby="moduleHelp">
-                                    <option value="SemiAdmin">SemiAdmin</option>
-                                    <option value="Employee">Employee</option>
-                                </select>
-                            </div>
-            
-
-                            <button type="submit" class="btn btn-primary">Add Staff</button>
-                        </form>
-                        </div>
+                    <div class="bg-light rounded h-100 p-4 vendorinfo">
+                        <h3 class="mb-4">View All vendors</h3>
+                        {% comment %} <div style="border:5px solid rgb(255, 255, 255); padding:30px;">
+                        <h3 class="mb-4">Add Vendor</h3>
                         {% for i in messages %}
-                           <p>{{i}}</p>
+                            <p style="text-align:center;">{{i}}</p>
                         {% endfor %}
+                        <form action="addventors" method="post">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="vendorname" class="form-label">Vendor Name</label>
+                                <input type="text" class="form-control" id="vendorname" name="vendorname"
+                                    aria-describedby="emailHelp">
+                                <div id="emailHelp" class="form-text">Add new vendor's name here.
+                                </div>
+                            </div>
+                            <br>
+                            <div class="mb-3">
+                                <label for="vendorcode" class="form-label">Vendor Code</label>
+                                <input type="text" class="form-control" id="vendorcode" name="vendorcode"
+                                    aria-describedby="emailHelp">
+                                <div id="emailHelp" class="form-text">Add new vendor's code here.
+                                </div>
+                            </div>
+   
+                            <button type="submit" class="btn btn-primary">Add Vendor</button>
+                        </form>
+                        </div> {% endcomment %}
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="container">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <th>Vendor Name</th>
+                                            <th>Vendor Code</th>
+                                            <th colspan="2">Actions</th>
+                                        </tr>
+                                        {% for i in vendors %}
+                                            <tr>
+                                                <td>{{i.vendorname}}</td>
+                                                <td>{{i.ventorcode}}</td>
+                                                <td><a href="{% url 'updatevendor' i.id %}" class="btn btn-warning">Update</a></td>
+                                                <td><a href="{% url 'deletevendor' i.id %}" class="btn btn-danger">Delete</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>            
@@ -201,52 +217,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% for i in messages %}
-        <p>{{i}}</p>
-    {% endfor %}
-    <h1 style="text-align:center;">Admin Add Staffs</h1><br>
-
-    <a href="GridHome">Home</a><br>
-
-    <form action="addstaffs" method="post">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="username" required><br>
-        <input type="password" name="password" placeholder="password" required><br>
-        <input type="password" name="confirm_password" placeholder="confirmpassword" required><br>
-        <select name="module">
-            <option value="SemiAdmin">SemiAdmin</option>
-            <option value="Employee">Employee</option>
-        </select>
-        <input type="submit">
-    </form>
-</body>
-</html> -->

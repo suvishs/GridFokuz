@@ -33,6 +33,15 @@ def gallery(request):
 def contact(request):
     return render(request, "General/contact.html")
 
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'GridAdmin/user_list.html', {'users': users})
+
+def deleteuser(request,id):
+    user = User.objects.get(id=id)
+    user.delete()
+    return redirect("user_list")
+
     
 
 def Register(request):
@@ -143,7 +152,7 @@ def EmployeeHome(request):
                                          "vendors":vendors,
                                          "limit":limit})
     
-# ---------------------------Addvendors section---------------------------
+# ---------------------------Vendors section---------------------------
 
 def addventors(request):
     if request.method == "POST":
@@ -154,6 +163,30 @@ def addventors(request):
         messages.info(request, "Vendor is added successfuly...")
         return redirect("addventors")
     return render(request, "GridAdmin/addventors.html")
+
+def AdminViewAllVendors(request):
+    vendors = AddVendors.objects.all()
+    return render(request, "GridAdmin/AdminViewAllVendors.html", {"vendors":vendors})
+
+def updatevendor(request,id):
+    vendor = AddVendors.objects.get(id=id)
+    ven_id = vendor.pk
+    print(ven_id)
+    ven_name = vendor.vendorname
+    ven_code = vendor.ventorcode
+    if request.method == "POST":
+        vendorname = request.POST.get("vendorname")
+        vendorcode = request.POST.get("vendorcode")
+        vendor.vendorname = vendorname
+        vendor.ventorcode = vendorcode
+        vendor.save()
+        return redirect("AdminViewAllVendors")
+    return render(request, "GridAdmin/updatevendor.html",{"ven_id":ven_id, "ven_name":ven_name, "ven_code":ven_code})
+
+def deletevendor(request,id):
+    vendor = AddVendors.objects.get(id=id)
+    vendor.delete()
+    return redirect("AdminViewAllVendors")
 
 # ---------------------------Product section---------------------------
 def AdminViewAllProducts(request):
@@ -2836,6 +2869,11 @@ def combo_products(request):
         temp_combo = []
         combo = []
         count = 20
+        product_price = []
+        for i in combo_product:
+            combo_prod = AddProducts.objects.get(id=i.product.id)
+            product_price.append(combo_prod.Total_GF_price)
+        combo_price = sum(product_price)
         if limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2859,12 +2897,16 @@ def combo_products(request):
                         temp_combo = []
                         temp_com_price = []
                 count = count-1
+            for j in combo:
+                if len(j) == 1:
+                    combo.remove(j)
             combo.sort(key=lambda x: len(x), reverse=True)
             return render(request, "GridAdmin/ComboSection.html", {"name":name,"vendors":vendors,
                                                                     "combo_product":combo_product,
                                                                     "product":prod,
                                                                     "combo":combo,
-                                                                    "vendors":vendors})
+                                                                    "vendors":vendors,
+                                                                    "combo_price":combo_price})
         else:
             messages.info(request, "Something went wrong...")
 
@@ -3466,35 +3508,75 @@ def IntermediatePDFsection(request):
     return render(request, "General/IntermediatePDFsection.html")
 
 
-def html_to_pdf(request, *args, **kwargs):
+def html_to_pdf(request):
     if request.method == "POST":
         productId = request.POST.getlist("productId")
-        price_display = request.POST.get("price_display")
-
-        branding_cost_dis = request.POST.get("branding_cost_dis")
-        branding_cat_dis = request.POST.get("branding_cat_dis")
-        transportation_cost_dis = request.POST.get("transportation_cost_dis")
-        gridfokuz_price_dis = request.POST.get("gridfokuz_price_dis")
-
-        # discription_display = request.POST.get("discription_display")
-        # temp_discripiton = request.POST.getlist("temp_discripiton")
-        profit_percentage = request.POST.getlist("profit_percentage")
+        profit = request.POST.getlist("profit")
+        profit_input = request.POST.getlist("profit_input")
         branding_cost = request.POST.getlist("branding_cost")
         branding_category = request.POST.getlist("branding_category")
         transportation_cost = request.POST.getlist("transportation_cost")
         tax = request.POST.getlist("tax")
-
-        for i,pro_p,barn_co,bran_cat,trans_co,ta in zip(productId, profit_percentage, branding_cost,branding_category, transportation_cost, tax):
+        
+        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
             id = int(i)
             item = AddProducts.objects.get(id=id)
-            price_with_profit = float(item.Vendor_Price)+((float(item.Vendor_Price))*(float(pro_p)/100))
-            final_price = (price_with_profit+float(barn_co)+float(trans_co))+((price_with_profit+float(barn_co)+float(trans_co))*int(ta)/100)
+            if prof == "profit_percentage":
+                price_with_profit = float(item.Vendor_Price)+((float(item.Vendor_Price))*(float(pro_in)/100))
+            elif prof == "profit_amount":
+                price_with_profit = float(item.Vendor_Price)+float(pro_in)
+            final_price = (price_with_profit+float(barn_co)+float(trans_co))+((price_with_profit+float(barn_co)+float(trans_co))*float(ta)/100)
             item.branding_category = bran_cat
-            item.profit_percentage = pro_p
+            item.profit_percentage = pro_in
             item.branding_cost = barn_co
             item.transportation_cost = trans_co
             item.tax = ta
             item.final_price = final_price
+            item.profit_type = prof
+            item.save()
+
+        if PDFtemp.objects.filter(usr=request.user).exists():
+            prod = PDFtemp.objects.filter(usr=request.user)
+            prod.delete()
+        for i in productId:
+            j = int(i)
+            pro = AddProducts.objects.get(id=j)
+            temp_prod = PDFtemp(product=pro, usr=request.user)
+            temp_prod.save()
+        products = PDFtemp.objects.filter(usr=request.user)
+        return render(request, "GridAdmin/confirmation.html", {"products":products})
+
+def html_to_pdf_confirm(request, *args, **kwargs):
+    if request.method == "POST":
+        price_display = request.POST.get("price_display")
+        branding_cost_dis = request.POST.get("branding_cost_dis")
+        branding_cat_dis = request.POST.get("branding_cat_dis")
+        transportation_cost_dis = request.POST.get("transportation_cost_dis")
+        gridfokuz_price_dis = request.POST.get("gridfokuz_price_dis")
+        
+        productId = request.POST.getlist("productId")
+        profit = request.POST.getlist("profit")
+        profit_input = request.POST.getlist("profit_input")
+        branding_cost = request.POST.getlist("branding_cost")
+        branding_category = request.POST.getlist("branding_category")
+        transportation_cost = request.POST.getlist("transportation_cost")
+        tax = request.POST.getlist("tax")
+        
+        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
+            id = int(i)
+            item = AddProducts.objects.get(id=id)
+            if prof == "profit_percentage":
+                price_with_profit = float(item.Vendor_Price)+((float(item.Vendor_Price))*(float(pro_in)/100))
+            elif prof == "profit_amount":
+                price_with_profit = float(item.Vendor_Price)+float(pro_in)
+            final_price = (price_with_profit+float(barn_co)+float(trans_co))+((price_with_profit+float(barn_co)+float(trans_co))*float(ta)/100)
+            item.branding_category = bran_cat
+            item.profit_percentage = pro_in
+            item.branding_cost = barn_co
+            item.transportation_cost = trans_co
+            item.tax = ta
+            item.final_price = final_price
+            item.profit_type = prof
             item.save()
 
         if PDFtemp.objects.filter(usr=request.user).exists():
@@ -3506,7 +3588,7 @@ def html_to_pdf(request, *args, **kwargs):
             temp_prod = PDFtemp(product=pro, usr=request.user)
             temp_prod.save()
         product = PDFtemp.objects.filter(usr=request.user)
-        print(product)
+        
         template_path = 'General/finalPDF.html'
         context = {'product': product, 
                    'STATIC_ROOT': settings.STATIC_ROOT, 
@@ -3611,6 +3693,9 @@ def Employee_combo_products(request):
                         temp_combo = []
                         temp_com_price = []
                 count = count-1
+            for j in combo:
+                if len(j) == 1:
+                    combo.remove(j)
             combo.sort(key=lambda x: len(x), reverse=True)
             return render(request, "Employee/Employee_ComboSection.html", {"name":name,
                                                     "combo":combo,
@@ -4245,6 +4330,9 @@ def Customer_combo_products(request):
                         temp_combo = []
                         temp_com_price = []
                 count = count-1
+            for j in combo:
+                if len(j) == 1:
+                    combo.remove(j)
             combo.sort(key=lambda x: len(x), reverse=True)
             return render(request, "Customer/Customer_ComboSection.html", {"name":name,
                                                     "combo":combo,

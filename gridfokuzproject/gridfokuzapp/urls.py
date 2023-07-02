@@ -11,9 +11,14 @@ urlpatterns = [
     path("SemiAdminHome", views.SemiAdminHome, name="SemiAdminHome"),
     path("EmployeeHome", views.EmployeeHome, name="EmployeeHome"),
     path("logout", views.logout, name="logout"),
+    path('users', views.user_list, name='user_list'),
+    path('deleteuser/<int:id>', views.deleteuser, name="deleteuser"),
     
     # -------------------Vendor Section-------------------
     path("addventors", views.addventors, name="addventors"),
+    path("AdminViewAllVendors", views.AdminViewAllVendors, name="AdminViewAllVendors"),
+    path("updatevendor/<int:id>", views.updatevendor, name="updatevendor"),
+    path("deletevendor/<int:id>", views.deletevendor, name="deletevendor"),
     
     # -------------------Vendor Section-------------------
     path("addstaffs", views.addstaffs, name="addstaffs"),
@@ -63,6 +68,7 @@ urlpatterns = [
     # -------------------PDF Section-------------------
     path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
     path('html_to_pdf', views.html_to_pdf, name='convert_to_pdf'),
+    path('html_to_pdf_confirm', views.html_to_pdf_confirm, name='html_to_pdf_confirm'),
     
     # -------------------Employee Combo Section-------------------
     path("Employee_Combo", views.Employee_Combo, name="Employee_Combo"),

@@ -10,7 +10,6 @@ class AddVendors(models.Model):
     def __str__(self): 
         return str(self.vendorname)
     
-
 class AddProducts(models.Model):
     SKU = models.CharField(max_length=10, null=True)
     Vendor = models.ForeignKey(AddVendors ,on_delete=models.SET_NULL, null=True)
@@ -40,6 +39,7 @@ class AddProducts(models.Model):
     branding_cost = models.FloatField(default=0, null=True)
     transportation_cost = models.FloatField(default=0, null=True)
     tax = models.FloatField(null=True)
+    profit_type = models.CharField(max_length=30, null=True)
     
     def __str__(self):
         return self.Product_Name
