@@ -42,7 +42,6 @@ def deleteuser(request,id):
     user.delete()
     return redirect("user_list")
 
-    
 
 def Register(request):
     if request.method == 'POST':
