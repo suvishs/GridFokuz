@@ -303,7 +303,7 @@ def update_product(request,id):
         Category = request.POST.get("Category")
         Sub_category = request.POST.get("Sub_category")
         Product_Name = request.POST.get("Product_Name")
-        MRP = request.POST.get("MRP")
+        Total_GF_price = request.POST.get("Total_GF_price")
         Vendor_Price = request.POST.get("Vendor_Price")
         # Transport1 = request.POST.get("Transport1")
         # Transport2 = request.POST.get("Transport2")
@@ -315,14 +315,17 @@ def update_product(request,id):
         # Tax_in_precentage = request.POST.get("Tax_in_precentage")
         # Tax_amount = request.POST.get("Tax_amount")
         Total_GF_price = request.POST.get("Total_GF_price")
-        product_image = request.FILES["product_image"]
-        
+        try:
+            product_image = request.FILES["product_image"]
+            product.product_image = product_image
+        except:
+            pass
         product.SKU = SKU
         product.Category = Category
         product.Vendor = vendor_name
         product.Sub_category = Sub_category
         product.Product_Name = Product_Name
-        product.MRP = MRP
+        product.Total_GF_price = Total_GF_price
         product.Vendor_Price = Vendor_Price
         # product.Transport1 = Transport1
         # product.Transport2 = Transport2
@@ -334,10 +337,9 @@ def update_product(request,id):
         # product.Tax_in_precentage = Tax_in_precentage
         # product.Tax_amount = Tax_amount
         product.Total_GF_price = Total_GF_price
-        product.product_image = product_image
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
-        return redirect("GridHome")
+        return redirect("AdminViewAllProducts")
     return render(request, "GridAdmin/update_product.html",{"product":product,
                                                   "vendor":vendor})
 
@@ -363,7 +365,11 @@ def GridSemiadminupdate_product(request,id):
         # Tax_in_precentage = request.POST.get("Tax_in_precentage")
         # Tax_amount = request.POST.get("Tax_amount")
         # Total_GF_price = request.POST.get("Total_GF_price")
-        product_image = request.FILES["product_image"]
+        try:
+            product_image = request.FILES["product_image"]
+            product.product_image = product_image
+        except:
+            pass
         
         product.SKU = SKU
         product.Category = Category
@@ -382,7 +388,6 @@ def GridSemiadminupdate_product(request,id):
         # product.Tax_in_precentage = Tax_in_precentage
         # product.Tax_amount = Tax_amount
         # product.Total_GF_price = Total_GF_price
-        product.product_image = product_image
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
         return redirect("SemiAdminHome")

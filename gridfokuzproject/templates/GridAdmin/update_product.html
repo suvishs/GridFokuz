@@ -86,8 +86,7 @@
                   </div>
                   <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
                   <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                  <a href="AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
-                  <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
+
               </div>
           </nav>
       </div>
@@ -219,7 +218,7 @@
                               <div class="form-group">
                                 <label for="Vendor">Vendor</label>
                                 <select class="form-control" id="Vendor" name="Vendor">
-                                  <option value="none">Select Vendor</option>
+                                  <option value="{{ product.Vendor.vendorname }}">{{ product.Vendor.vendorname }}</option>
                                   {% for i in vendor %}
                                     <option value="{{ i.vendorname }}">{{ i.vendorname }}</option>
                                   {% endfor %}
@@ -243,7 +242,7 @@
                     
                               <div class="form-group">
                                 <label for="MRP">MRP</label>
-                                <input type="number" class="form-control" id="MRP" name="MRP" placeholder="MRP" step="0.0001" value="{{ product.MRP }}" required>
+                                <input type="number" class="form-control" id="MRP" name="Total_GF_price" placeholder="MRP" step="0.0001" value="{{ product.Total_GF_price }}" required>
                               </div>
                     
                               <div class="form-group">
@@ -255,26 +254,14 @@
                     
                               <div class="form-group">
                                 <label for="product_image">Product Image</label>
-                                <input type="file" class="form-control-file" id="product_image" name="product_image" required>
+                                <input type="file" class="form-control-file" name="product_image">
                               </div>
                               <br>
-                              {% comment %} <input type="submit" class="btn btn-primary" onclick="return validateForm()" value="Update"> {% endcomment %}
+                              <input type="submit" class="btn btn-primary" value="Update"> 
                             </form>
                           </div>
                         </div>
                       </div>
-    
-                      <script>
-                          function validateForm() {
-                            var selectBox = document.getElementsByName("Vendor")[0];
-                            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-                            if (selectedValue === "none") {
-                              alert("Please select a vendor.");
-                              return false;
-                            }
-                            return true;
-                          }
-                          </script>
                     </div>
                   </div>
                 </div>
