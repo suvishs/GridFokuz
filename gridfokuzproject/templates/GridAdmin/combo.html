@@ -61,17 +61,6 @@
           {{i.Vendor_Price}}
         </td>
       </tr>
-      <!-- <tr>
-        <th>Total price</th>
-        <td class="Total_GF_price">
-          {{i.Total_GF_price}}
-        </td>
-      </tr> -->
-      {% comment %} <tr>
-        <th>Discription</th>
-        <td>
-          <textarea type="text" name="temp_discription" placeholder="Enter Discription"></textarea>
-        </td> {% endcomment %}
       </tr>
       <tr>
         <th>Profit Percentage</th>
@@ -91,7 +80,6 @@
         </td>
       </tr>
       
-
       <tr>
         <th>Branding Cost</th>
         <td>
@@ -147,9 +135,6 @@
     {% endfor %}
 </div>
 <br>
-
-  {% comment %} <h3>Total Combo Price: {{total_combo_price|floatformat:2}}</h3><br> {% endcomment %}
-  <input type="hidden" name="total_combo_price" value="{{total_combo_price}}">
     <br>
     <div class="pdfbtn">
       <input type="submit" class="btn btn-warning" value="View Details">

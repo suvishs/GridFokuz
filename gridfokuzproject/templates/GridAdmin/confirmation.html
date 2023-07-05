@@ -64,7 +64,7 @@
                                 <td>{{i.product.Sub_category}}</td>
                                 <td>{{i.product.Product_Name}}</td>
                                 <td>{{i.product.MRP}}</td>
-                                <td>{{i.product.Vendor_Price}}</td>
+                                <td id="Vendor_Price">{{i.product.Vendor_Price}}</td>
                                 <td>
                                     <select name="branding_category">
                                         <option value="{{i.product.branding_category}}">{{i.product.branding_category}}</option>
@@ -84,7 +84,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="profit">
+                                    <select class="profit-select" name="profit">
                                         <option value="{{i.product.profit_type}}">{{i.product.profit_type}}</option>
                                         {% if i.product.profit_type == "profit_percentage" %}
                                             <option value="profit_amount">Profit Amount</option>
@@ -94,17 +94,17 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="profit_input" value="{{i.product.profit_percentage}}" placeholder="Profit">
+                                    <input class="profit-input" type="number" name="profit_input" value="{{i.product.profit_percentage}}" placeholder="Profit">
                                 </td>
                                 <td>
-                                    <input type="number" name="branding_cost" value="{{i.product.branding_cost}}" placeholder="Branding Cost" required>
+                                    <input class="branding-cost-input" type="number" name="branding_cost" value="{{i.product.branding_cost}}" placeholder="Branding Cost" required>
                                 </td>
                                 <td>
-                                    <input type="number" name="transportation_cost" value="{{i.product.transportation_cost}}" placeholder="Transportation Cost" required>
+                                    <input class="transportation-cost-input" type="number" name="transportation_cost" value="{{i.product.transportation_cost}}" placeholder="Transportation Cost" required>
                                 </td>
                                 <td>
-                                    <select id="tax" name="tax">
-                                        <option value="{{i.product.tax}}">{{i.product.tax}}<option>
+                                    <select class="tax-select" name="tax">
+                                        <option value="{{i.product.tax}}">{{i.product.tax}}</option>
                                         <option value="0">0%</option>
                                         <option value="5">5%</option>
                                         <option value="12">12%</option>
@@ -112,9 +112,8 @@
                                         <option value="28">28%</option>
                                     </select>
                                 </td>
-                                <td>
+                                <td class="final-price">
                                     {{i.product.final_price}}
-                                    <input type="hidden" name="productId" value="{{i.product.id}}">
                                 </td>
                             </tr>
                         {% endfor %}
@@ -147,7 +146,6 @@
             </div>
         </div>
     </form>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   </body>
 </html>
