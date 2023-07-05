@@ -370,11 +370,9 @@
                                                 <img src="{{i.product_image.url}}" class="card-img-top product-image" alt="...">
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{i.Product_Name}}</h5>
-                                                    {% comment %} <p>MRP: {{i.MRP}}</p> {% endcomment %}
                                                     <p>Vendor Price: {{i.Vendor_Price}}</p>
                                                     <p>MRP: {{i.Total_GF_price}}</p>
-                                                    <a class="btn btn-primary" href="{% url 'update_product' i.id %}">Update</a>
-                                                    <a class="btn btn-warning" href="{% url 'GridAdminDeleteProduct' i.id %}">Delete</a>
+                                                    <a href="{% url 'Employee_product_detail' i.id %}" class="btn btn-primary">View</a>
                                                 </div>
                                             </div>
                                         </div>

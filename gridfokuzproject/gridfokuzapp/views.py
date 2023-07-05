@@ -3554,18 +3554,29 @@ def html_to_pdf(request):
 def html_to_pdf_confirm(request, *args, **kwargs):
     if request.method == "POST":
         price_display = request.POST.get("price_display")
+        # print('1',price_display)
         branding_cost_dis = request.POST.get("branding_cost_dis")
+        # print('2',branding_cost_dis)
         branding_cat_dis = request.POST.get("branding_cat_dis")
+        # print('3',branding_cat_dis)
         transportation_cost_dis = request.POST.get("transportation_cost_dis")
+        # print('4',transportation_cost_dis)
         gridfokuz_price_dis = request.POST.get("gridfokuz_price_dis")
-        
+        # print('5',gridfokuz_price_dis)
         productId = request.POST.getlist("productId")
+        # print('6',productId)
         profit = request.POST.getlist("profit")
+        # print('7',profit)
         profit_input = request.POST.getlist("profit_input")
+        # print('8',profit_input)
         branding_cost = request.POST.getlist("branding_cost")
+        # print('9',branding_cost)
         branding_category = request.POST.getlist("branding_category")
+        # print('10',branding_category)
         transportation_cost = request.POST.getlist("transportation_cost")
+        # print('11',transportation_cost)
         tax = request.POST.getlist("tax")
+        # print('12',tax)
         
         for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
             id = int(i)

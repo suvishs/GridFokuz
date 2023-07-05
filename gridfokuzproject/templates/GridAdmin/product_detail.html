@@ -209,8 +209,8 @@
                                   <p>MRP: {{product.Total_GF_price}}</p>
                                   <p>Vendor Price: {{product.Vendor_Price}}</p>
                                   <br>
-                                  <a class="btn btn-primary" href="{% url 'update_product' product.id %}">Update</a>
-                                  <a class="btn btn-primary" href="{% url 'GridAdminDeleteProduct' product.id %}">Delete</a>
+                                  <a class="btn btn-warning" href="{% url 'update_product' product.id %}">Update</a>
+                                  <a class="btn btn-danger" href="{% url 'GridAdminDeleteProduct' product.id %}">Delete</a>
                                 </div>  
                             </div>
                         </div>
