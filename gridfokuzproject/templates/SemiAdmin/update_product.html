@@ -20,7 +20,7 @@
                 <input type="text" name="SKU" placeholder="SKU" value="{{product.SKU}}" required><br><br>
         
                 <select name="Vendor">
-                    <option value="none">Select Vendor</option>
+                    <option value="{{product.Vendor.vendorname}}">{{product.Vendor.vendorname}}</option>
                     {% for i in vendor %}
                       <option value="{{ i.vendorname }}">{{ i.vendorname }}</option>
                     {% endfor %}
@@ -62,7 +62,6 @@
             </form>
         </div>
     </div>
-
 
     <script>
         function validateForm() {

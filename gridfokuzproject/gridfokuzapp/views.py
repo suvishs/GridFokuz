@@ -3668,6 +3668,7 @@ def Employee_combo_products(request):
     if request.method == "POST":
         vendors = AddVendors.objects.all()
         all_product = AddProducts.objects.all()
+        prod = AddProducts.objects.all()
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -3702,9 +3703,18 @@ def Employee_combo_products(request):
                 if len(j) == 1:
                     combo.remove(j)
             combo.sort(key=lambda x: len(x), reverse=True)
+            combo_product = ManualComboTemp.objects.filter(usr=request.user)
+            product_price = []
+            for i in combo_product:
+                combo_prod = AddProducts.objects.get(id=i.product.id)
+                product_price.append(combo_prod.Total_GF_price)
+            combo_price = sum(product_price)
             return render(request, "Employee/Employee_ComboSection.html", {"name":name,
                                                     "combo":combo,
-                                                    "vendors":vendors})
+                                                    "product":prod,
+                                                    "vendors":vendors,
+                                                    "combo_product":combo_product,
+                                                    "combo_price":combo_price})
         else:
             messages.info(request, "Something went wrong...")
 
