@@ -154,6 +154,12 @@ def EmployeeHome(request):
 # ---------------------------Vendors section---------------------------
 
 def addventors(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         vendorname = request.POST.get("vendorname")
         vendorcode = request.POST.get("vendorcode")
@@ -161,13 +167,25 @@ def addventors(request):
         vendor.save()
         messages.info(request, "Vendor is added successfuly...")
         return redirect("addventors")
-    return render(request, "GridAdmin/addventors.html")
+    return render(request, "GridAdmin/addventors.html", {"is_admin":is_admin})
 
 def AdminViewAllVendors(request):
     vendors = AddVendors.objects.all()
-    return render(request, "GridAdmin/AdminViewAllVendors.html", {"vendors":vendors})
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    return render(request, "GridAdmin/AdminViewAllVendors.html", {"vendors":vendors, "is_admin":is_admin})
 
 def updatevendor(request,id):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     vendor = AddVendors.objects.get(id=id)
     ven_id = vendor.pk
     print(ven_id)
@@ -180,7 +198,7 @@ def updatevendor(request,id):
         vendor.ventorcode = vendorcode
         vendor.save()
         return redirect("AdminViewAllVendors")
-    return render(request, "GridAdmin/updatevendor.html",{"ven_id":ven_id, "ven_name":ven_name, "ven_code":ven_code})
+    return render(request, "GridAdmin/updatevendor.html",{"ven_id":ven_id, "ven_name":ven_name, "ven_code":ven_code, "is_admin":is_admin})
 
 def deletevendor(request,id):
     vendor = AddVendors.objects.get(id=id)
@@ -189,6 +207,12 @@ def deletevendor(request,id):
 
 # ---------------------------Product section---------------------------
 def AdminViewAllProducts(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     name = request.user
     product = AddProducts.objects.all()
     vendors = AddVendors.objects.all()
@@ -197,7 +221,8 @@ def AdminViewAllProducts(request):
     return render(request, "GridAdmin/AdminViewAllProducts.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
 
 def EmployeeViewAllProducts(request):
     name = request.user
@@ -223,6 +248,12 @@ def CustomerViewAllProducts(request):
 
 def addproducts(request):
     vendor = AddVendors.objects.all()
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         SKU = request.POST.get("SKU")
         Vendor = request.POST.get("Vendor")
@@ -270,7 +301,7 @@ def addproducts(request):
         product.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
         return redirect("addproducts")
-    return render(request, "GridAdmin/addproducts.html",{"vendor":vendor})
+    return render(request, "GridAdmin/addproducts.html",{"vendor":vendor, "is_admin":is_admin})
 
 def GridAdminDeleteProduct(request,id):
     product = AddProducts.objects.get(id=id)
@@ -285,14 +316,26 @@ def GridSemiAdminDeleteProduct(request,id):
     return redirect("SemiAdminHome")
 
 def product_detail(request,id):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     product = AddProducts.objects.get(id=id)
-    return render(request, "GridAdmin/product_detail.html",{"product":product})
+    return render(request, "GridAdmin/product_detail.html",{"product":product, "is_admin":is_admin})
 
 def SemiAdminProductDetail(request,id):
     product = AddProducts.objects.get(id=id)
     return render(request, "SemiAdmin/SemiAdminProductDetail.html",{"product":product})
 
 def update_product(request,id):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     vendor = AddVendors.objects.all()
     product = AddProducts.objects.get(id=id)
     if request.method == "POST":
@@ -340,7 +383,8 @@ def update_product(request,id):
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
         return redirect("AdminViewAllProducts")
     return render(request, "GridAdmin/update_product.html",{"product":product,
-                                                  "vendor":vendor})
+                                                  "vendor":vendor,
+                                                  "is_admin":is_admin})
 
 def GridSemiadminupdate_product(request,id):
     vendor = AddVendors.objects.all()
@@ -418,6 +462,12 @@ def product_list(request):
                                          "limit":limit})
 
 def AdminViewAll_product_list(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all()
@@ -429,13 +479,15 @@ def AdminViewAll_product_list(request):
         return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
     else:
         product = AddProducts.objects.all()
         return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
 def EmployeeViewAll_product_list(request):
     query = request.GET.get('search')
@@ -520,6 +572,12 @@ def Customer_product_list(request):
 # ---------------------------Filtering section---------------------------
 
 def sort_products(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         all_product = AddProducts.objects.all()
         name = request.user
@@ -580,7 +638,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -593,13 +652,15 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif selected_vendors and category:
             for i in selected_vendors:
@@ -629,7 +690,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -642,14 +704,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
+                                         "limit":limit,
+                                         "is_admin":is_admin})   
          
         elif selected_vendors and sub_category:
             for i in selected_vendors:
@@ -679,7 +743,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -692,14 +757,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
+                                         "limit":limit,
+                                         "is_admin":is_admin})    
         
         elif category and sub_category:
             for lmt in all_product:
@@ -729,7 +796,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -742,14 +810,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif category:
             for lmt in all_product:
@@ -774,7 +844,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -787,14 +858,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif sub_category:
             for lmt in all_product:
@@ -819,7 +892,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -832,14 +906,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif selected_vendors:
             for i in selected_vendors:
@@ -864,7 +940,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -877,14 +954,16 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif limit:
             for lmt in all_product:
@@ -905,7 +984,8 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -918,19 +998,27 @@ def sort_products(request):
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         else:
             messages.info(request, "Something went wrong...")
     return redirect("GridHome")
 
 def AdminViewAllProduct_sort_products(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         all_product = AddProducts.objects.all()
         name = request.user
@@ -979,7 +1067,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -991,13 +1080,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif selected_vendors and category:
             for i in selected_vendors:
@@ -1026,7 +1117,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -1038,13 +1130,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
+                                         "limit":limit,
+                                         "is_admin":is_admin})   
          
         elif selected_vendors and sub_category:
             for i in selected_vendors:
@@ -1073,7 +1167,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -1085,13 +1180,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
+                                         "limit":limit,
+                                         "is_admin":is_admin})    
         
         elif category and sub_category:
             for lmt in all_product:
@@ -1120,7 +1217,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -1132,13 +1230,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif category:
             for lmt in all_product:
@@ -1162,7 +1262,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -1174,13 +1275,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif sub_category:
             for lmt in all_product:
@@ -1204,7 +1307,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -1216,13 +1320,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif selected_vendors:
             for i in selected_vendors:
@@ -1246,7 +1352,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -1258,13 +1365,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         
         elif limit:
             for lmt in all_product:
@@ -1284,7 +1393,8 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -1296,13 +1406,15 @@ def AdminViewAllProduct_sort_products(request):
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
         else:
             messages.info(request, "Something went wrong...")
     return redirect("GridHome")
@@ -2825,6 +2937,12 @@ def Customer_sort_products(request):
 # ---------------------------Combo section---------------------------
 
 def Combo(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     name = request.user
     product = AddProducts.objects.all()
     vendors = AddVendors.objects.all()
@@ -2842,11 +2960,18 @@ def Combo(request):
                                                 "vendors":vendors,
                                                 "limit":limit,
                                                 "combo_product":combo_product,
-                                                "combo_price":combo_price})
+                                                "combo_price":combo_price,
+                                                "is_admin":is_admin})
 
 def HomeSortedManualCombo(request):
     combo = []
     combo_price = []
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         # print(manualcombolist)
@@ -2856,10 +2981,16 @@ def HomeSortedManualCombo(request):
             combo.append(prod)
             combo_price.append(prod.Total_GF_price)
         total_combo_price = sum(combo_price)
-        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price, "is_admin":is_admin})
     return redirect("GridHome")
 
 def combo_products(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     name = request.user
     if request.method == "POST":
         combo_product = ManualComboTemp.objects.filter(usr=request.user)
@@ -2910,13 +3041,20 @@ def combo_products(request):
                                                                     "product":prod,
                                                                     "combo":combo,
                                                                     "vendors":vendors,
-                                                                    "combo_price":combo_price})
+                                                                    "combo_price":combo_price,
+                                                                    "is_admin":is_admin})
         else:
             messages.info(request, "Something went wrong...")
 
     return redirect("Combo")
 
 def ManualCombo(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     name = request.user
     products = AddProducts.objects.all()
     vendors = AddVendors.objects.all()
@@ -2933,7 +3071,8 @@ def ManualCombo(request):
                                          "product":products,
                                          "vendors":vendors,
                                          "limit":limit,
-                                         "combo_price":combo_price})
+                                         "combo_price":combo_price,
+                                         "is_admin":is_admin})
     
 def MakeMaualCombo(request):
     if request.method == "POST":
@@ -2958,6 +3097,12 @@ def Product_Manual_Combo_Del(request,id):
     return redirect("Combo")
 
 def combo_product_list(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all()
@@ -2977,7 +3122,8 @@ def combo_product_list(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
     else:
         product = AddProducts.objects.all()
         return render(request, "GridAdmin/ComboSection.html",{"name":name,
@@ -2985,9 +3131,16 @@ def combo_product_list(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
 
 def combo_sort_products(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     name = request.user
     vendors = AddVendors.objects.all()
     prod = AddProducts.objects.all()
@@ -3051,7 +3204,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -3066,7 +3220,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
@@ -3075,7 +3230,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
         
         elif selected_vendors and category:
             for i in selected_vendors:
@@ -3107,7 +3263,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -3122,7 +3279,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":cat_list})   
@@ -3131,7 +3289,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
          
         elif selected_vendors and sub_category:
             for i in selected_vendors:
@@ -3163,7 +3322,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -3178,7 +3338,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final}) 
@@ -3187,7 +3348,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})   
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})   
         
         elif category and sub_category:
             for lmt in all_product:
@@ -3219,7 +3381,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -3234,7 +3397,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
@@ -3243,7 +3407,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
         
         elif category:
             for lmt in all_product:
@@ -3270,7 +3435,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in cat_list:
                         items = AddProducts.objects.get(id=i.id)
@@ -3285,7 +3451,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":cat_list})
@@ -3294,7 +3461,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
 
         elif sub_category:
             for lmt in all_product:
@@ -3321,7 +3489,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in final:
                         items = AddProducts.objects.get(id=i.id)
@@ -3336,7 +3505,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":final})
@@ -3345,7 +3515,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
         
         elif selected_vendors:
             for i in selected_vendors:
@@ -3372,7 +3543,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -3387,7 +3559,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":product})
@@ -3396,7 +3569,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
         
         elif limit:
             for lmt in all_product:
@@ -3419,7 +3593,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 elif sorting == "desending":
                     for i in product:
                         items = AddProducts.objects.get(id=i.id)
@@ -3434,7 +3609,8 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             # return render(request, "ComboSection.html",{"product":product})
@@ -3443,12 +3619,19 @@ def combo_sort_products(request):
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})
+                                                    "combo_price":combo_price,
+                                                    "is_admin":is_admin})
         else:
             messages.info(request, "Something went wrong...")
     return redirect("Combo")
      
 def SortedManualCombofinal(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups) 
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -3459,7 +3642,7 @@ def SortedManualCombofinal(request):
             combo.append(prod)
             combo_price.append(prod.Total_GF_price)
         total_combo_price = sum(combo_price)
-        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price})
+        return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price, "is_admin":is_admin})
 
 def AddToManualCombo(request,id):
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():

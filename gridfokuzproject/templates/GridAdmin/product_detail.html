@@ -86,13 +86,17 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="/addventors" class="dropdown-item">Vendors</a>
                             <a href="/addproducts" class="dropdown-item">Products</a>
-                            <a href="/addstaffs" class="dropdown-item">Staffs</a>
+                            {% if is_admin %}
+                                <a href="addstaffs" class="dropdown-item">Staffs</a>
+                            {% endif %}
                         </div>
                     </div>
                     <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
                     <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
                     <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
-                    <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
+                    {% if is_admin %}
+                        <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
+                    {% endif %}
                 </div>
             </nav>
         </div>
