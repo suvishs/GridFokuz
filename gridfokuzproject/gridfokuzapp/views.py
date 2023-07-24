@@ -13,6 +13,7 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 
