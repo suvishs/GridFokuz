@@ -87,11 +87,11 @@
                       </div>
                   </div>
                   <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
-                  <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                  <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
-                    {% if is_admin %}
-                        <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
-                    {% endif %}
+                  <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>View Products</a>
+                  <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-store me-2"></i>View Vendors</a>
+                  {% if is_admin %}
+                      <a href="/users" class="nav-item nav-link"><i class="fa fa-user me-2"></i>View Users</a>
+                  {% endif %}
               </div>
           </nav>
       </div>
@@ -176,7 +176,7 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/logo3.png" alt="" style="width: 40px; height: 40px;">
+                            <img class="rounded-circle me-lg-2" src="{% static 'img/logo3.png' %}" alt="" style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">Admin</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-2 rounded-0 rounded-bottom m-0">
@@ -211,7 +211,9 @@
                       <div class="container">
                         <h2 class="text-center">{{ product.Product_Name }}</h2><br>
                         <div class="card mx-auto" style="width: 25rem;">
-                          <img src="{{ product.product_image.url }}" class="card-img-top" alt="{{ product.Product_Name }}">
+                            <a href="{{ product.product_image.url }}" target="_blank">
+                                <img src="{{ product.product_image.url }}" class="card-img-top" alt="{{ product.Product_Name }}">
+                            </a>
                           <div class="card-body">
                             <form action="{% url 'update_product' product.id %}" method="post" enctype="multipart/form-data">
                               {% csrf_token %}
@@ -264,6 +266,7 @@
                               <br>
                               <input type="submit" class="btn btn-primary" value="Update"> 
                             </form>
+
                           </div>
                         </div>
                       </div>

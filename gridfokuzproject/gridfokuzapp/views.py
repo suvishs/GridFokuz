@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
-from .models import AddVendors, AddProducts, ManualComboTemp, PDFtemp
+from .models import AddVendors, AddProducts, ManualComboTemp, PDFtemp, Logo
 from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
@@ -10,7 +10,7 @@ from io import BytesIO
 from xhtml2pdf import pisa
 import pdfkit
 from django.conf import settings
-from django.template.loader import get_template 
+from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 
@@ -44,39 +44,45 @@ def deleteuser(request,id):
 
 
 def Register(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirmpassword = request.POST.get('confirm_password')
+    try:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            confirmpassword = request.POST.get('confirm_password')
 
-        if password == confirmpassword:
-            if User.objects.filter(username=username).exists():
-                messages.info(request, "Username already Taken")
-            elif User.objects.filter(email=email).exists():
-                messages.info(request, "Email Id is already Exists...")
+            if password == confirmpassword:
+                if User.objects.filter(username=username).exists():
+                    messages.info(request, "Username already Taken")
+                elif User.objects.filter(email=email).exists():
+                    messages.info(request, "Email Id is already Exists...")
+                else:
+                    user = User.objects.create_user(username=username, password=password, email=email)
+                    user.save()
+                    messages.info(request, "User Successfuly created...")
+                    return redirect('Usrlogin')
             else:
-                user = User.objects.create_user(username=username, password=password, email=email)
-                user.save()
-                messages.info(request, "User Successfuly created...")
-                return redirect('Usrlogin')
-        else:
-            messages.info(request, "Both password is not matching")
-            return redirect('Register')
-    return render(request, 'General/Register.html')
+                messages.info(request, "Both password is not matching")
+                return redirect('Register')
+        return render(request, 'General/Register.html')
+    except PermissionDenied as e:
+        return render(request, 'General/error_page.html', {'error_message': str(e)})
 
 def Usrlogin(request):
-    if request.method == 'POST':
-        username=request.POST['username']
-        password=request.POST['password']
-        user=auth.authenticate(username=username,password=password)
-        if user is not None:
-            auth.login(request,user)
-            return redirect('home')
-        else:
-            messages.info(request, "Username or Password Is Wrong...")
-            return redirect('Usrlogin')
-    return render(request, 'General/Usrlogin.html')
+    try:
+        if request.method == 'POST':
+            username=request.POST['username']
+            password=request.POST['password']
+            user=auth.authenticate(username=username,password=password)
+            if user is not None:
+                auth.login(request,user)
+                return redirect('home')
+            else:
+                messages.info(request, "Username or Password Is Wrong...")
+                return redirect('Usrlogin')
+        return render(request, 'General/Usrlogin.html')
+    except PermissionDenied as e:
+        return render(request, 'General/error_page.html', {'error_message': str(e)})
 
 def logout(request):
     auth.logout(request)
@@ -84,19 +90,21 @@ def logout(request):
 
 # ---------------------------Add Staffs---------------------------
 def addstaffs(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         confirmpassword = request.POST.get('confirm_password')
         print(password,confirmpassword)
-        module = request.POST.get('module')  
+        module = request.POST.get('module')
         if password == confirmpassword:
             if User.objects.filter(username=username).exists():
                 return HttpResponse("Username Already Exist")
             else:
                 user = User.objects.create_user(username=username, password=password)
-                group = Group.objects.get(name=module)  
-                user.groups.add(group)  
+                group = Group.objects.get(name=module)
+                user.groups.add(group)
                 user.save()
                 messages.info(request, f"{module} With Username {username} Created Successfuly...!")
                 return render(request, 'GridAdmin/addstaffs.html')
@@ -108,9 +116,11 @@ def addstaffs(request):
 
 @Admin_only
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Customer/home.html", {"name":name,
@@ -119,9 +129,11 @@ def home(request):
                                          "limit":limit})
 
 def GridHome(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/GridHome.html", {"name":name,
@@ -130,33 +142,39 @@ def GridHome(request):
                                          "limit":limit})
 
 def SemiAdminHome(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "SemiAdmin/SemiAdminHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-    
+
 def EmployeeHome(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-    
+
 # ---------------------------Vendors section---------------------------
 
 def addventors(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -170,19 +188,23 @@ def addventors(request):
     return render(request, "GridAdmin/addventors.html", {"is_admin":is_admin})
 
 def AdminViewAllVendors(request):
-    vendors = AddVendors.objects.all()
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     return render(request, "GridAdmin/AdminViewAllVendors.html", {"vendors":vendors, "is_admin":is_admin})
 
 def updatevendor(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -201,21 +223,25 @@ def updatevendor(request,id):
     return render(request, "GridAdmin/updatevendor.html",{"ven_id":ven_id, "ven_name":ven_name, "ven_code":ven_code, "is_admin":is_admin})
 
 def deletevendor(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     vendor = AddVendors.objects.get(id=id)
     vendor.delete()
     return redirect("AdminViewAllVendors")
 
 # ---------------------------Product section---------------------------
 def AdminViewAllProducts(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/AdminViewAllProducts.html", {"name":name,
@@ -225,20 +251,24 @@ def AdminViewAllProducts(request):
                                          "is_admin":is_admin})
 
 def EmployeeViewAllProducts(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeViewAllProducts.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-    
+
 def CustomerViewAllProducts(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Customer/CustomerViewAllProducts.html", {"name":name,
@@ -247,10 +277,12 @@ def CustomerViewAllProducts(request):
                                          "limit":limit})
 
 def addproducts(request):
-    vendor = AddVendors.objects.all()
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    vendor = AddVendors.objects.all().order_by('vendorname')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -304,21 +336,27 @@ def addproducts(request):
     return render(request, "GridAdmin/addproducts.html",{"vendor":vendor, "is_admin":is_admin})
 
 def GridAdminDeleteProduct(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     product.delete()
     messages.info(request, f"{product} Deleted Successfuly...!")
     return redirect("AdminViewAllProducts")
 
 def GridSemiAdminDeleteProduct(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     product.delete()
     messages.info(request, f"{product} Deleted Successfuly...!")
     return redirect("SemiAdminHome")
 
 def product_detail(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -326,17 +364,21 @@ def product_detail(request,id):
     return render(request, "GridAdmin/product_detail.html",{"product":product, "is_admin":is_admin})
 
 def SemiAdminProductDetail(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     return render(request, "SemiAdmin/SemiAdminProductDetail.html",{"product":product})
 
 def update_product(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
-    vendor = AddVendors.objects.all()
+    vendor = AddVendors.objects.all().order_by('vendorname')
     product = AddProducts.objects.get(id=id)
     if request.method == "POST":
         SKU = request.POST.get("SKU")
@@ -387,7 +429,9 @@ def update_product(request,id):
                                                   "is_admin":is_admin})
 
 def GridSemiadminupdate_product(request,id):
-    vendor = AddVendors.objects.all()
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    vendor = AddVendors.objects.all().order_by('vendorname')
     product = AddProducts.objects.get(id=id)
     if request.method == "POST":
         SKU = request.POST.get("SKU")
@@ -413,7 +457,7 @@ def GridSemiadminupdate_product(request,id):
             product.product_image = product_image
         except:
             pass
-        
+
         product.SKU = SKU
         product.Category = Category
         product.Vendor = vendor_name
@@ -438,14 +482,18 @@ def GridSemiadminupdate_product(request,id):
                                                   "vendor":vendor})
 
 def delete_product(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     return render(request, "GridAdmin/delete_product.html",{"product":product})
 
 def product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -455,23 +503,25 @@ def product_list(request):
                                          "vendors":vendors,
                                          "limit":limit})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "GridAdmin/GridHome.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
 
 def AdminViewAll_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -482,18 +532,20 @@ def AdminViewAll_product_list(request):
                                          "limit":limit,
                                          "is_admin":is_admin})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
 def EmployeeViewAll_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -503,17 +555,19 @@ def EmployeeViewAll_product_list(request):
                                          "vendors":vendors,
                                          "limit":limit})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
 def CustomerViewAll_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -523,17 +577,19 @@ def CustomerViewAll_product_list(request):
                                          "vendors":vendors,
                                          "limit":limit})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
 
 def Employee_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -543,17 +599,19 @@ def Employee_product_list(request):
                                          "vendors":vendors,
                                          "limit":limit})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "Employee/EmployeeHome.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
 def Customer_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     if query:
@@ -563,25 +621,27 @@ def Customer_product_list(request):
                                          "vendors":vendors,
                                          "limit":limit})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "Customer/home.html",{"name":name,
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
 # ---------------------------Filtering section---------------------------
 
 def sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
-        vendors = AddVendors.objects.all()
+        vendors = AddVendors.objects.all().order_by('vendorname')
         sorting = request.POST.get('sorting')
         print(sorting)
         selected_vendors = request.POST.getlist('vendor')
@@ -661,7 +721,7 @@ def sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -713,8 +773,8 @@ def sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit,
-                                         "is_admin":is_admin})   
-         
+                                         "is_admin":is_admin})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -766,8 +826,8 @@ def sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit,
-                                         "is_admin":is_admin})    
-        
+                                         "is_admin":is_admin})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -820,7 +880,7 @@ def sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -868,7 +928,7 @@ def sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -916,7 +976,7 @@ def sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -964,7 +1024,7 @@ def sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1013,16 +1073,18 @@ def sort_products(request):
     return redirect("GridHome")
 
 def AdminViewAllProduct_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
-        vendors = AddVendors.objects.all()
+        vendors = AddVendors.objects.all().order_by('vendorname')
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         min_limit = request.POST.get("min_limit")
@@ -1089,7 +1151,7 @@ def AdminViewAllProduct_sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1138,8 +1200,8 @@ def AdminViewAllProduct_sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit,
-                                         "is_admin":is_admin})   
-         
+                                         "is_admin":is_admin})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1188,8 +1250,8 @@ def AdminViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit,
-                                         "is_admin":is_admin})    
-        
+                                         "is_admin":is_admin})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1239,7 +1301,7 @@ def AdminViewAllProduct_sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1284,7 +1346,7 @@ def AdminViewAllProduct_sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1329,7 +1391,7 @@ def AdminViewAllProduct_sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1374,7 +1436,7 @@ def AdminViewAllProduct_sort_products(request):
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1420,8 +1482,10 @@ def AdminViewAllProduct_sort_products(request):
     return redirect("GridHome")
 
 def EmployeeViewAllProduct_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -1487,7 +1551,7 @@ def EmployeeViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1533,8 +1597,8 @@ def EmployeeViewAllProduct_sort_products(request):
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
-         
+                                         "limit":limit})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1580,8 +1644,8 @@ def EmployeeViewAllProduct_sort_products(request):
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
-        
+                                         "limit":limit})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1628,7 +1692,7 @@ def EmployeeViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1670,7 +1734,7 @@ def EmployeeViewAllProduct_sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1712,7 +1776,7 @@ def EmployeeViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1754,7 +1818,7 @@ def EmployeeViewAllProduct_sort_products(request):
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -1798,8 +1862,10 @@ def EmployeeViewAllProduct_sort_products(request):
 
 
 def CustomerViewAllProduct_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -1865,7 +1931,7 @@ def CustomerViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1911,8 +1977,8 @@ def CustomerViewAllProduct_sort_products(request):
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
-         
+                                         "limit":limit})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -1958,8 +2024,8 @@ def CustomerViewAllProduct_sort_products(request):
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
-        
+                                         "limit":limit})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2006,7 +2072,7 @@ def CustomerViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2048,7 +2114,7 @@ def CustomerViewAllProduct_sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2090,7 +2156,7 @@ def CustomerViewAllProduct_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2132,7 +2198,7 @@ def CustomerViewAllProduct_sort_products(request):
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2176,8 +2242,10 @@ def CustomerViewAllProduct_sort_products(request):
 
 
 def Employee_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -2246,7 +2314,7 @@ def Employee_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2292,8 +2360,8 @@ def Employee_sort_products(request):
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
-         
+                                         "limit":limit})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2339,8 +2407,8 @@ def Employee_sort_products(request):
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
-        
+                                         "limit":limit})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2387,7 +2455,7 @@ def Employee_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2429,7 +2497,7 @@ def Employee_sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2471,7 +2539,7 @@ def Employee_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2513,7 +2581,7 @@ def Employee_sort_products(request):
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2556,8 +2624,10 @@ def Employee_sort_products(request):
     return redirect("EmployeeHome")
 
 def Customer_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -2626,7 +2696,7 @@ def Customer_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2672,8 +2742,8 @@ def Customer_sort_products(request):
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":cat_list,
                                          "vendors":vendors,
-                                         "limit":limit})   
-         
+                                         "limit":limit})
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2719,8 +2789,8 @@ def Customer_sort_products(request):
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":final,
                                          "vendors":vendors,
-                                         "limit":limit})    
-        
+                                         "limit":limit})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2767,7 +2837,7 @@ def Customer_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2809,7 +2879,7 @@ def Customer_sort_products(request):
                                          "product":cat_list,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2851,7 +2921,7 @@ def Customer_sort_products(request):
                                          "product":final,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -2893,7 +2963,7 @@ def Customer_sort_products(request):
                                          "product":product,
                                          "vendors":vendors,
                                          "limit":limit})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -2937,14 +3007,16 @@ def Customer_sort_products(request):
 # ---------------------------Combo section---------------------------
 
 def Combo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -2964,11 +3036,13 @@ def Combo(request):
                                                 "is_admin":is_admin})
 
 def HomeSortedManualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     combo = []
     combo_price = []
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -2985,9 +3059,11 @@ def HomeSortedManualCombo(request):
     return redirect("GridHome")
 
 def combo_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -2995,8 +3071,8 @@ def combo_products(request):
     if request.method == "POST":
         combo_product = ManualComboTemp.objects.filter(usr=request.user)
         vendors = AddVendors.objects.all()
-        prod = AddProducts.objects.all()
-        all_product = AddProducts.objects.all()
+        prod = AddProducts.objects.all().order_by('Category')
+        all_product = AddProducts.objects.all().order_by('Category')
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -3013,8 +3089,8 @@ def combo_products(request):
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
                 if float(item.Total_GF_price) <= float(limit):
-                    product.append(item) 
-                    # print(product)  
+                    product.append(item)
+                    # print(product)
             for i in product:
                 com_product = AddProducts.objects.get(id=i.id)
                 if float(com_product.Total_GF_price) < float(limit):
@@ -3049,14 +3125,16 @@ def combo_products(request):
     return redirect("Combo")
 
 def ManualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     name = request.user
-    products = AddProducts.objects.all()
+    products = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in products]
     limit = max(price)
@@ -3073,8 +3151,10 @@ def ManualCombo(request):
                                          "limit":limit,
                                          "combo_price":combo_price,
                                          "is_admin":is_admin})
-    
+
 def MakeMaualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -3090,6 +3170,8 @@ def MakeMaualCombo(request):
     return redirect("Combo")
 
 def Product_Manual_Combo_Del(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -3097,15 +3179,17 @@ def Product_Manual_Combo_Del(request,id):
     return redirect("Combo")
 
 def combo_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -3125,7 +3209,7 @@ def combo_product_list(request):
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
     else:
-        product = AddProducts.objects.all()
+        product = AddProducts.objects.all().order_by('Category')
         return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
                                                     "vendors":vendors,
@@ -3135,15 +3219,17 @@ def combo_product_list(request):
                                                     "is_admin":is_admin})
 
 def combo_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
     name = request.user
     vendors = AddVendors.objects.all()
-    prod = AddProducts.objects.all()
+    prod = AddProducts.objects.all().order_by('Category')
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
     combo_product = ManualComboTemp.objects.filter(usr=request.user)
@@ -3152,9 +3238,9 @@ def combo_sort_products(request):
         combo_prod = AddProducts.objects.get(id=i.product.id)
         product_price.append(combo_prod.Total_GF_price)
     combo_price = sum(product_price)
-    
+
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -3232,7 +3318,7 @@ def combo_sort_products(request):
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -3283,7 +3369,7 @@ def combo_sort_products(request):
                                                     "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":cat_list})   
+            # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":cat_list,
                                                     "vendors":vendors,
@@ -3291,7 +3377,7 @@ def combo_sort_products(request):
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
-         
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -3342,15 +3428,15 @@ def combo_sort_products(request):
                                                     "is_admin":is_admin})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":final}) 
+            # return render(request, "ComboSection.html",{"product":final})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
-                                                    "is_admin":is_admin})   
-        
+                                                    "is_admin":is_admin})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -3409,7 +3495,7 @@ def combo_sort_products(request):
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -3517,7 +3603,7 @@ def combo_sort_products(request):
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -3571,7 +3657,7 @@ def combo_sort_products(request):
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price,
                                                     "is_admin":is_admin})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -3624,11 +3710,13 @@ def combo_sort_products(request):
         else:
             messages.info(request, "Something went wrong...")
     return redirect("Combo")
-     
+
 def SortedManualCombofinal(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
-    admin = list(user_groups) 
+    admin = list(user_groups)
     # print(admin)
     if admin[0] == "Admin":
         is_admin = True
@@ -3645,6 +3733,8 @@ def SortedManualCombofinal(request):
         return render(request, "GridAdmin/combo.html", {"combo":combo,"total_combo_price":total_combo_price, "is_admin":is_admin})
 
 def AddToManualCombo(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Combo")
@@ -3655,6 +3745,8 @@ def AddToManualCombo(request,id):
         return redirect("Combo")
 
 def DeleteCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -3662,6 +3754,8 @@ def DeleteCombo(request):
     return redirect("Combo")
 
 def auto_combo_submit(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         print(combo_prod)
@@ -3678,6 +3772,8 @@ def auto_combo_submit(request):
 
 # ---------------------------PDF section---------------------------
 def IntermediatePDFsection(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         price_dis_display = request.POST.getlist("price_dis_display")
@@ -3696,6 +3792,8 @@ def IntermediatePDFsection(request):
 
 
 def html_to_pdf(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         profit = request.POST.getlist("profit")
@@ -3704,7 +3802,7 @@ def html_to_pdf(request):
         branding_category = request.POST.getlist("branding_category")
         transportation_cost = request.POST.getlist("transportation_cost")
         tax = request.POST.getlist("tax")
-        
+
         for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
             id = int(i)
             item = AddProducts.objects.get(id=id)
@@ -3734,6 +3832,8 @@ def html_to_pdf(request):
         return render(request, "GridAdmin/confirmation.html", {"products":products})
 
 def html_to_pdf_confirm(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         price_display = request.POST.get("price_display")
         # print('1',price_display)
@@ -3759,7 +3859,7 @@ def html_to_pdf_confirm(request, *args, **kwargs):
         # print('11',transportation_cost)
         tax = request.POST.getlist("tax")
         # print('12',tax)
-        
+
         for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
             id = int(i)
             item = AddProducts.objects.get(id=id)
@@ -3786,15 +3886,33 @@ def html_to_pdf_confirm(request, *args, **kwargs):
             temp_prod = PDFtemp(product=pro, usr=request.user)
             temp_prod.save()
         product = PDFtemp.objects.filter(usr=request.user)
-        
+
+        # logo1 = Logo.objects.get(pk=5)
+        # logo2 = Logo.objects.get(id=3)
+        # logo3 = Logo.objects.get(id=4)
+        logolist = []
+        for i in range(0,100):
+            try:
+                logo = Logo.objects.get(id=i)
+                if logo:
+                    logolist.append(i)
+            except:
+                pass
+
         template_path = 'General/finalPDF.html'
-        context = {'product': product, 
-                   'STATIC_ROOT': settings.STATIC_ROOT, 
+        context = {'product': product,
+                   'STATIC_ROOT': settings.STATIC_ROOT,
                    "price_display":price_display,
                    "branding_cost_dis":branding_cost_dis,
                    "branding_cat_dis":branding_cat_dis,
                    "transportation_cost_dis":transportation_cost_dis,
-                   "gridfokuz_price_dis":gridfokuz_price_dis}
+                   "gridfokuz_price_dis":gridfokuz_price_dis,
+                #   "logo1":logo1,
+                #   "logo2":logo2,
+                #   "logo3":logo3
+                "logolist":logolist,
+
+                   }
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
         template = get_template(template_path)
@@ -3808,10 +3926,14 @@ def html_to_pdf_confirm(request, *args, **kwargs):
 # ---------------------------Employee section---------------------------
 
 def Employee_product_detail(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     return render(request, "Employee/employee_product_detail.html",{"product":product})
 
 def Employee_HomeSortedManualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -3827,8 +3949,10 @@ def Employee_HomeSortedManualCombo(request):
     return redirect("EmployeeHome")
 
 def Employee_Combo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -3847,6 +3971,8 @@ def Employee_Combo(request):
                                                 "combo_price":combo_price})
 
 def Employee_AddToManualCombo(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Employee_Combo")
@@ -3855,13 +3981,15 @@ def Employee_AddToManualCombo(request,id):
         combo = ManualComboTemp(product=product,usr=request.user)
         combo.save()
         return redirect("Employee_Combo")
-    
+
 def Employee_combo_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
     if request.method == "POST":
         vendors = AddVendors.objects.all()
-        all_product = AddProducts.objects.all()
-        prod = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
+        prod = AddProducts.objects.all().order_by('Category')
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -3873,8 +4001,8 @@ def Employee_combo_products(request):
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
                 if float(item.Total_GF_price) <= float(limit):
-                    product.append(item) 
-                    # print(product)  
+                    product.append(item)
+                    # print(product)
             for i in product:
                 com_product = AddProducts.objects.get(id=i.id)
                 if float(com_product.Total_GF_price) < float(limit):
@@ -3914,6 +4042,8 @@ def Employee_combo_products(request):
     return redirect("Employee_Combo")
 
 def Employee_MakeMaualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -3929,6 +4059,8 @@ def Employee_MakeMaualCombo(request):
     return redirect("Employee_Combo")
 
 def Employee_Product_Manual_Combo_Del(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -3936,9 +4068,11 @@ def Employee_Product_Manual_Combo_Del(request,id):
     return redirect("Employee_Combo")
 
 def Employee_combo_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -3958,6 +4092,8 @@ def Employee_combo_product_list(request):
                                                     "combo_price":combo_price})
 
 def Employee_SortedManualCombofinal(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -3971,6 +4107,8 @@ def Employee_SortedManualCombofinal(request):
         return render(request, "Employee/Employee_combo.html", {"combo":combo,"total_combo_price":total_combo_price})
 
 def Employee_DeleteCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -3978,6 +4116,8 @@ def Employee_DeleteCombo(request):
     return redirect("Employee_Combo")
 
 def Employee_auto_combo_submit(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         com = ManualComboTemp.objects.filter(usr=request.user)
@@ -3992,9 +4132,11 @@ def Employee_auto_combo_submit(request):
     return redirect("Employee_Combo")
 
 def Employee_combo_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
     vendors = AddVendors.objects.all()
-    prod = AddProducts.objects.all()
+    prod = AddProducts.objects.all().order_by('Category')
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
     combo_product = ManualComboTemp.objects.filter(usr=request.user)
@@ -4003,9 +4145,9 @@ def Employee_combo_sort_products(request):
         combo_prod = AddProducts.objects.get(id=i.product.id)
         product_price.append(combo_prod.Total_GF_price)
     combo_price = sum(product_price)
-    
+
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -4080,7 +4222,7 @@ def Employee_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -4129,14 +4271,14 @@ def Employee_combo_sort_products(request):
                                                     "combo_price":combo_price})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":cat_list})   
+            # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":cat_list,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-         
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -4185,14 +4327,14 @@ def Employee_combo_sort_products(request):
                                                     "combo_price":combo_price})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":final}) 
+            # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})   
-        
+                                                    "combo_price":combo_price})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4248,7 +4390,7 @@ def Employee_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4299,7 +4441,7 @@ def Employee_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4350,7 +4492,7 @@ def Employee_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -4401,7 +4543,7 @@ def Employee_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4455,10 +4597,14 @@ def Employee_combo_sort_products(request):
 # ---------------------------Customer section---------------------------
 
 def Customer_product_detail(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     return render(request, "Customer/Customer_product_detail.html",{"product":product})
 
 def Customer_HomeSortedManualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -4474,8 +4620,10 @@ def Customer_HomeSortedManualCombo(request):
     return redirect("home")
 
 def Customer_Combo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4494,6 +4642,8 @@ def Customer_Combo(request):
                                                 "combo_price":combo_price})
 
 def Customer_AddToManualCombo(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Customer_Combo")
@@ -4502,12 +4652,14 @@ def Customer_AddToManualCombo(request,id):
         combo = ManualComboTemp(product=product,usr=request.user)
         combo.save()
         return redirect("Customer_Combo")
-    
+
 def Customer_combo_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
     if request.method == "POST":
         vendors = AddVendors.objects.all()
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -4519,8 +4671,8 @@ def Customer_combo_products(request):
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
                 if float(item.Total_GF_price) <= float(limit):
-                    product.append(item) 
-                    # print(product)  
+                    product.append(item)
+                    # print(product)
             for i in product:
                 com_product = AddProducts.objects.get(id=i.id)
                 if float(com_product.Total_GF_price) < float(limit):
@@ -4551,6 +4703,8 @@ def Customer_combo_products(request):
     return redirect("Customer_Combo")
 
 def Customer_MakeMaualCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -4566,6 +4720,8 @@ def Customer_MakeMaualCombo(request):
     return redirect("Customer_Combo")
 
 def Customer_Product_Manual_Combo_Del(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -4573,9 +4729,11 @@ def Customer_Product_Manual_Combo_Del(request,id):
     return redirect("Customer_Combo")
 
 def Customer_combo_product_list(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     query = request.GET.get('search')
     name = request.user
-    product = AddProducts.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4595,6 +4753,8 @@ def Customer_combo_product_list(request):
                                                     "combo_price":combo_price})
 
 def Customer_SortedManualCombofinal(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -4608,6 +4768,8 @@ def Customer_SortedManualCombofinal(request):
         return render(request, "Customer/Customer_combo.html", {"combo":combo,"total_combo_price":total_combo_price})
 
 def Customer_DeleteCombo(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -4615,6 +4777,8 @@ def Customer_DeleteCombo(request):
     return redirect("Customer_Combo")
 
 def Customer_auto_combo_submit(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         com = ManualComboTemp.objects.filter(usr=request.user)
@@ -4629,9 +4793,11 @@ def Customer_auto_combo_submit(request):
     return redirect("Customer_Combo")
 
 def Customer_combo_sort_products(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
     name = request.user
     vendors = AddVendors.objects.all()
-    prod = AddProducts.objects.all()
+    prod = AddProducts.objects.all().order_by('Category')
     price = [p.Total_GF_price for p in prod]
     limit = max(price)
     combo_product = ManualComboTemp.objects.filter(usr=request.user)
@@ -4640,9 +4806,9 @@ def Customer_combo_sort_products(request):
         combo_prod = AddProducts.objects.get(id=i.product.id)
         product_price.append(combo_prod.Total_GF_price)
     combo_price = sum(product_price)
-    
+
     if request.method == "POST":
-        all_product = AddProducts.objects.all()
+        all_product = AddProducts.objects.all().order_by('Category')
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -4717,7 +4883,7 @@ def Customer_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif selected_vendors and category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -4766,14 +4932,14 @@ def Customer_combo_sort_products(request):
                                                     "combo_price":combo_price})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":cat_list})   
+            # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":cat_list,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-         
+
         elif selected_vendors and sub_category:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -4822,14 +4988,14 @@ def Customer_combo_sort_products(request):
                                                     "combo_price":combo_price})
                 else:
                     return HttpResponse("Sorting Making Problem...")
-            # return render(request, "ComboSection.html",{"product":final}) 
+            # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":final,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
-                                                    "combo_price":combo_price})   
-        
+                                                    "combo_price":combo_price})
+
         elif category and sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4885,7 +5051,7 @@ def Customer_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4936,7 +5102,7 @@ def Customer_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif sub_category:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -4987,7 +5153,7 @@ def Customer_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif selected_vendors:
             for i in selected_vendors:
                 vendor = AddVendors.objects.get(vendorname=i)
@@ -5038,7 +5204,7 @@ def Customer_combo_sort_products(request):
                                                     "limit":limit,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
-        
+
         elif limit:
             for lmt in all_product:
                 item = AddProducts.objects.get(id=lmt.id)
@@ -5088,3 +5254,15 @@ def Customer_combo_sort_products(request):
         else:
             messages.info(request, "Something went wrong...")
     return redirect("Customer_Combo")
+
+from django.shortcuts import render
+from django.contrib import messages
+
+def logo_input(request):
+    if request.method == "POST":
+        logos = request.POST.get("logos")
+        logo = Logos(images=logos)
+        logo.save()
+        messages.info(request, "Logo uploaded successfully")
+        return render(request, "General/logo.html")
+    return render(request, "General/logo.html")

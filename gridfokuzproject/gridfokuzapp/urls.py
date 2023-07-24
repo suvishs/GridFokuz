@@ -4,6 +4,11 @@ from .import views
 urlpatterns = [
     # -------------------General Section-------------------
     path("", views.Index, name="index"),
+    path("Index", views.Index, name="index"),
+    path("shop", views.shop, name="shop"),
+    path("ourstory", views.ourstory, name="ourstory"),
+    path("gallery", views.gallery, name="gallery"),
+    path("contact", views.contact, name="contact"),
     path("Usrlogin", views.Usrlogin, name="Usrlogin"),
     path("Register", views.Register, name="Register"),
     path("home", views.home, name="home"),
@@ -13,16 +18,17 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path('users', views.user_list, name='user_list'),
     path('deleteuser/<int:id>', views.deleteuser, name="deleteuser"),
-    
+    path('logo_input', views.logo_input, name='logo_input'),
+
     # -------------------Vendor Section-------------------
     path("addventors", views.addventors, name="addventors"),
     path("AdminViewAllVendors", views.AdminViewAllVendors, name="AdminViewAllVendors"),
     path("updatevendor/<int:id>", views.updatevendor, name="updatevendor"),
     path("deletevendor/<int:id>", views.deletevendor, name="deletevendor"),
-    
+
     # -------------------Vendor Section-------------------
     path("addstaffs", views.addstaffs, name="addstaffs"),
-    
+
     # -------------------Product Section-------------------
     path("addproducts", views.addproducts, name="addproducts"),
     path("product_detail/<int:id>", views.product_detail, name="product_detail"),
@@ -37,7 +43,7 @@ urlpatterns = [
     path("AdminViewAllProducts", views.AdminViewAllProducts, name="AdminViewAllProducts"),
     path("EmployeeViewAllProducts", views.EmployeeViewAllProducts, name="EmployeeViewAllProducts"),
     path("CustomerViewAllProducts", views.CustomerViewAllProducts, name="CustomerViewAllProducts"),
-    
+
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
     path("AdminViewAllProduct_sort_products", views.AdminViewAllProduct_sort_products, name="AdminViewAllProduct_sort_products"),
@@ -51,7 +57,7 @@ urlpatterns = [
     path("CustomerViewAll_product_list", views.CustomerViewAll_product_list, name="CustomerViewAll_product_list"),
     path("Employee_product_list", views.Employee_product_list, name="Employee_product_list"),
     path("Customer_product_list", views.Customer_product_list, name="Customer_product_list"),
-    
+
     # -------------------Admin Combo Section-------------------
     path("Combo", views.Combo, name="Combo"),
     path("combo_products", views.combo_products, name="combo_products"),
@@ -64,12 +70,12 @@ urlpatterns = [
     path("DeleteCombo", views.DeleteCombo, name="DeleteCombo"),
     path("auto_combo_submit", views.auto_combo_submit, name="auto_combo_submit"),
     path("combo_sort_products", views.combo_sort_products, name="combo_sort_products"),
-    
+
     # -------------------PDF Section-------------------
     path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
     path('html_to_pdf', views.html_to_pdf, name='convert_to_pdf'),
     path('html_to_pdf_confirm', views.html_to_pdf_confirm, name='html_to_pdf_confirm'),
-    
+
     # -------------------Employee Combo Section-------------------
     path("Employee_Combo", views.Employee_Combo, name="Employee_Combo"),
     path("Employee_combo_products", views.Employee_combo_products, name="Employee_combo_products"),
@@ -82,7 +88,7 @@ urlpatterns = [
     path("Employee_DeleteCombo", views.Employee_DeleteCombo, name="Employee_DeleteCombo"),
     path("Employee_auto_combo_submit", views.Employee_auto_combo_submit, name="Employee_auto_combo_submit"),
     path("Employee_combo_sort_products", views.Employee_combo_sort_products, name="Employee_combo_sort_products"),
-    
+
     # -------------------Customer Combo Section-------------------
     path("Customer_Combo", views.Customer_Combo, name="Customer_Combo"),
     path("Customer_combo_products", views.Customer_combo_products, name="Customer_combo_products"),

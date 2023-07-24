@@ -81,10 +81,10 @@
                         </div>
                     </div>
                     <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
-                    <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
+                    <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>View Products</a>
+                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-store me-2"></i>View Vendors</a>
                     {% if is_admin %}
-                        <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
+                        <a href="/users" class="nav-item nav-link"><i class="fa fa-user me-2"></i>View Users</a>
                     {% endif %}
                 </div>
             </nav>
@@ -220,7 +220,7 @@
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">MRP</label>
                                     <input class="form-control" id="Total_GF_price" name="Total_GF_price" placeholder="Enter MRP" required>
-                                </div> 
+                                </div>
 
                                 <div class="mb-3">
                                     <label for="mrp" class="form-label">Choose Product Picture</label>
@@ -275,7 +275,7 @@
             // Get the input field values
             var vendorPrice = parseFloat(document.getElementById("vendorprice").value);
             var totalGFPriceInput = document.getElementById("Total_GF_price");
-      
+
             // Update the Total_GF_price input field
             if (!isNaN(vendorPrice)) {
               totalGFPriceInput.value = vendorPrice;

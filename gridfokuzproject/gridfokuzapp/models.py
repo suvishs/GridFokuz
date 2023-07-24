@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 class AddVendors(models.Model):
     vendorname = models.CharField(max_length=30)
     ventorcode = models.CharField(max_length=30, null=True)
-    
-    def __str__(self): 
+
+    def __str__(self):
         return str(self.vendorname)
-    
+
 class AddProducts(models.Model):
     SKU = models.CharField(max_length=10, null=True)
     Vendor = models.ForeignKey(AddVendors ,on_delete=models.SET_NULL, null=True)
@@ -40,10 +40,10 @@ class AddProducts(models.Model):
     transportation_cost = models.FloatField(default=0, null=True)
     tax = models.FloatField(null=True)
     profit_type = models.CharField(max_length=30, null=True)
-    
+
     def __str__(self):
         return self.Product_Name
-    
+
 class ManualComboTemp(models.Model):
     product = models.ForeignKey(AddProducts, on_delete=models.CASCADE, null=True)
     usr = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
@@ -54,4 +54,13 @@ class PDFtemp(models.Model):
     grand_total = models.FloatField(null=True)
 
 class Logo(models.Model):
-    image = models.ImageField(upload_to="Logo")
+    image = models.ImageField(upload_to="Logo1")
+
+    def __str__(self):
+        return str(self.image)
+
+class Logos(models.Model):
+    images = models.ImageField(upload_to = "Logos")
+
+    def __str__(self):
+        return str(self.image)

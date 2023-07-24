@@ -7,16 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    .logo
-    {
-      width:280px;
-      height:150px;
 
-    }
-    .logo_container{
-      padding-left: 230px;
-      padding-top:400px;
-    }
+
+
     .logo_container2
     {
       padding-left:650px;
@@ -25,45 +18,16 @@
 </head>
 <body>
   <div class="logo_container">
-    <img src="static/img/logo3.png" alt="" class="logo">
+    <img src="static/img/pdf1.jpg" alt="logo">
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
   <br>
   {% for i in product %}
   <div class="logo_container2">
     <img src="static/img/logo3.png" alt="" height="50px">
   </div>
-  <hr>
+  <br>
+  <br>
+  <!-- <hr> -->
   <div class="image_container">
     <img src="{{i.product.product_image.path}}" alt="" width="1000px" height="1000px">
   </div>
@@ -72,33 +36,49 @@
     {% if price_display %}
       <div>
         {% if branding_cost_dis %}
-          <h1 style="color:rgb(0, 28, 255);">Branding Cost: <span style="color:green;">Rs.{{ i.product.branding_cost|floatformat:2 }}/-</span></h1>
+          <h1 style="color:black;">Branding Cost: Rs.{{ i.product.branding_cost|floatformat:2 }}/-</h1>
         {% else %}
           <h1 style="color:white;">.</h1>
         {% endif %}
         {% if branding_cat_dis %}
-          <h1 style="color:rgb(0, 28, 255);">Branding category: {{i.product.branding_category}}</h1>
+          <h1 style="color:black;">Branding category: {{i.product.branding_category}}</h1>
         {% else %}
           <h1 style="color:white;">.</h1>
         {% endif %}
         {% if transportation_cost_dis %}
-          <h1 style="color:rgb(0, 28, 255);">Transportation cost: {{i.product.transportation_cost}}</h1>
+          <h1 style="color:black;">Transportation cost: {{i.product.transportation_cost}}</h1>
         {% else %}
           <h1 style="color:white;">.</h1>
         {% endif %}
         {% if gridfokuz_price_dis %}
-          <h1 style="color:rgb(0, 28, 255);">Grid Fokuz Price: Rs.{{ i.product.final_price|floatformat:2 }}/- (Total Price)</h1>
+          <h1 style="color:black;">Grid Fokuz Price: Rs.{{ i.product.final_price|floatformat:2 }}/- (Total Price)</h1>
         {% else %}
           <h1 style="color:white;">.</h1>
         {% endif %}
       </div>
       {% endif %}
-        <br>
-        <br>
+        <img src="static/img/gridbar.jpg" alt="" class="image4" height="50px">
   {% endfor %}
   <br>
   <br>
   <br>
-  <img src="static/img/temp.png" alt="" class="image4">
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <img src="static/img/temp.png" alt="" height="1000px">
 </body>
 </html>

@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Gridfokuz - Admin Panel</title>
+    <title>Gridfokuz - Employee Panel</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -141,25 +141,16 @@
                         <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-0">Administrator</h6>
-                        <span>Employee</span>
+                        <h6 class="mb-0">Employee</h6>
+                        <span>{{name}}</span>
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="EmployeeHome" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    {% comment %} <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-plus me-2"></i>Add</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="addventors" class="dropdown-item">Vendors</a>
-                            <a href="addproducts" class="dropdown-item">Products</a>
-                            <a href="addstaffs" class="dropdown-item">Staffs</a>
-                        </div>
-                    </div> {% endcomment %}
+
                     <a href="/Employee_Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
-                    {% comment %} <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
-                    <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a> {% endcomment %}
-                    <a href="/EmployeeViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
+
+                    <a href="/EmployeeViewAllProducts" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>View Products</a>
                 </div>
             </nav>
         </div>
@@ -189,7 +180,7 @@
                     <div class="nav-item dropdown">
                         <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img class="rounded-circle me-lg-2" src="{% static 'img/logo3.png' %}" alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex">Admin</span>
+                            <span class="d-none d-lg-inline-flex">Employee</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-2 rounded-0 rounded-bottom m-0">
              

@@ -4,7 +4,7 @@ from dal import autocomplete
 
 class AddProductForm(forms.ModelForm):
     Product_Name = forms.ModelChoiceField(
-        queryset=AddProducts.objects.all(),
+        queryset=AddProducts.objects.all().order_by('Category'),
         widget=autocomplete.ModelSelect2(url='product-autocomplete')
     )
 

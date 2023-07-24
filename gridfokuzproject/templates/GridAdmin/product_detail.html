@@ -92,10 +92,10 @@
                         </div>
                     </div>
                     <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>
-                    <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Products</a>
-                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Vendors</a>
+                    <a href="/AdminViewAllProducts" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>View Products</a>
+                    <a href="/AdminViewAllVendors" class="nav-item nav-link"><i class="fa fa-store me-2"></i>View Vendors</a>
                     {% if is_admin %}
-                        <a href="/users" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>View Users</a>
+                        <a href="/users" class="nav-item nav-link"><i class="fa fa-user me-2"></i>View Users</a>
                     {% endif %}
                 </div>
             </nav>
@@ -200,7 +200,9 @@
                         <div style="border:5px solid rgb(255, 255, 255); padding:30px;">
                             <div class="container">
                                 <div class="image-container">
-                                  <img src="{{product.product_image.url}}" alt="Image">
+                                    <a href="{{product.product_image.url}}" target="_blank">
+                                        <img src="{{product.product_image.url}}" alt="Image" style="height:350px; width:350px;">
+                                      </a>                                
                                 </div>
                                 <div class="description-box">
                                   <h3>Description</h3>
