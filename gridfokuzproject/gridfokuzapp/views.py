@@ -35,7 +35,13 @@ def contact(request):
 
 def user_list(request):
     users = User.objects.all()
-    return render(request, 'GridAdmin/user_list.html', {'users': users})
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    return render(request, 'GridAdmin/user_list.html', {'users': users,"is_admin":is_admin})
 
 def deleteuser(request,id):
     user = User.objects.get(id=id)
@@ -92,6 +98,13 @@ def logout(request):
 def addstaffs(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -107,10 +120,10 @@ def addstaffs(request):
                 user.groups.add(group)
                 user.save()
                 messages.info(request, f"{module} With Username {username} Created Successfuly...!")
-                return render(request, 'GridAdmin/addstaffs.html')
+                return render(request, 'GridAdmin/addstaffs.html', {"is_admin":is_admin})
         else:
             return HttpResponse("Password Does Not Maching")
-    return render(request, "GridAdmin/addstaffs.html")
+    return render(request, "GridAdmin/addstaffs.html", {"is_admin":is_admin})
 
 # ---------------------------Users section---------------------------
 
@@ -132,6 +145,12 @@ def GridHome(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
     name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     product = AddProducts.objects.all().order_by('Category')
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
@@ -139,7 +158,8 @@ def GridHome(request):
     return render(request, "GridAdmin/GridHome.html", {"name":name,
                                          "product":product,
                                          "vendors":vendors,
-                                         "limit":limit})
+                                         "limit":limit,
+                                         "is_admin":is_admin})
 
 def SemiAdminHome(request):
     if not request.user.is_authenticated:
@@ -172,6 +192,7 @@ def EmployeeHome(request):
 def addventors(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -190,6 +211,7 @@ def addventors(request):
 def AdminViewAllVendors(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     vendors = AddVendors.objects.all().order_by('vendorname')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
@@ -202,6 +224,7 @@ def AdminViewAllVendors(request):
 def updatevendor(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -225,7 +248,13 @@ def updatevendor(request,id):
 def deletevendor(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
+    default_vendor = AddVendors.objects.get(vendorname="vendorname")
     vendor = AddVendors.objects.get(id=id)
+    products = AddProducts.objects.filter(Vendor=vendor)
+    for product in products:
+        product.Vendor = default_vendor
+        product.save()
     vendor.delete()
     return redirect("AdminViewAllVendors")
 
@@ -233,6 +262,7 @@ def deletevendor(request,id):
 def AdminViewAllProducts(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -279,6 +309,7 @@ def CustomerViewAllProducts(request):
 def addproducts(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     vendor = AddVendors.objects.all().order_by('vendorname')
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
@@ -338,6 +369,7 @@ def addproducts(request):
 def GridAdminDeleteProduct(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     product.delete()
     messages.info(request, f"{product} Deleted Successfuly...!")
@@ -346,6 +378,7 @@ def GridAdminDeleteProduct(request,id):
 def GridSemiAdminDeleteProduct(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     product.delete()
     messages.info(request, f"{product} Deleted Successfuly...!")
@@ -354,6 +387,7 @@ def GridSemiAdminDeleteProduct(request,id):
 def product_detail(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -366,12 +400,14 @@ def product_detail(request,id):
 def SemiAdminProductDetail(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     return render(request, "SemiAdmin/SemiAdminProductDetail.html",{"product":product})
 
 def update_product(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -431,6 +467,7 @@ def update_product(request,id):
 def GridSemiadminupdate_product(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     vendor = AddVendors.objects.all().order_by('vendorname')
     product = AddProducts.objects.get(id=id)
     if request.method == "POST":
@@ -484,6 +521,7 @@ def GridSemiadminupdate_product(request,id):
 def delete_product(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     return render(request, "GridAdmin/delete_product.html",{"product":product})
 
@@ -512,6 +550,7 @@ def product_list(request):
 def AdminViewAll_product_list(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -632,6 +671,7 @@ def Customer_product_list(request):
 def sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -1075,6 +1115,7 @@ def sort_products(request):
 def AdminViewAllProduct_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -1484,6 +1525,7 @@ def AdminViewAllProduct_sort_products(request):
 def EmployeeViewAllProduct_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
@@ -1864,6 +1906,7 @@ def EmployeeViewAllProduct_sort_products(request):
 def CustomerViewAllProduct_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
@@ -2244,6 +2287,7 @@ def CustomerViewAllProduct_sort_products(request):
 def Employee_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
@@ -2626,6 +2670,7 @@ def Employee_sort_products(request):
 def Customer_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
         name = request.user
@@ -3009,6 +3054,7 @@ def Customer_sort_products(request):
 def Combo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3038,6 +3084,7 @@ def Combo(request):
 def HomeSortedManualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     combo = []
     combo_price = []
     is_admin = False
@@ -3061,6 +3108,7 @@ def HomeSortedManualCombo(request):
 def combo_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3127,6 +3175,7 @@ def combo_products(request):
 def ManualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3155,6 +3204,7 @@ def ManualCombo(request):
 def MakeMaualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -3172,6 +3222,7 @@ def MakeMaualCombo(request):
 def Product_Manual_Combo_Del(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -3181,6 +3232,7 @@ def Product_Manual_Combo_Del(request,id):
 def combo_product_list(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3221,6 +3273,7 @@ def combo_product_list(request):
 def combo_sort_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3714,6 +3767,7 @@ def combo_sort_products(request):
 def SortedManualCombofinal(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     is_admin = False
     user_groups = request.user.groups.values_list('name', flat=True)
     admin = list(user_groups)
@@ -3735,6 +3789,7 @@ def SortedManualCombofinal(request):
 def AddToManualCombo(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Combo")
@@ -3747,6 +3802,7 @@ def AddToManualCombo(request,id):
 def DeleteCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -3756,6 +3812,7 @@ def DeleteCombo(request):
 def auto_combo_submit(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         print(combo_prod)
@@ -3774,6 +3831,7 @@ def auto_combo_submit(request):
 def IntermediatePDFsection(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         price_dis_display = request.POST.getlist("price_dis_display")
@@ -3794,6 +3852,13 @@ def IntermediatePDFsection(request):
 def html_to_pdf(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
     if request.method == "POST":
         productId = request.POST.getlist("productId")
         profit = request.POST.getlist("profit")
@@ -3829,11 +3894,12 @@ def html_to_pdf(request):
             temp_prod = PDFtemp(product=pro, usr=request.user)
             temp_prod.save()
         products = PDFtemp.objects.filter(usr=request.user)
-        return render(request, "GridAdmin/confirmation.html", {"products":products})
+        return render(request, "GridAdmin/confirmation.html", {"products":products,"is_admin":is_admin})
 
 def html_to_pdf_confirm(request, *args, **kwargs):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         price_display = request.POST.get("price_display")
         # print('1',price_display)
@@ -3887,17 +3953,10 @@ def html_to_pdf_confirm(request, *args, **kwargs):
             temp_prod.save()
         product = PDFtemp.objects.filter(usr=request.user)
 
-        # logo1 = Logo.objects.get(pk=5)
-        # logo2 = Logo.objects.get(id=3)
-        # logo3 = Logo.objects.get(id=4)
-        logolist = []
-        for i in range(0,100):
-            try:
-                logo = Logo.objects.get(id=i)
-                if logo:
-                    logolist.append(i)
-            except:
-                pass
+        logo1 = Logo.objects.get(id=2)
+        logo2 = Logo.objects.get(id=3)
+        logo3 = Logo.objects.get(id=4)
+        logo4 = Logo.objects.get(id=5)
 
         template_path = 'General/finalPDF.html'
         context = {'product': product,
@@ -3907,11 +3966,10 @@ def html_to_pdf_confirm(request, *args, **kwargs):
                    "branding_cat_dis":branding_cat_dis,
                    "transportation_cost_dis":transportation_cost_dis,
                    "gridfokuz_price_dis":gridfokuz_price_dis,
-                #   "logo1":logo1,
-                #   "logo2":logo2,
-                #   "logo3":logo3
-                "logolist":logolist,
-
+                  "logo1":logo1,
+                  "logo2":logo2,
+                  "logo3":logo3,
+                  "logo4":logo4,
                    }
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
@@ -3928,12 +3986,14 @@ def html_to_pdf_confirm(request, *args, **kwargs):
 def Employee_product_detail(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     return render(request, "Employee/employee_product_detail.html",{"product":product})
 
 def Employee_HomeSortedManualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -3973,6 +4033,7 @@ def Employee_Combo(request):
 def Employee_AddToManualCombo(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Employee_Combo")
@@ -4044,6 +4105,7 @@ def Employee_combo_products(request):
 def Employee_MakeMaualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -4061,6 +4123,7 @@ def Employee_MakeMaualCombo(request):
 def Employee_Product_Manual_Combo_Del(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -4070,6 +4133,7 @@ def Employee_Product_Manual_Combo_Del(request,id):
 def Employee_combo_product_list(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
@@ -4094,6 +4158,7 @@ def Employee_combo_product_list(request):
 def Employee_SortedManualCombofinal(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -4109,6 +4174,7 @@ def Employee_SortedManualCombofinal(request):
 def Employee_DeleteCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -4118,6 +4184,7 @@ def Employee_DeleteCombo(request):
 def Employee_auto_combo_submit(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         com = ManualComboTemp.objects.filter(usr=request.user)
@@ -4599,12 +4666,14 @@ def Employee_combo_sort_products(request):
 def Customer_product_detail(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     return render(request, "Customer/Customer_product_detail.html",{"product":product})
 
 def Customer_HomeSortedManualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -4644,6 +4713,7 @@ def Customer_Combo(request):
 def Customer_AddToManualCombo(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if ManualComboTemp.objects.filter(product=id,usr=request.user).exists():
         messages.info(request, "Cant Select a product more than once...!")
         return redirect("Customer_Combo")
@@ -4656,6 +4726,7 @@ def Customer_AddToManualCombo(request,id):
 def Customer_combo_products(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     name = request.user
     if request.method == "POST":
         vendors = AddVendors.objects.all()
@@ -4705,6 +4776,7 @@ def Customer_combo_products(request):
 def Customer_MakeMaualCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         manualcombolist = request.POST.getlist("manualcombolist")
         for i in manualcombolist:
@@ -4722,6 +4794,7 @@ def Customer_MakeMaualCombo(request):
 def Customer_Product_Manual_Combo_Del(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     product = AddProducts.objects.get(id=id)
     com_product = ManualComboTemp.objects.filter(product=product,usr=request.user)
     com_product.delete()
@@ -4755,6 +4828,7 @@ def Customer_combo_product_list(request):
 def Customer_SortedManualCombofinal(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     combo = []
     combo_price = []
     if request.method == "POST":
@@ -4770,6 +4844,7 @@ def Customer_SortedManualCombofinal(request):
 def Customer_DeleteCombo(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     # combo = ManualComboTemp.objects.all()
     combo = ManualComboTemp.objects.filter(usr=request.user)
     combo.delete()
@@ -4779,6 +4854,7 @@ def Customer_DeleteCombo(request):
 def Customer_auto_combo_submit(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
+    name = request.user
     if request.method == "POST":
         combo_prod = request.POST.getlist("combo_prod")
         com = ManualComboTemp.objects.filter(usr=request.user)
@@ -5254,15 +5330,3 @@ def Customer_combo_sort_products(request):
         else:
             messages.info(request, "Something went wrong...")
     return redirect("Customer_Combo")
-
-from django.shortcuts import render
-from django.contrib import messages
-
-def logo_input(request):
-    if request.method == "POST":
-        logos = request.POST.get("logos")
-        logo = Logos(images=logos)
-        logo.save()
-        messages.info(request, "Logo uploaded successfully")
-        return render(request, "General/logo.html")
-    return render(request, "General/logo.html")

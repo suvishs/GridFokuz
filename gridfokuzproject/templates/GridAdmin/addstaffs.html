@@ -66,7 +66,9 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="addventors" class="dropdown-item">Vendors</a>
                             <a href="addproducts" class="dropdown-item">Products</a>
-                            <a href="addstaffs" class="dropdown-item">Staffs</a>
+                            {% if is_admin %}
+                                <a href="addstaffs" class="dropdown-item">Staffs</a>
+                            {% endif %}
                         </div>
                     </div>
                     <a href="/Combo" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Combo Selection</a>

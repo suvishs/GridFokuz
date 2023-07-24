@@ -18,7 +18,6 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path('users', views.user_list, name='user_list'),
     path('deleteuser/<int:id>', views.deleteuser, name="deleteuser"),
-    path('logo_input', views.logo_input, name='logo_input'),
 
     # -------------------Vendor Section-------------------
     path("addventors", views.addventors, name="addventors"),

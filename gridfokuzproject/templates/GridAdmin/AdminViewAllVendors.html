@@ -163,12 +163,16 @@
                                             <th colspan="2">Actions</th>
                                         </tr>
                                         {% for i in vendors %}
-                                            <tr>
-                                                <td>{{i.vendorname}}</td>
-                                                <td>{{i.ventorcode}}</td>
-                                                <td><a href="{% url 'updatevendor' i.id %}" class="btn btn-warning">Update</a></td>
-                                                <td><a href="{% url 'deletevendor' i.id %}" class="btn btn-danger">Delete</a></td>
-                                            </tr>
+                                            {% if i.vendorname == "vendorname" %}
+                                            <tr></tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td>{{i.vendorname}}</td>
+                                                    <td>{{i.ventorcode}}</td>
+                                                    <td><a href="{% url 'updatevendor' i.id %}" class="btn btn-warning">Update</a></td>
+                                                    <td><a href="{% url 'deletevendor' i.id %}" class="btn btn-danger">Delete</a></td>
+                                                </tr>
+                                            {% endif %}
                                         {% endfor %}
                                     </table>
                                 </div>

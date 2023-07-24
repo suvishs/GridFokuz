@@ -59,8 +59,3 @@ class Logo(models.Model):
     def __str__(self):
         return str(self.image)
 
-class Logos(models.Model):
-    images = models.ImageField(upload_to = "Logos")
-
-    def __str__(self):
-        return str(self.image)
