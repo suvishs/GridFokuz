@@ -23,7 +23,8 @@ def Index(request):
     return render(request, "General/Index.html")
 
 def shop(request):
-    return render(request, "General/shop.html")
+    products = AddProducts.objects.all()
+    return render(request, "General/shop.html", {"products":products})
 
 def ourstory(request):
     return render(request, "General/ourstory.html")
@@ -153,7 +154,7 @@ def GridHome(request):
     if admin[0] == "Admin":
         is_admin = True
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all().order_by('vendorname')
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/GridHome.html", {"name":name,
@@ -167,7 +168,7 @@ def SemiAdminHome(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all().order_by('vendorname')
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "SemiAdmin/SemiAdminHome.html", {"name":name,
@@ -180,7 +181,7 @@ def EmployeeHome(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all().order_by('vendorname')
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeHome.html", {"name":name,
@@ -260,6 +261,28 @@ def deletevendor(request,id):
     return redirect("AdminViewAllVendors")
 
 # ---------------------------Product section---------------------------
+
+
+def productlist(request):
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
+    product = AddProducts.objects.all()
+    vendors = AddVendors.objects.all()
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    return render(request, "GridAdmin/productlist.html", {"name":name,
+                                         "product":product,
+                                         "vendors":vendors,
+                                         "limit":limit,
+                                         "is_admin":is_admin})
+
+
+
 def AdminViewAllProducts(request):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
@@ -272,7 +295,7 @@ def AdminViewAllProducts(request):
         is_admin = True
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all().order_by('vendorname')
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/AdminViewAllProducts.html", {"name":name,
@@ -286,7 +309,7 @@ def EmployeeViewAllProducts(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all().order_by('vendorname')
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeViewAllProducts.html", {"name":name,
@@ -376,6 +399,29 @@ def GridAdminDeleteProduct(request,id):
     messages.info(request, f"{product} Deleted Successfuly...!")
     return redirect("AdminViewAllProducts")
 
+def GridAdminDeleteProduct_list(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    product = AddProducts.objects.get(id=id)
+    product.delete()
+    messages.info(request, f"{product} Deleted Successfuly...!")
+    return redirect("productlist")
+
+def Admindeleteproductlist(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    if request.method == "POST":
+        products_id = request.POST.getlist("productid")
+        for i in products_id:
+            id=int(i)
+            product = AddProducts.objects.get(id=id)
+            product.delete()
+        messages.info(request, "Products Deleted Successfuly...!")
+        return redirect("productlist")
+    return redirect("productlist")
+
 def GridSemiAdminDeleteProduct(request,id):
     if not request.user.is_authenticated:
         return redirect('Usrlogin')
@@ -461,6 +507,66 @@ def update_product(request,id):
         product.save()
         messages.info(request, "{} Updated Successfuly...".format(Product_Name))
         return redirect("AdminViewAllProducts")
+    return render(request, "GridAdmin/update_product.html",{"product":product,
+                                                  "vendor":vendor,
+                                                  "is_admin":is_admin})
+
+def update_product_list(request,id):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    vendor = AddVendors.objects.all().order_by('vendorname')
+    product = AddProducts.objects.get(id=id)
+    if request.method == "POST":
+        SKU = request.POST.get("SKU")
+        Vendor = request.POST.get("Vendor")
+        vendor_name = AddVendors.objects.get(vendorname=Vendor)
+        Category = request.POST.get("Category")
+        Sub_category = request.POST.get("Sub_category")
+        Product_Name = request.POST.get("Product_Name")
+        Total_GF_price = request.POST.get("Total_GF_price")
+        Vendor_Price = request.POST.get("Vendor_Price")
+        # Transport1 = request.POST.get("Transport1")
+        # Transport2 = request.POST.get("Transport2")
+        # Branding = request.POST.get("Branding")
+        # Packing = request.POST.get("Packing")
+        # Profit_in_precentage = request.POST.get("Profit_in_precentage")
+        # Profit_amount = request.POST.get("Profit_amount")
+        # GF_Price = request.POST.get("GF_Price")
+        # Tax_in_precentage = request.POST.get("Tax_in_precentage")
+        # Tax_amount = request.POST.get("Tax_amount")
+        Total_GF_price = request.POST.get("Total_GF_price")
+        try:
+            product_image = request.FILES["product_image"]
+            product.product_image = product_image
+        except:
+            pass
+        product.SKU = SKU
+        product.Category = Category
+        product.Vendor = vendor_name
+        product.Sub_category = Sub_category
+        product.Product_Name = Product_Name
+        product.Total_GF_price = Total_GF_price
+        product.Vendor_Price = Vendor_Price
+        # product.Transport1 = Transport1
+        # product.Transport2 = Transport2
+        # product.Branding = Branding
+        # product.Packing = Packing
+        # product.Profit_in_precentage = Profit_in_precentage
+        # product.Profit_amount = Profit_amount
+        # product.GF_Price = GF_Price
+        # product.Tax_in_precentage = Tax_in_precentage
+        # product.Tax_amount = Tax_amount
+        product.Total_GF_price = Total_GF_price
+        product.save()
+        messages.info(request, "{} Updated Successfuly...".format(Product_Name))
+        return redirect("product_list")
     return render(request, "GridAdmin/update_product.html",{"product":product,
                                                   "vendor":vendor,
                                                   "is_admin":is_admin})
@@ -3064,7 +3170,7 @@ def Combo(request):
         is_admin = True
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all()
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     # combo_product = ManualComboTemp.objects.all()
@@ -3868,8 +3974,9 @@ def html_to_pdf(request):
         branding_category = request.POST.getlist("branding_category")
         transportation_cost = request.POST.getlist("transportation_cost")
         tax = request.POST.getlist("tax")
+        usrinput = request.POST.getlist("usrinput")
 
-        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
+        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof,usrin in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit, usrinput):
             id = int(i)
             item = AddProducts.objects.get(id=id)
             if prof == "profit_percentage":
@@ -3884,6 +3991,7 @@ def html_to_pdf(request):
             item.tax = ta
             item.final_price = final_price
             item.profit_type = prof
+            item.usrinput = usrin
             item.save()
 
         if PDFtemp.objects.filter(usr=request.user).exists():
@@ -4014,7 +4122,7 @@ def Employee_Combo(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
-    vendors = AddVendors.objects.all()
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     # combo_product = ManualComboTemp.objects.all()

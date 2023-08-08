@@ -40,6 +40,7 @@ class AddProducts(models.Model):
     transportation_cost = models.FloatField(default=0, null=True)
     tax = models.FloatField(null=True)
     profit_type = models.CharField(max_length=30, null=True)
+    usrinput = models.CharField(max_length=250, null=True)
 
     def __str__(self):
         return self.Product_Name
