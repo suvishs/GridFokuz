@@ -3974,9 +3974,8 @@ def html_to_pdf(request):
         branding_category = request.POST.getlist("branding_category")
         transportation_cost = request.POST.getlist("transportation_cost")
         tax = request.POST.getlist("tax")
-        usrinput = request.POST.getlist("usrinput")
 
-        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof,usrin in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit, usrinput):
+        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
             id = int(i)
             item = AddProducts.objects.get(id=id)
             if prof == "profit_percentage":
@@ -3991,7 +3990,6 @@ def html_to_pdf(request):
             item.tax = ta
             item.final_price = final_price
             item.profit_type = prof
-            item.usrinput = usrin
             item.save()
 
         if PDFtemp.objects.filter(usr=request.user).exists():
@@ -4034,8 +4032,10 @@ def html_to_pdf_confirm(request, *args, **kwargs):
         # print('11',transportation_cost)
         tax = request.POST.getlist("tax")
         # print('12',tax)
+        usrinput = request.POST.getlist("usrinput")
+        # print(usrinput)
 
-        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit):
+        for i, pro_in, barn_co, bran_cat, trans_co, ta, prof, usrin in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit, usrinput):
             id = int(i)
             item = AddProducts.objects.get(id=id)
             if prof == "profit_percentage":
@@ -4050,6 +4050,7 @@ def html_to_pdf_confirm(request, *args, **kwargs):
             item.tax = ta
             item.final_price = final_price
             item.profit_type = prof
+            item.usrinput = usrin
             item.save()
 
         if PDFtemp.objects.filter(usr=request.user).exists():
