@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
-from .models import AddVendors, AddProducts, ManualComboTemp, PDFtemp, Logo
+from .models import *
 from django.db.models import Q
 import random
 from gridfokuzapp.decorators import Admin_only
@@ -14,6 +14,7 @@ from django.template.loader import get_template
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+import random
 
 # Create your views here.
 
@@ -23,8 +24,11 @@ def Index(request):
     return render(request, "General/Index.html")
 
 def shop(request):
-    products = AddProducts.objects.all()
-    return render(request, "General/shop.html", {"products":products})
+    product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
+    vendors = AddVendors.objects.all().order_by('vendorname')
+    return render(request, "General/shop.html", {"products":product, "vendors": vendors, "category":category, "sub_category":sub_category})
 
 def ourstory(request):
     return render(request, "General/ourstory.html")
@@ -135,11 +139,15 @@ def home(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Customer/home.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -154,11 +162,17 @@ def GridHome(request):
     if admin[0] == "Admin":
         is_admin = True
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/GridHome.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                        "category":category,
+                                        "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -168,11 +182,15 @@ def SemiAdminHome(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "SemiAdmin/SemiAdminHome.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -181,11 +199,15 @@ def EmployeeHome(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeHome.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -271,12 +293,16 @@ def productlist(request):
     if admin[0] == "Admin":
         is_admin = True
     name = request.user
-    product = AddProducts.objects.all()
-    vendors = AddVendors.objects.all()
+    product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
+    vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/productlist.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -295,11 +321,15 @@ def AdminViewAllProducts(request):
         is_admin = True
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "GridAdmin/AdminViewAllProducts.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -309,11 +339,15 @@ def EmployeeViewAllProducts(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Employee/EmployeeViewAllProducts.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -322,11 +356,15 @@ def CustomerViewAllProducts(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
     return render(request, "Customer/CustomerViewAllProducts.html", {"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -342,10 +380,10 @@ def addproducts(request):
     if admin[0] == "Admin":
         is_admin = True
     if request.method == "POST":
-        SKU = request.POST.get("SKU")
+        # SKU = request.POST.get("SKU")
         Vendor = request.POST.get("Vendor")
         vendor_name = AddVendors.objects.get(vendorname=Vendor)
-        Category = request.POST.get("Category")
+        category = request.POST.get("Category")
         Sub_category = request.POST.get("Sub_category")
         Product_Name = request.POST.get("Product_Name")
         MRP = request.POST.get("MRP")
@@ -364,9 +402,10 @@ def addproducts(request):
         product_image = request.FILES["product_image"]
         # product_image2 = request.FILES["product_image2"]
         # product_image3 = request.FILES["product_image3"]
-        product = AddProducts(SKU=SKU,
+        product = AddProducts(
+            # SKU=SKU,
                               Vendor=vendor_name,
-                              Category=Category,
+                              Category=category,
                               Sub_category=Sub_category,
                               Product_Name=Product_Name,
                               MRP=MRP,
@@ -386,6 +425,17 @@ def addproducts(request):
                             #   product_image2=product_image2,
                             #   product_image3=product_image3)
         product.save()
+        if Category.objects.filter(category_name=category).exists():
+            pass
+        else:
+            cat_name = Category(category_name=category)
+            cat_name.save()
+        if SubCategory.objects.filter(subcategory_name=Sub_category).exists():
+            pass
+        else:
+            cat = Category.objects.filter(category_name=category).first()
+            subcat_name = SubCategory(subcategory_name=Sub_category, category=cat)
+            subcat_name.save()
         messages.info(request, "{} added successfuly...".format(Product_Name))
         return redirect("addproducts")
     return render(request, "GridAdmin/addproducts.html",{"vendor":vendor, "is_admin":is_admin})
@@ -464,7 +514,7 @@ def update_product(request,id):
     vendor = AddVendors.objects.all().order_by('vendorname')
     product = AddProducts.objects.get(id=id)
     if request.method == "POST":
-        SKU = request.POST.get("SKU")
+        # SKU = request.POST.get("SKU")
         Vendor = request.POST.get("Vendor")
         vendor_name = AddVendors.objects.get(vendorname=Vendor)
         Category = request.POST.get("Category")
@@ -487,7 +537,7 @@ def update_product(request,id):
             product.product_image = product_image
         except:
             pass
-        product.SKU = SKU
+        # product.SKU = SKU
         product.Category = Category
         product.Vendor = vendor_name
         product.Sub_category = Sub_category
@@ -638,6 +688,8 @@ def product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -645,12 +697,45 @@ def product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "GridAdmin/GridHome.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "GridAdmin/GridHome.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit})
+
+def product_list_shop(request):
+    query = request.GET.get('search')
+    product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
+    vendors = AddVendors.objects.all().order_by('vendorname')
+    price = [p.Total_GF_price for p in product]
+    limit = max(price)
+    if query:
+        product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
+        return render(request, "General/shop.html",{
+                                         "products":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit})
+    else:
+        product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
+        return render(request, "General/shop.html",{
+                                         "products":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -667,6 +752,8 @@ def AdminViewAll_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -674,13 +761,19 @@ def AdminViewAll_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -691,6 +784,8 @@ def EmployeeViewAll_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -698,12 +793,18 @@ def EmployeeViewAll_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -713,6 +814,8 @@ def CustomerViewAll_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -720,12 +823,18 @@ def CustomerViewAll_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -735,6 +844,8 @@ def Employee_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -742,12 +853,18 @@ def Employee_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Employee/EmployeeHome.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "Employee/EmployeeHome.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -757,6 +874,8 @@ def Customer_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('vendorname')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -764,12 +883,18 @@ def Customer_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Customer/home.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "Customer/home.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -787,6 +912,8 @@ def sort_products(request):
         is_admin = True
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all().order_by('vendorname')
         sorting = request.POST.get('sorting')
@@ -844,6 +971,8 @@ def sort_products(request):
                     print(acending_items)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -858,6 +987,8 @@ def sort_products(request):
                     print(acending_items)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -865,6 +996,8 @@ def sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -896,6 +1029,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -910,6 +1045,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -918,6 +1055,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -949,6 +1088,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -963,6 +1104,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -971,6 +1114,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1002,6 +1147,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1016,6 +1163,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1024,6 +1173,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1050,6 +1201,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1064,6 +1217,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1072,6 +1227,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1098,6 +1255,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1112,6 +1271,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1120,6 +1281,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1146,6 +1309,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1160,6 +1325,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1168,6 +1335,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1190,6 +1359,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1204,6 +1375,8 @@ def sort_products(request):
                     print(product)
                     return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1212,6 +1385,8 @@ def sort_products(request):
             print(product)
             return render(request, "GridAdmin/sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1231,6 +1406,8 @@ def AdminViewAllProduct_sort_products(request):
         is_admin = True
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all().order_by('vendorname')
         sorting = request.POST.get('sorting')
@@ -1276,6 +1453,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1289,6 +1468,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1296,6 +1477,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1326,6 +1509,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1339,6 +1524,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1346,6 +1533,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1376,6 +1565,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1389,6 +1580,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1396,6 +1589,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1426,6 +1621,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1439,6 +1636,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1446,6 +1645,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1471,6 +1672,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1484,6 +1687,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1491,6 +1696,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1516,6 +1723,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1529,6 +1738,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1536,6 +1747,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1561,6 +1774,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1574,6 +1789,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1581,6 +1798,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1602,6 +1821,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1615,6 +1836,8 @@ def AdminViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1622,6 +1845,8 @@ def AdminViewAllProduct_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "GridAdmin/AdminViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "is_admin":is_admin})
@@ -1635,6 +1860,8 @@ def EmployeeViewAllProduct_sort_products(request):
     name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -1680,6 +1907,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1692,12 +1921,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1727,6 +1960,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1739,12 +1974,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1774,6 +2013,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1786,12 +2027,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1821,6 +2066,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1833,12 +2080,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1863,6 +2114,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1875,12 +2128,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1905,6 +2162,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1917,12 +2176,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1947,6 +2210,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1959,12 +2224,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -1985,6 +2254,8 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -1997,12 +2268,16 @@ def EmployeeViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/EmployeeViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
         else:
@@ -2016,6 +2291,8 @@ def CustomerViewAllProduct_sort_products(request):
     name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -2061,6 +2338,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2073,12 +2352,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2108,6 +2391,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2120,12 +2405,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2155,6 +2444,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2167,12 +2458,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2202,6 +2497,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2214,12 +2511,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2244,6 +2545,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2256,12 +2559,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2286,6 +2593,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2298,12 +2607,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2328,6 +2641,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2340,12 +2655,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2366,6 +2685,8 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2378,12 +2699,16 @@ def CustomerViewAllProduct_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/CustomerViewAllProducts.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
         else:
@@ -2397,6 +2722,8 @@ def Employee_sort_products(request):
     name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -2445,6 +2772,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2457,12 +2786,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2492,6 +2825,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2504,12 +2839,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2539,6 +2878,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2551,12 +2892,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2586,6 +2931,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2598,12 +2945,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2628,6 +2979,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2646,6 +2999,8 @@ def Employee_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2670,6 +3025,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2682,12 +3039,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2712,6 +3073,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2730,6 +3093,8 @@ def Employee_sort_products(request):
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2750,6 +3115,8 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2762,12 +3129,16 @@ def Employee_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Employee/Employee_sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
         else:
@@ -2780,6 +3151,8 @@ def Customer_sort_products(request):
     name = request.user
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         name = request.user
         vendors = AddVendors.objects.all()
         sorting = request.POST.get('sorting')
@@ -2828,6 +3201,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2840,12 +3215,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2875,6 +3254,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2887,12 +3268,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2922,6 +3307,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2934,12 +3321,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -2969,6 +3360,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -2981,12 +3374,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -3011,6 +3408,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -3023,12 +3422,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -3053,6 +3456,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -3065,12 +3470,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -3095,6 +3504,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -3107,12 +3518,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
 
@@ -3133,6 +3548,8 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 elif sorting == "desending":
@@ -3145,12 +3562,16 @@ def Customer_sort_products(request):
                         acending_items.append(acend_items)
                     return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
                 else:
                     return HttpResponse("Sorting Making Problem...")
             return render(request, "Customer/Customer_sorted_products.html",{"name":name,
                                          "product":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit})
         else:
@@ -3170,6 +3591,8 @@ def Combo(request):
         is_admin = True
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -3182,6 +3605,8 @@ def Combo(request):
     combo_price = sum(product_price)
     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                 "product":product,
+                                                "category":category,
+                                         "sub_category":sub_category,
                                                 "vendors":vendors,
                                                 "limit":limit,
                                                 "combo_product":combo_product,
@@ -3228,6 +3653,8 @@ def combo_products(request):
         vendors = AddVendors.objects.all()
         prod = AddProducts.objects.all().order_by('Category')
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -3270,6 +3697,8 @@ def combo_products(request):
             return render(request, "GridAdmin/ComboSection.html", {"name":name,"vendors":vendors,
                                                                     "combo_product":combo_product,
                                                                     "product":prod,
+                                                                    "category":category,
+                                                                    "sub_category":sub_category,
                                                                     "combo":combo,
                                                                     "vendors":vendors,
                                                                     "combo_price":combo_price,
@@ -3303,6 +3732,8 @@ def ManualCombo(request):
     combo_price = sum(product_price)
     return render(request, "GridAdmin/ManualCombo.html", {"name":name,
                                          "product":products,
+                                         "category":category,
+                                         "sub_category":sub_category,
                                          "vendors":vendors,
                                          "limit":limit,
                                          "combo_price":combo_price,
@@ -3349,6 +3780,8 @@ def combo_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -3362,6 +3795,8 @@ def combo_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3369,8 +3804,12 @@ def combo_product_list(request):
                                                     "is_admin":is_admin})
     else:
         product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3401,6 +3840,8 @@ def combo_sort_products(request):
 
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -3447,6 +3888,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3463,6 +3906,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3473,6 +3918,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3506,6 +3953,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3522,6 +3971,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3532,6 +3983,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3565,6 +4018,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3581,6 +4036,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3591,6 +4048,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3624,6 +4083,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3640,6 +4101,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3650,6 +4113,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3678,6 +4143,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3694,6 +4161,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3704,6 +4173,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3732,6 +4203,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3748,6 +4221,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3758,6 +4233,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3786,6 +4263,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3802,6 +4281,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3812,6 +4293,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3836,6 +4319,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3852,6 +4337,8 @@ def combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -3862,6 +4349,8 @@ def combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "GridAdmin/ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4017,6 +4506,9 @@ def html_to_pdf_confirm(request, *args, **kwargs):
         transportation_cost_dis = request.POST.get("transportation_cost_dis")
         # print('4',transportation_cost_dis)
         gridfokuz_price_dis = request.POST.get("gridfokuz_price_dis")
+
+        tax_dis = request.POST.get("tax_dis")
+
         # print('5',gridfokuz_price_dis)
         productId = request.POST.getlist("productId")
         # print('6',productId)
@@ -4033,7 +4525,6 @@ def html_to_pdf_confirm(request, *args, **kwargs):
         tax = request.POST.getlist("tax")
         # print('12',tax)
         usrinput = request.POST.getlist("usrinput")
-        # print(usrinput)
 
         for i, pro_in, barn_co, bran_cat, trans_co, ta, prof, usrin in zip(productId, profit_input, branding_cost,branding_category, transportation_cost, tax, profit, usrinput):
             id = int(i)
@@ -4067,6 +4558,9 @@ def html_to_pdf_confirm(request, *args, **kwargs):
         logo2 = Logo.objects.get(id=3)
         logo3 = Logo.objects.get(id=4)
         logo4 = Logo.objects.get(id=5)
+        logo5 = Logo.objects.get(id=6)
+        logo6 = Logo.objects.get(id=9)
+
 
         template_path = 'General/finalPDF.html'
         context = {'product': product,
@@ -4076,10 +4570,14 @@ def html_to_pdf_confirm(request, *args, **kwargs):
                    "branding_cat_dis":branding_cat_dis,
                    "transportation_cost_dis":transportation_cost_dis,
                    "gridfokuz_price_dis":gridfokuz_price_dis,
+                   "tax_dis":tax_dis,
                   "logo1":logo1,
                   "logo2":logo2,
                   "logo3":logo3,
                   "logo4":logo4,
+                  "logo5":logo5,
+                  "logo6":logo6,
+
                    }
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="report.pdf"'
@@ -4123,6 +4621,8 @@ def Employee_Combo(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all().order_by('ventorcode')
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4135,6 +4635,8 @@ def Employee_Combo(request):
     combo_price = sum(product_price)
     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                 "product":product,
+                                                "category":category,
+                                         "sub_category":sub_category,
                                                 "vendors":vendors,
                                                 "limit":limit,
                                                 "combo_product":combo_product,
@@ -4160,6 +4662,8 @@ def Employee_combo_products(request):
     if request.method == "POST":
         vendors = AddVendors.objects.all()
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         prod = AddProducts.objects.all().order_by('Category')
         limit = request.POST.get("limit")
         product = []
@@ -4204,6 +4708,8 @@ def Employee_combo_products(request):
             return render(request, "Employee/Employee_ComboSection.html", {"name":name,
                                                     "combo":combo,
                                                     "product":prod,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "combo_product":combo_product,
                                                     "combo_price":combo_price})
@@ -4247,6 +4753,8 @@ def Employee_combo_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4260,6 +4768,8 @@ def Employee_combo_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4325,6 +4835,8 @@ def Employee_combo_sort_products(request):
 
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -4371,6 +4883,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4386,6 +4900,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4395,6 +4911,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4427,6 +4945,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4442,6 +4962,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4451,6 +4973,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4483,6 +5007,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4498,6 +5024,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4507,6 +5035,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4539,6 +5069,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4554,6 +5086,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4563,6 +5097,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4590,6 +5126,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4605,6 +5143,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4614,6 +5154,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4641,6 +5183,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4656,6 +5200,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4665,6 +5211,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4692,6 +5240,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4707,6 +5257,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4716,6 +5268,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4739,6 +5293,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4754,6 +5310,8 @@ def Employee_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4763,6 +5321,8 @@ def Employee_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "Employee/Employee_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4803,6 +5363,8 @@ def Customer_Combo(request):
         return redirect('Usrlogin')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4815,6 +5377,8 @@ def Customer_Combo(request):
     combo_price = sum(product_price)
     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                 "product":product,
+                                                "category":category,
+                                         "sub_category":sub_category,
                                                 "vendors":vendors,
                                                 "limit":limit,
                                                 "combo_product":combo_product,
@@ -4841,6 +5405,8 @@ def Customer_combo_products(request):
     if request.method == "POST":
         vendors = AddVendors.objects.all()
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         limit = request.POST.get("limit")
         product = []
         temp = []
@@ -4877,6 +5443,8 @@ def Customer_combo_products(request):
             combo.sort(key=lambda x: len(x), reverse=True)
             return render(request, "Customer/Customer_ComboSection.html", {"name":name,
                                                     "combo":combo,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors})
         else:
             messages.info(request, "Something went wrong...")
@@ -4917,6 +5485,8 @@ def Customer_combo_product_list(request):
     query = request.GET.get('search')
     name = request.user
     product = AddProducts.objects.all().order_by('Category')
+    category = Category.objects.all().order_by("category_name")
+    sub_category = SubCategory.objects.all().order_by("subcategory_name")
     vendors = AddVendors.objects.all()
     price = [p.Total_GF_price for p in product]
     limit = max(price)
@@ -4930,6 +5500,8 @@ def Customer_combo_product_list(request):
         product = AddProducts.objects.filter(Q(Product_Name__icontains=query))
         return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -4995,6 +5567,8 @@ def Customer_combo_sort_products(request):
 
     if request.method == "POST":
         all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
         sorting = request.POST.get('sorting')
         selected_vendors = request.POST.getlist('vendor')
         limit = request.POST.get("limit")
@@ -5041,6 +5615,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5056,6 +5632,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5065,6 +5643,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5097,6 +5677,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5112,6 +5694,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5121,6 +5705,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5153,6 +5739,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5168,6 +5756,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5177,6 +5767,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5209,6 +5801,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5224,6 +5818,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5233,6 +5829,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5260,6 +5858,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5275,6 +5875,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5284,6 +5886,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":cat_list})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":cat_list,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5311,6 +5915,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5326,6 +5932,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5335,6 +5943,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":final})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":final,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5362,6 +5972,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5377,6 +5989,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5386,6 +6000,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5409,6 +6025,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5424,6 +6042,8 @@ def Customer_combo_sort_products(request):
                     # return render(request, "ComboSection.html",{"product":acending_items})
                     return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":acending_items,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5433,6 +6053,8 @@ def Customer_combo_sort_products(request):
             # return render(request, "ComboSection.html",{"product":product})
             return render(request, "Customer/Customer_ComboSection.html",{"name":name,
                                                     "product":product,
+                                                    "category":category,
+                                         "sub_category":sub_category,
                                                     "vendors":vendors,
                                                     "limit":limit,
                                                     "combo_product":combo_product,
@@ -5440,3 +6062,649 @@ def Customer_combo_sort_products(request):
         else:
             messages.info(request, "Something went wrong...")
     return redirect("Customer_Combo")
+
+def sort_products_shop(request):
+    if request.method == "POST":
+        all_product = AddProducts.objects.all().order_by('Category')
+        category = Category.objects.all().order_by("category_name")
+        sub_category = SubCategory.objects.all().order_by("subcategory_name")
+        name = request.user
+        vendors = AddVendors.objects.all().order_by('vendorname')
+        sorting = request.POST.get('sorting')
+        print(sorting)
+        selected_vendors = request.POST.getlist('vendor')
+        print(selected_vendors)
+        min_limit = request.POST.get("min_limit")
+        print(min_limit)
+        limit = request.POST.get("limit")
+        print(limit)
+        category = request.POST.getlist("category")
+        print(category)
+        sub_category = request.POST.getlist("sub_category")
+        print(sub_category)
+        products = []
+        product = []
+        cat_list = []
+        final = []
+        item_price_sort = []
+        acending_items = []
+        if selected_vendors and category and sub_category:
+            print(selected_vendors)
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+                    print(products)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+                    print(product)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+                        print(cat_list)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+                        print(final)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(acending_items)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(acending_items)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            return render(request, "General/shop.html",{
+                                         "products":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif selected_vendors and category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif selected_vendors and sub_category:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif category and sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for k in category:
+                    if item_cat.Category == k:
+                        cat_list.append(cat)
+            for sub_cat in cat_list:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for q in sub_category:
+                    if sub_item.Sub_category == q:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            for cat in product:
+                item_cat = AddProducts.objects.get(id=cat.id)
+                for i in category:
+                    if item_cat.Category == i:
+                        cat_list.append(cat)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in cat_list:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":cat_list,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif sub_category:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            for sub_cat in product:
+                sub_item = AddProducts.objects.get(id=sub_cat.id)
+                for i in sub_category:
+                    if sub_item.Sub_category == i:
+                        final.append(sub_item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in final:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":final,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif selected_vendors:
+            for i in selected_vendors:
+                vendor = AddVendors.objects.get(vendorname=i)
+                pro = AddProducts.objects.filter(Vendor=vendor)
+                for j in pro:
+                    products.append(j)
+            for lmt in products:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+
+        elif limit:
+            for lmt in all_product:
+                item = AddProducts.objects.get(id=lmt.id)
+                if float(item.Total_GF_price) <= float(limit) and float(item.Total_GF_price) >= float(min_limit):
+                    product.append(item)
+                    # print("limit pro list :",product)
+            if sorting != "null":
+                if sorting == "acending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort()
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                elif sorting == "desending":
+                    for i in product:
+                        items = AddProducts.objects.get(id=i.id)
+                        item_price_sort.append(items.Total_GF_price)
+                    item_price_sort.sort(reverse=True)
+                    for j in item_price_sort:
+                        acend_items =  AddProducts.objects.filter(Total_GF_price=j).first()
+                        acending_items.append(acend_items)
+                    print(product)
+                    return render(request, "General/shop.html",{
+                                         "products":acending_items,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+                else:
+                    return HttpResponse("Sorting Making Problem...")
+            print(product)
+            return render(request, "General/shop.html",{
+                                         "products":product,
+                                         "category":category,
+                                         "sub_category":sub_category,
+                                         "vendors":vendors,
+                                         "limit":limit })
+        else:
+            messages.info(request, "Something went wrong...")
+    return redirect("GridHome")
+
+def SortedCombo1(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
+    vendors = AddVendors.objects.all()
+    category = Category.objects.all()
+    if request.method == "POST":
+        vendor_name = request.POST.getlist("vendor")
+        cat_name = request.POST.getlist("category")
+        cats = []
+        for i in cat_name:
+            cat = Category.objects.get(category_name=i)
+            cats.append(cat)
+        sub_cats = []
+        for i in cats:
+            sub_cat = SubCategory.objects.filter(category=i)
+            sub_cats.append(sub_cat)
+        return render(request, "GridAdmin/SortedCombo2.html", {"vendor_name":vendor_name, "cat_name":cats, "sub_cat":sub_cats,"name":name})
+    return render(request, "GridAdmin/SortedCombo1.html", {"vendors":vendors, "category":category,"name":name})
+
+def SortedCombo2(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
+    if request.method == "POST":
+        vendor_code = request.POST.getlist("vendor")
+        cat_name = request.POST.getlist("cat_name")
+        sub_cat = request.POST.getlist("sub_cat")
+        min_limit = request.POST.get("min_limit")
+        max_limit = request.POST.get("max_limit")
+        
+        products_at_vendor = []
+        for i in vendor_code:
+            vendor = AddVendors.objects.get(vendorname=i)
+            product_vendor = AddProducts.objects.filter(Vendor=vendor)
+            for i in product_vendor:   
+                products_at_vendor.append(i)
+        product_at_cat = [] 
+        for j in products_at_vendor:
+            for k in cat_name:
+                if j.Category == k:
+                    product_at_cat.append(j)
+        product_at_subcat = []
+        for k in product_at_cat:
+            for l in sub_cat:
+                if k.Sub_category == l:
+                    product_at_subcat.append(k)
+        combo = []
+        final_combo = []
+        total_price = []
+        total_combo_price = []
+        count = 20
+        while count > 0:
+            for i in range(10):
+                random.shuffle(product_at_subcat)
+                for m in product_at_subcat:
+                    combo.append(m)
+                    total_price.append(m.Total_GF_price)
+                    if sum(total_price) <= float(min_limit):
+                        continue
+                    if sum(total_price) > float(max_limit):
+                        combo.pop(-1)
+                        final_combo.append(combo)
+                        combo = []
+                        total_price = []
+                    for i in final_combo:
+                        if len(i) < 2:
+                            final_combo.remove(i)
+                        for j in i:
+                            total_combo_price.append(j.Total_GF_price)
+            count = count-1
+            max_limit = float(max_limit) - ((float(max_limit)*5)/100)
+            if len(product_at_subcat) > 1:
+                product_at_subcat.pop(-1)    
+        sorted_list_descending = sorted(final_combo, key=lambda x: len(x), reverse=True)
+        return render(request, "GridAdmin/SortedCombo3.html", {"final_combo":sorted_list_descending,"total_combo_price":total_combo_price,"name":name})
+    return render(request, "GridAdmin/SortedCombo2.html",{"name":name})
+
+
+def employee_SortedCombo1(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
+    vendors = AddVendors.objects.all()
+    category = Category.objects.all()
+    if request.method == "POST":
+        vendor_name = request.POST.getlist("vendor")
+        cat_name = request.POST.getlist("category")
+        cats = []
+        for i in cat_name:
+            cat = Category.objects.get(category_name=i)
+            cats.append(cat)
+        sub_cats = []
+        for i in cats:
+            sub_cat = SubCategory.objects.filter(category=i)
+            sub_cats.append(sub_cat)
+        return render(request, "Employee/SortedCombo2.html", {"vendor_name":vendor_name, "cat_name":cats, "sub_cat":sub_cats})
+    return render(request, "Employee/SortedCombo1.html", {"vendors":vendors, "category":category})
+
+def employee_SortedCombo2(request):
+    if not request.user.is_authenticated:
+        return redirect('Usrlogin')
+    name = request.user
+    is_admin = False
+    user_groups = request.user.groups.values_list('name', flat=True)
+    admin = list(user_groups)
+    # print(admin)
+    if admin[0] == "Admin":
+        is_admin = True
+    name = request.user
+    if request.method == "POST":
+        vendor_code = request.POST.getlist("vendor")
+        cat_name = request.POST.getlist("cat_name")
+        sub_cat = request.POST.getlist("sub_cat")
+        min_limit = request.POST.get("min_limit")
+        max_limit = request.POST.get("max_limit")
+        
+        products_at_vendor = []
+        for i in vendor_code:
+            vendor = AddVendors.objects.get(vendorname=i)
+            product_vendor = AddProducts.objects.filter(Vendor=vendor)
+            for i in product_vendor:   
+                products_at_vendor.append(i)
+        product_at_cat = [] 
+        for j in products_at_vendor:
+            for k in cat_name:
+                if j.Category == k:
+                    product_at_cat.append(j)
+        product_at_subcat = []
+        for k in product_at_cat:
+            for l in sub_cat:
+                if k.Sub_category == l:
+                    product_at_subcat.append(k)
+        combo = []
+        final_combo = []
+        total_price = []
+        total_combo_price = []
+        count = 20
+        while count > 0:
+            for i in range(15):
+                random.shuffle(product_at_subcat)
+                for m in product_at_subcat:
+                    combo.append(m)
+                    total_price.append(m.Total_GF_price)
+                    if sum(total_price) < float(min_limit):
+                        continue
+                    if sum(total_price) > float(max_limit):
+                        combo.pop(-1)
+                        final_combo.append(combo)
+                        combo = []
+                        total_price = []
+                    for i in final_combo:
+                        if len(i) < 2:
+                            final_combo.remove(i)
+                        for j in i:
+                            total_combo_price.append(j.Total_GF_price)
+            count = count-1
+            max_limit = float(max_limit) - ((float(max_limit)*5)/100)
+            if len(product_at_subcat) >= 1:
+                product_at_subcat.pop(-1)    
+        sorted_list_descending = sorted(final_combo, key=lambda x: len(x), reverse=True)
+        return render(request, "Employee/SortedCombo3.html", {"final_combo":sorted_list_descending,"total_combo_price":total_combo_price})
+    return render(request, "Employee/SortedCombo2.html")

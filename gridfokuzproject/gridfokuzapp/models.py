@@ -9,7 +9,23 @@ class AddVendors(models.Model):
 
     def __str__(self):
         return str(self.vendorname)
+    
 
+class Category(models.Model):
+    category_name = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.category_name
+    
+
+class SubCategory(models.Model):
+    subcategory_name = models.CharField(max_length=50)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True,blank=True)
+    
+    def __str__(self):
+        return self.subcategory_name
+    
+    
 class AddProducts(models.Model):
     SKU = models.CharField(max_length=10, null=True)
     Vendor = models.ForeignKey(AddVendors ,on_delete=models.SET_NULL, null=True)

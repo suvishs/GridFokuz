@@ -1,5 +1,5 @@
 from django.urls import path
-from .import views
+from . import views
 
 urlpatterns = [
     # -------------------General Section-------------------
@@ -18,6 +18,7 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path('users', views.user_list, name='user_list'),
     path('deleteuser/<int:id>', views.deleteuser, name="deleteuser"),
+    path('sort_products_shop', views.sort_products_shop, name="sort_products_shop"),
 
     # -------------------Vendor Section-------------------
     path("addventors", views.addventors, name="addventors"),
@@ -42,6 +43,11 @@ urlpatterns = [
     path("AdminViewAllProducts", views.AdminViewAllProducts, name="AdminViewAllProducts"),
     path("EmployeeViewAllProducts", views.EmployeeViewAllProducts, name="EmployeeViewAllProducts"),
     path("CustomerViewAllProducts", views.CustomerViewAllProducts, name="CustomerViewAllProducts"),
+    path("productlist", views.productlist, name="productlist"),
+    path("GridAdminDeleteProduct_list/<int:id>", views.GridAdminDeleteProduct_list, name="GridAdminDeleteProduct_list"),
+    path("Admindeleteproductlist", views.Admindeleteproductlist, name="Admindeleteproductlist"),
+    path("update_product_list/<int:id>", views.update_product_list, name="update_product_list"),
+
 
     # -------------------Filtering Section-------------------
     path("sort_products", views.sort_products, name="sort_products"),
@@ -51,6 +57,7 @@ urlpatterns = [
     path("Employee_sort_products", views.Employee_sort_products, name="Employee_sort_products"),
     path("Customer_sort_products", views.Customer_sort_products, name="Customer_sort_products"),
     path("product_list", views.product_list, name="product_list"),
+    path("product_list_shop", views.product_list_shop, name="product_list_shop"),
     path("AdminViewAll_product_list", views.AdminViewAll_product_list, name="AdminViewAll_product_list"),
     path("EmployeeViewAll_product_list", views.EmployeeViewAll_product_list, name="EmployeeViewAll_product_list"),
     path("CustomerViewAll_product_list", views.CustomerViewAll_product_list, name="CustomerViewAll_product_list"),
@@ -69,6 +76,12 @@ urlpatterns = [
     path("DeleteCombo", views.DeleteCombo, name="DeleteCombo"),
     path("auto_combo_submit", views.auto_combo_submit, name="auto_combo_submit"),
     path("combo_sort_products", views.combo_sort_products, name="combo_sort_products"),
+    
+    path("SortedCombo1", views.SortedCombo1, name="SortedCombo1"),
+    path("SortedCombo2", views.SortedCombo2, name="SortedCombo2"),
+    
+    path("employee_SortedCombo1", views.employee_SortedCombo1, name="employee_SortedCombo1"),
+    path("employee_SortedCombo2", views.employee_SortedCombo2, name="employee_SortedCombo2"),
 
     # -------------------PDF Section-------------------
     path("IntermediatePDFsection", views.IntermediatePDFsection, name="IntermediatePDFsection"),
